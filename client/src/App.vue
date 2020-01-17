@@ -1,32 +1,57 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view />
-  </div>
+  <v-app>
+    <v-app-bar app color="cyan" dark>
+
+      <v-navigation-drawer app>
+        <!-- -->
+        <!-- <navBar/> -->
+      </v-navigation-drawer>
+      <div class="d-flex align-center">
+        <v-img
+          alt="STI Logo"
+          class="shrink mr-2"
+          contain
+          src="./assets/sti_logo.png"
+          transition="scale-transition"
+          width="80"
+        />
+
+      </div>
+
+      <v-spacer></v-spacer>
+
+      <!-- <v-btn
+        href="https://github.com/vuetifyjs/vuetify/releases/latest"
+        target="_blank"
+        text
+      >
+        <span class="mr-2">Latest Release</span>
+        <v-icon>mdi-open-in-new</v-icon>
+      </v-btn> -->
+    </v-app-bar>
+
+    <v-content>
+      <div class="mt-5">
+        <router-view/>
+      </div>
+    </v-content>
+  </v-app>
 </template>
 
-<style>
-#app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+// import HelloWorld from "./components/HelloWorld";
+// import NavBar from "./components/NavBar";
 
-#nav {
-  padding: 30px;
-}
+export default {
+  name: "App",
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
+  components: {
+    // HelloWorld
+    // NavBar
+  },
 
-#nav a.router-link-exact-active {
-  color: #42b983;
-}
-</style>
+  data: () => ({
+    //
+  })
+};
+</script>
