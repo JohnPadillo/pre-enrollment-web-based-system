@@ -1,11 +1,6 @@
 <template>
   <v-app>
     <v-app-bar app color="cyan" dark>
-
-      <v-navigation-drawer app>
-        <!-- -->
-        <!-- <navBar/> -->
-      </v-navigation-drawer>
       <div class="d-flex align-center">
         <v-img
           alt="STI Logo"
@@ -29,7 +24,7 @@
         <v-icon>mdi-open-in-new</v-icon>
       </v-btn> -->
     </v-app-bar>
-
+    <navBar/>
     <v-content>
       <div class="mt-5">
         <router-view/>
@@ -40,14 +35,14 @@
 
 <script>
 // import HelloWorld from "./components/HelloWorld";
-// import NavBar from "./components/NavBar";
+import NavBar from "./components/NavBar";
 
 export default {
   name: "App",
 
   components: {
     // HelloWorld
-    // NavBar
+    NavBar
   },
 
   data: () => ({
