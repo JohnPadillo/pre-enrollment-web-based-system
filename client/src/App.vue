@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-app-bar app color="cyan" dark>
+    <v-app-bar clipped-left app color="cyan" dark>
       <div class="d-flex align-center">
         <v-img
           alt="STI Logo"
@@ -26,7 +26,7 @@
     </v-app-bar>
     <navBar/>
     <v-content>
-      <div class="mt-5">
+      <div class="ma-5">
         <router-view/>
       </div>
     </v-content>

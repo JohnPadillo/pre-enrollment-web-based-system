@@ -1,6 +1,6 @@
 <template>
   <v-navigation-drawer app clipped>
-      <v-list-item>
+      <!-- <v-list-item>
         <v-list-item-content>
           <v-list-item-title class="title">
             Application
@@ -11,7 +11,7 @@
         </v-list-item-content>
       </v-list-item>
 
-      <v-divider></v-divider>
+      <v-divider></v-divider> -->
 
       <v-list
         dense
@@ -21,6 +21,7 @@
           v-for="item in items"
           :key="item.title"
           link
+          :to=" { path: item.link } "
         >
           <v-list-item-icon>
             <v-icon>{{ item.icon }}</v-icon>
@@ -39,9 +40,10 @@ export default {
     data () {
       return {
         items: [
-          { title: 'Dashboard', icon: 'mdi-view-dashboard' },
-          { title: 'Photos', icon: 'mdi-image' },
-          { title: 'About', icon: 'mdi-help-box' },
+          { title: 'Dashboard', icon: 'mdi-view-dashboard' , link: '/admin'},
+          { title: 'Courses', icon: 'mdi-image', link: '/admin/courses' },
+          { title: 'Subjects', icon: 'mdi-help-box', link: '/admin/subjects' },
+          { title: 'Students', icon: 'mdi-help-box', link: '/admin/students' },
         ],
         right: null,
       }
