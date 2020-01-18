@@ -12,8 +12,8 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="dialog = false">Close</v-btn>
-          <v-btn color="blue darken-1" text @click="dialog = false">Add</v-btn>
+          <v-btn color="blue darken-1" text @click="close">Close</v-btn>
+          <v-btn color="blue darken-1" text @click="save">Save</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -26,7 +26,15 @@ export default {
         'dialog',
         'title',
         'add'
-    ]
+    ],
+    methods: {
+      close(){
+        this.$emit('close')
+      },
+      save(){
+        this.$emit('save')
+      }
+    }
 }
 </script>
 
