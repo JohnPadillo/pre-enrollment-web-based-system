@@ -22,22 +22,17 @@
 
 <script>
 export default {
-    props: [
-        'dialog',
-        'title',
-        'add'
-    ],
-    methods: {
-      close(){
-        this.$emit('close')
-      },
-      save(){
-        this.$emit('save')
-      }
+  props: ["dialog", "title", "add"],
+
+  methods: {
+    close() {
+      this.$emit("close");
+    },
+    save() {
+      this.$emit("save");
     }
-}
+  }
+};
 </script>
 
-<style>
-
-</style>
+<style></style>

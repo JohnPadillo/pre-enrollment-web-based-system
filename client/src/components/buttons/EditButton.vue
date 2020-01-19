@@ -1,8 +1,8 @@
 <template>
   <v-tooltip top>
     <template v-slot:activator="{ on }">
-      <v-btn class="mx-2" fab dark color="green" @click="add" v-on="on">
-        <v-icon dark>mdi-plus</v-icon>
+      <v-btn class="mx-2" fab dark color="cyan" @click="edit" v-on="on">
+        <v-icon dark>mdi-pencil</v-icon>
       </v-btn>
     </template>
     <span>Add {{ title }}</span>
@@ -13,8 +13,8 @@
 export default {
   props: ["title"],
   methods: {
-    add() {
-      this.$emit("add");
+    edit() {
+      this.$emit("edit");
     }
   }
 };

@@ -1,20 +1,19 @@
 <template>
   <v-tooltip top>
     <template v-slot:activator="{ on }">
-      <v-btn class="mx-2" fab dark color="green" @click="add" v-on="on">
-        <v-icon dark>mdi-plus</v-icon>
+      <v-btn class="mx-2" fab dark color="pink" @click="remove" v-on="on">
+        <v-icon dark>delete</v-icon>
       </v-btn>
     </template>
-    <span>Add {{ title }}</span>
+    <span>Delete</span>
   </v-tooltip>
 </template>
 
 <script>
 export default {
-  props: ["title"],
   methods: {
-    add() {
-      this.$emit("add");
+    remove() {
+      this.$emit("delete");
     }
   }
 };
