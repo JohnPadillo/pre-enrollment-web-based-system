@@ -5,7 +5,7 @@
         <v-icon dark>mdi-plus</v-icon>
       </v-btn>
     </template>
-    <span>Add {{ title }}</span>
+    <span>Add</span>
   </v-tooltip>
 </template>
 

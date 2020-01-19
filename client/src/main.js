@@ -12,6 +12,9 @@ import DeleteButton from "./components/buttons/DeleteButton";
 // Dialog
 import AddDialog from "./components/dialogs/AddDialog";
 
+// Toolbar
+import ToolbarNav from "@/components/Toolbar.vue";
+
 Vue.config.productionTip = false;
 
 // Button
@@ -21,6 +24,9 @@ Vue.component("DeleteButton", DeleteButton);
 
 // Dialog
 Vue.component("AddDialog", AddDialog);
+
+// Toolbar
+Vue.component("ToolbarNav", ToolbarNav);
 
 new Vue({
   router,

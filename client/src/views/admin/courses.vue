@@ -12,16 +12,8 @@
             @close="closeAddDialog"
             @save="addCourse"
           >
-            <v-text-field
-              label="Course Name"
-              v-model="course_name"
-              outlined
-            ></v-text-field>
-            <v-text-field
-              v-model="course_code"
-              label="Course Code"
-              outlined
-            ></v-text-field>
+            <v-text-field label="Course Name" v-model="course_name" outlined></v-text-field>
+            <v-text-field v-model="course_code" label="Course Code" outlined></v-text-field>
 
             <v-select
               v-model="course_department"
@@ -42,7 +34,7 @@
             >
               {{ header.text }}
             </th>
-          </template> -->
+          </template>-->
           <template v-slot:item="props">
             <tr>
               <td>{{ props.item.code }}</td>
@@ -50,7 +42,7 @@
               <td>{{ props.item.department }}</td>
 
               <td>
-                <v-btn
+                <!-- <v-btn
                   class="mx-2"
                   fab
                   dark
@@ -59,8 +51,7 @@
                   @click="edit(props.item.code)"
                 >
                   <v-icon dark>add_circle_outline</v-icon>
-                </v-btn>
-                <addButton />
+                </v-btn>-->
                 <editButton />
                 <deleteButton />
               </td>
@@ -73,11 +64,7 @@
 </template>
 
 <script>
-import ToolbarNav from "@/components/Toolbar.vue";
 export default {
-  components: {
-    ToolbarNav
-  },
   methods: {
     add() {
       this.openAddDialog = !this.openAddDialog;

@@ -5,7 +5,7 @@
         <v-icon dark>mdi-pencil</v-icon>
       </v-btn>
     </template>
-    <span>Add {{ title }}</span>
+    <span>Edit</span>
   </v-tooltip>
 </template>
 
