@@ -1,7 +1,7 @@
 <template>
   <v-tooltip top>
     <template v-slot:activator="{ on }">
-      <v-btn class="mx-2" fab dark color="green" @click="add" v-on="on">
+      <v-btn small class="mx-2" fab dark color="green" @click="add" v-on="on">
         <v-icon dark>mdi-plus</v-icon>
       </v-btn>
     </template>

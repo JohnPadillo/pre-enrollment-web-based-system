@@ -21,7 +21,6 @@
             ></v-text-field>
           </addDialog>
         </toolbarNav>
-
         <v-data-table class="mt-5" :headers="headers" :items="subjects">
           <template v-slot:item="props">
             <tr>

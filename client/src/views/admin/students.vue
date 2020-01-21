@@ -17,12 +17,28 @@
             outlined
           ></v-select>
         </addDialog>
-
-        <v-data-table class="mt-5" :headers="headers" :items="students">
+        <v-layout>
+          <v-spacer></v-spacer>
+          <v-col class="d-flex" cols="12" sm="3">
+            <v-select
+              :items="courses"
+              v-model="selected_course"
+              label="Course"
+              item-text="code"
+              item-value="code"
+              solo
+              clearable
+              @click:clear="resetSelectCourse"
+              @input="selectCourse"
+            ></v-select>
+          </v-col>
+        </v-layout>
+        <v-data-table class="mt-1" :headers="headers" :items="students">
           <template v-slot:item="props">
             <tr>
               <td>{{ props.item.name }}</td>
               <td>{{ props.item.course }}</td>
+              <td>{{ props.item.year }}</td>
               <td>
                 <editButton />
                 <deleteButton />
@@ -43,23 +59,29 @@ export default {
       openAddDialog: false,
       student_name: "",
       student_course: "",
+      selected_course: "",
+      defaultStudents: "",
       students: [
         {
           name: "Katrina Castillo",
-          course: "BSIT"
+          course: "BSIT",
+          year: "4th Year"
         },
         {
           name: "Vice Ganda",
-          course: "POLSCI"
+          course: "POLSCI",
+          year: "2nd Year"
         },
         {
           name: "Marian Rivera",
-          course: "BSc Psychology"
+          course: "BSc Psychology",
+          year: "3rd Year"
         }
       ],
       headers: [
         { text: "Student Name", value: "name" },
         { text: "Student Course", value: "course" },
+        { text: "Student Year", value: "year" },
         { text: "Actions" }
       ],
       courses: [
@@ -81,12 +103,26 @@ export default {
       ]
     };
   },
+  created() {
+    this.defaultStudents = this.students;
+  },
   methods: {
     add() {
       this.openAddDialog = true;
     },
     closeAddDialog() {
       this.openAddDialog = false;
+    },
+    selectCourse() {
+      this.students = this.defaultStudents;
+      let data = this.students.filter(student => {
+        return student.course === this.selected_course;
+      });
+
+      this.students = data;
+    },
+    async resetSelectCourse() {
+      this.students = await this.defaultStudents;
     }
   }
 };
