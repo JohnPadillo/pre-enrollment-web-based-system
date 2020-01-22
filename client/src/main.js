@@ -15,6 +15,9 @@ import AddDialog from "./components/dialogs/AddDialog";
 // Toolbar
 import ToolbarNav from "@/components/Toolbar.vue";
 
+// Form
+import PreEnrollmentForm from "@/components/PreEnrollmentForm";
+
 Vue.config.productionTip = false;
 
 // Button
@@ -27,6 +30,9 @@ Vue.component("AddDialog", AddDialog);
 
 // Toolbar
 Vue.component("ToolbarNav", ToolbarNav);
+
+// Form
+Vue.component("PreEnrollmentForm", PreEnrollmentForm);
 
 new Vue({
   router,
