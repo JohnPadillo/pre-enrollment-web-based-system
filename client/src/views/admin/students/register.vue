@@ -1,10 +1,24 @@
 <template>
   <registerForm :title="title" @register="register">
-    <v-text-field label="First Name" v-model="firstName" outlined></v-text-field>
-    <v-text-field label="Middle Name" v-model="middleName" outlined></v-text-field>
+    <v-text-field
+      label="First Name"
+      v-model="firstName"
+      outlined
+    ></v-text-field>
+    <v-text-field
+      label="Middle Name"
+      v-model="middleName"
+      outlined
+    ></v-text-field>
     <v-text-field label="Last Name" v-model="lastName" outlined></v-text-field>
     <v-text-field label="Email" v-model="email" outlined></v-text-field>
-    <v-text-field label="Contact No." v-model="contact_no" outlined counter="11" maxlength="11"></v-text-field>
+    <v-text-field
+      label="Contact No."
+      v-model="contact_no"
+      outlined
+      counter="11"
+      maxlength="11"
+    ></v-text-field>
 
     <v-select
       :items="courses"
@@ -43,7 +57,7 @@
 
 <script>
 import RegisterForm from "@/components/Form.vue";
-
+import AuthenticationService from "@/services/AuthenticationService";
 export default {
   components: {
     RegisterForm
@@ -77,8 +91,7 @@ export default {
     };
   },
   methods: {
-    register() {
-      console.log(this.firstName);
+    async register() {
       let data = {
         first_name: this.firstName,
         middle_name: this.middleName,
@@ -87,9 +100,12 @@ export default {
         contact_no: this.contact_no,
         course: this.courseSelected
       };
-      console.log(data);
+      // console.log(data);
 
       //   this.$router.push({ path: "/dashboard" });
+      const response = await AuthenticationService.register(data);
+
+      console.log(response.data);
     },
     selectCourse() {
       console.log(this.courseSelected);
