@@ -11,18 +11,20 @@ app.use(bodyparser.urlencoded({ extended: false }));
 app.use(morgan("combined"));
 app.use(cors());
 
-const Sequelize = require("sequelize");
+// const Sequelize = require("sequelize");
 
-// Option 1: Passing parameters separately
-const sequelize = new Sequelize(
-  "pre_enrollment_web_app",
-  "john_padillo",
-  "padillorrerr",
-  {
-    host: "localhost",
-    dialect: "postgres"
-  }
-);
+// // Option 1: Passing parameters separately
+// const sequelize = new Sequelize(
+//   "pre_enrollment_web_app",
+//   "john_padillo",
+//   "padillorrerr",
+//   {
+//     host: "localhost",
+//     dialect: "postgres"
+//   }
+// );
+
+const sequelize = require("./config/db");
 
 sequelize
   .authenticate()
