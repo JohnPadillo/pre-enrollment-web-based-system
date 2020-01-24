@@ -6,8 +6,17 @@
           <addButton :title="title" @add="add" />
         </toolbarNav>
 
-        <addDialog :dialog="openAddDialog" :title="title" ref="addDialog" @close="closeAddDialog">
-          <v-text-field label="Stundent Name" v-model="student_name" outlined></v-text-field>
+        <addDialog
+          :dialog="openAddDialog"
+          :title="title"
+          ref="addDialog"
+          @close="closeAddDialog"
+        >
+          <v-text-field
+            label="Stundent Name"
+            v-model="student_name"
+            outlined
+          ></v-text-field>
           <v-select
             v-model="student_course"
             :items="courses"
@@ -24,8 +33,8 @@
               :items="courses"
               v-model="selected_course"
               label="Course"
-              item-text="code"
-              item-value="code"
+              item-text="name"
+              item-value="id"
               solo
               clearable
               @click:clear="resetSelectCourse"
@@ -36,9 +45,8 @@
         <v-data-table class="mt-1" :headers="headers" :items="students">
           <template v-slot:item="props">
             <tr>
-              <td>{{ props.item.name }}</td>
-              <td>{{ props.item.course }}</td>
-              <td>{{ props.item.year }}</td>
+              <td>{{ props.item.first_name }} {{ props.item.last_name }}</td>
+              <td>{{ props.item.course.name }}</td>
               <td>
                 <editButton />
                 <deleteButton />
@@ -52,7 +60,15 @@
 </template>
 
 <script>
+import StudentService from "@/services/StudentService";
+import CourseService from "@/services/CourseService";
+
 export default {
+  mounted() {
+    this.getData();
+    this.getCourses();
+  },
+
   data() {
     return {
       title: "Students",
@@ -60,53 +76,31 @@ export default {
       student_name: "",
       student_course: "",
       selected_course: "",
-      defaultStudents: "",
-      students: [
-        {
-          name: "Katrina Castillo",
-          course: "BSIT",
-          year: "4th Year"
-        },
-        {
-          name: "Vice Ganda",
-          course: "POLSCI",
-          year: "2nd Year"
-        },
-        {
-          name: "Marian Rivera",
-          course: "BSc Psychology",
-          year: "3rd Year"
-        }
-      ],
+      students: [],
+      defaultStudents: [],
+      courses: [],
       headers: [
         { text: "Student Name", value: "name" },
         { text: "Student Course", value: "course" },
-        { text: "Student Year", value: "year" },
         { text: "Actions" }
-      ],
-      courses: [
-        {
-          code: "BSIT"
-        },
-        {
-          code: "POLSCI"
-        },
-        {
-          code: "BSc Psychology"
-        },
-        {
-          code: "BSED"
-        },
-        {
-          code: "BSCS"
-        }
       ]
     };
   },
-  created() {
-    this.defaultStudents = this.students;
-  },
   methods: {
+    async getData() {
+      this.students = (await StudentService.getStudents()).data;
+      this.defaultStudents = this.students;
+    },
+    async getCourses() {
+      let courses = (await CourseService.getCourses()).data;
+
+      this.courses = courses.map(course => {
+        return {
+          name: course.name,
+          id: course.id
+        };
+      });
+    },
     add() {
       this.openAddDialog = true;
     },
@@ -116,13 +110,12 @@ export default {
     selectCourse() {
       this.students = this.defaultStudents;
       let data = this.students.filter(student => {
-        return student.course === this.selected_course;
+        return student.course.id === this.selected_course;
       });
-
       this.students = data;
     },
     async resetSelectCourse() {
-      this.students = await this.defaultStudents;
+      this.students = (await StudentService.getStudents()).data;
     }
   }
 };
