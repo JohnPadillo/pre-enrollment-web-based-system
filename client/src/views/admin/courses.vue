@@ -12,23 +12,15 @@
             @close="closeAddDialog"
             @save="addCourse"
           >
-            <v-text-field
-              label="Course Name"
-              v-model="course_name"
-              outlined
-            ></v-text-field>
-            <v-text-field
-              v-model="course_code"
-              label="Course Code"
-              outlined
-            ></v-text-field>
+            <v-text-field label="Course Name" v-model="course_name" outlined></v-text-field>
+            <v-text-field v-model="course_code" label="Course Code" outlined></v-text-field>
 
             <v-select
               v-model="course_department"
               :items="departments"
               label="Department"
               item-text="name"
-              item-value="name"
+              item-value="id"
               outlined
             ></v-select>
           </addDialog>
@@ -36,7 +28,9 @@
         <v-data-table class="mt-5" :headers="headers" :items="courses">
           <template v-slot:item="props">
             <tr>
+              <td>{{ props.item.code }}</td>
               <td>{{ props.item.name }}</td>
+              <td>{{ props.item.department.name }}</td>
 
               <td>
                 <editButton />
@@ -52,12 +46,21 @@
 
 <script>
 import CourseService from "@/services/CourseService";
+import DepartmentService from "@/services/DepartmentService";
+
 export default {
-  async mounted() {
-    this.courses = (await CourseService.getCourses()).data;
-    console.log(this.courses);
+  mounted() {
+    this.getCourses();
+    this.getDepartments();
   },
   methods: {
+    async getCourses() {
+      this.courses = (await CourseService.getCourses()).data;
+      console.log(this.courses);
+    },
+    async getDepartments() {
+      this.departments = (await DepartmentService.getDepartments()).data;
+    },
     add() {
       this.openAddDialog = !this.openAddDialog;
       console.log(this.openAddDialog);
@@ -71,15 +74,18 @@ export default {
       this.course_name = "";
       this.course_department = "";
     },
-    addCourse() {
+    async addCourse() {
       let data = {
         code: this.course_code,
         name: this.course_name,
         department: this.course_department
       };
-      this.courses.push(data);
+
+      let response = await CourseService.addCourse(data);
+      console.log(response);
       this.openAddDialog = !this.openAddDialog;
       this.reset();
+      this.getCourses();
     },
     edit(data) {
       console.log(data);
@@ -93,6 +99,7 @@ export default {
       course_code: "",
       openAddDialog: false,
       courses: [],
+      departments: [],
       headers: [
         {
           text: "Course Name",
@@ -100,16 +107,18 @@ export default {
           align: "center"
         },
         {
-          text: "Action",
+          text: "Course Code",
+          value: "name",
           align: "center"
-        }
-      ],
-      departments: [
-        {
-          name: "IT Department"
         },
         {
-          name: "Education Department"
+          text: "Department",
+          value: "name",
+          align: "center"
+        },
+        {
+          text: "Action",
+          align: "center"
         }
       ]
     };

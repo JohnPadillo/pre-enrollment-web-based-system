@@ -10,24 +10,21 @@
           transition="scale-transition"
           width="80"
         />
-
       </div>
 
       <v-spacer></v-spacer>
 
-      <!-- <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
+      <!-- <v-btn href="https://github.com/vuetifyjs/vuetify/releases/latest" target="_blank" text>
         <span class="mr-2">Latest Release</span>
         <v-icon>mdi-open-in-new</v-icon>
-      </v-btn> -->
+      </v-btn>-->
+      <v-btn text :to="{ path: '/register' }">Register</v-btn>
+      <v-btn text :to="{ path: '/' }">Login</v-btn>
     </v-app-bar>
-    <navBar/>
+    <navBar v-if="isLoggedIn" />
     <v-content>
       <div class="ma-5">
-        <router-view/>
+        <router-view />
       </div>
     </v-content>
   </v-app>
@@ -46,6 +43,7 @@ export default {
   },
 
   data: () => ({
+    isLoggedIn: false
     //
   })
 };

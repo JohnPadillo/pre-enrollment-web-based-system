@@ -6,17 +6,8 @@
           <addButton :title="title" @add="add" />
         </toolbarNav>
 
-        <addDialog
-          :dialog="openAddDialog"
-          :title="title"
-          ref="addDialog"
-          @close="closeAddDialog"
-        >
-          <v-text-field
-            label="Stundent Name"
-            v-model="student_name"
-            outlined
-          ></v-text-field>
+        <addDialog :dialog="openAddDialog" :title="title" ref="addDialog" @close="closeAddDialog">
+          <v-text-field label="Stundent Name" v-model="student_name" outlined></v-text-field>
           <v-select
             v-model="student_course"
             :items="courses"
@@ -33,7 +24,7 @@
               :items="courses"
               v-model="selected_course"
               label="Course"
-              item-text="name"
+              item-text="code"
               item-value="id"
               solo
               clearable
@@ -46,7 +37,7 @@
           <template v-slot:item="props">
             <tr>
               <td>{{ props.item.first_name }} {{ props.item.last_name }}</td>
-              <td>{{ props.item.course.name }}</td>
+              <td>{{ props.item.course.code }}</td>
               <td>
                 <editButton />
                 <deleteButton />
@@ -96,6 +87,7 @@ export default {
 
       this.courses = courses.map(course => {
         return {
+          code: course.code,
           name: course.name,
           id: course.id
         };

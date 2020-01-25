@@ -1,25 +1,35 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
+
+// Admin
 import AdminRegister from "../views/admin/register";
 import AdminDashboard from "../views/admin/dashboard";
 import AdminCourses from "../views/admin/courses";
 import AdminSubjects from "../views/admin/subjects";
 import AdminStudents from "../views/admin/students";
-import StudentRegister from "../views/admin/students/register";
-import StudentDashboard from "../views/admin/students/dashboard";
-import StudentLogin from "../views/admin/students/login";
+import AdminDeparmtent from "../views/admin/department";
+
+// Student
+import StudentRegister from "../views/students/register";
+import StudentDashboard from "../views/students/dashboard";
+import Login from "../views/login";
 Vue.use(VueRouter);
 
 const routes = [
+  {
+    path: "/admin/department",
+    name: "AdminDepartment",
+    component: AdminDeparmtent
+  },
   {
     path: "/register",
     name: "StudentRegister",
     component: StudentRegister
   },
   {
-    path: "/login",
-    name: "StudentLogin",
-    component: StudentLogin
+    path: "/",
+    name: "Login",
+    component: Login
   },
   {
     path: "/dashboard",

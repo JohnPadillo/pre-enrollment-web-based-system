@@ -1,19 +1,13 @@
-
 <template>
   <v-layout>
-      <v-flex>
+    <v-flex>
       <h1>Dashboard</h1>
-
-      </v-flex>
+    </v-flex>
   </v-layout>
 </template>
 
 <script>
-export default {
-
-}
+export default {};
 </script>
 
-<style>
-
-</style>
+<style></style>
