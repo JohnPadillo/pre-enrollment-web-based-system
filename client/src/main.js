@@ -11,6 +11,7 @@ import DeleteButton from "./components/buttons/DeleteButton";
 
 // Dialog
 import AddDialog from "./components/dialogs/AddDialog";
+import ConfirmationDialog from "./components/dialogs/ConfirmationDialog";
 
 // Toolbar
 import ToolbarNav from "@/components/Toolbar.vue";
@@ -27,6 +28,7 @@ Vue.component("DeleteButton", DeleteButton);
 
 // Dialog
 Vue.component("AddDialog", AddDialog);
+Vue.component("ConfirmationDialog", ConfirmationDialog);
 
 // Toolbar
 Vue.component("ToolbarNav", ToolbarNav);

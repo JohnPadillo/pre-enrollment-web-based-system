@@ -18,8 +18,9 @@
         <span class="mr-2">Latest Release</span>
         <v-icon>mdi-open-in-new</v-icon>
       </v-btn>-->
-      <v-btn text :to="{ path: '/register' }">Register</v-btn>
-      <v-btn text :to="{ path: '/' }">Login</v-btn>
+      <v-btn text :to="{ path: '/register' }" v-if="!isLoggedIn">Register</v-btn>
+      <v-btn text :to="{ path: '/' }" v-if="!isLoggedIn">Login</v-btn>
+      <v-btn text :to="{ path: '/' }" v-if="isLoggedIn" @click="logout">Logout</v-btn>
     </v-app-bar>
     <navBar v-if="isLoggedIn" />
     <v-content>
@@ -41,10 +42,23 @@ export default {
     // HelloWorld
     NavBar
   },
-
+  computed: {
+    isLoggedIn() {
+      let isUser = this.$store.state.user;
+      if (isUser) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  },
   data: () => ({
-    isLoggedIn: false
-    //
-  })
+    isUser: false
+  }),
+  methods: {
+    async logout() {
+      await this.$store.dispatch("unSetUser");
+    }
+  }
 };
 </script>

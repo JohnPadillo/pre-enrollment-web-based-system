@@ -6,11 +6,11 @@
           <addButton :title="title" @add="add" />
 
           <addDialog
-            :dialog="openAddDialog"
+            :dialog="openDialog"
             :title="title"
             ref="addDialog"
-            @close="closeAddDialog"
-            @save="addDepartment"
+            @close="closeDialog"
+            @save="action === 'edit' ? saveEditDepartment() : addDepartment()"
           >
             <v-text-field label="Department Name" v-model="department_name" outlined></v-text-field>
 
@@ -24,13 +24,19 @@
             ></v-select>-->
           </addDialog>
         </toolbarNav>
+        <confirmationDialog
+          :dialog="confirmationDialog"
+          :title="confirmDialogTitle"
+          @no="closeConfirmDialog"
+          @yes="deleteDepartment"
+        ></confirmationDialog>
         <v-data-table class="mt-5" :headers="headers" :items="departments">
           <template v-slot:item="props">
             <tr>
               <td>{{ props.item.name }}</td>
               <td>
-                <editButton />
-                <deleteButton />
+                <editButton @edit="getEditDepartment(props.item.id)" />
+                <deleteButton @delete="getDeleteDepartment(props.item.id)" />
               </td>
             </tr>
           </template>
@@ -45,9 +51,13 @@ import DepartmentService from "@/services/DepartmentService";
 export default {
   data() {
     return {
+      id: null,
+      confirmDialogTitle: "",
+      action: "",
       title: "Department",
       department_name: "",
-      openAddDialog: false,
+      openDialog: false,
+      confirmationDialog: false,
       // courses: [],
       departments: [],
       headers: [
@@ -69,13 +79,13 @@ export default {
   methods: {
     async getDepartments() {
       this.departments = (await DepartmentService.getDepartments()).data;
-      console.log(this.departments);
     },
     add() {
-      this.openAddDialog = !this.openAddDialog;
+      this.action = "add";
+      this.openDialog = !this.openDialog;
     },
-    closeAddDialog() {
-      this.openAddDialog = !this.openAddDialog;
+    closeDialog() {
+      this.openDialog = !this.openDialog;
       this.reset();
     },
     reset() {
@@ -88,12 +98,50 @@ export default {
 
       let response = await DepartmentService.addDepartment(data);
       console.log(response);
-      this.openAddDialog = !this.openAddDialog;
+      this.closeDialog();
       this.reset();
       this.getDepartments();
     },
-    edit(data) {
-      console.log(data);
+    async getEditDepartment(id) {
+      this.action = "edit";
+      this.openDialog = !this.openDialog;
+      let response = (await DepartmentService.getDepartment(id)).data;
+      this.department_name = response.name;
+      this.id = id;
+    },
+
+    async saveEditDepartment() {
+      try {
+        let data = {
+          id: this.id,
+          name: this.department_name
+        };
+        let response = await DepartmentService.editDepartment(data);
+        console.log(response);
+        this.closeDialog();
+        this.reset();
+        this.getDepartments();
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    closeConfirmDialog() {
+      this.confirmationDialog = !this.confirmationDialog;
+    },
+    async getDeleteDepartment(id) {
+      this.confirmationDialog = !this.confirmationDialog;
+      this.confirmDialogTitle = "delete";
+      this.id = id;
+    },
+
+    async deleteDepartment() {
+      try {
+        await DepartmentService.deleteDepartment(this.id);
+        this.confirmationDialog = !this.confirmationDialog;
+        this.getDepartments();
+      } catch (error) {
+        console.log(error);
+      }
     }
   }
 };

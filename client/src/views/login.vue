@@ -34,6 +34,7 @@ export default {
       }
     };
   },
+
   methods: {
     async login() {
       let data = {
@@ -47,6 +48,7 @@ export default {
 
       if (user) {
         if (checkPassword(user.password)) {
+          await this.$store.dispatch("setUser", user);
           this.$router.push({ path: "/dashboard" });
         }
       }

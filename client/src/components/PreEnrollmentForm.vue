@@ -6,9 +6,11 @@
           <v-card-title>PRE ENROLLMENT FORM</v-card-title>
           <v-card-text>
             <v-list>
-              Student Name:
+              <strong>Student Name:</strong>
+              {{ name }}
               <br />
-              Program:
+              <strong>Program:</strong>
+              {{ course }}
             </v-list>
           </v-card-text>
         </v-card>
@@ -18,7 +20,12 @@
 </template>
 
 <script>
-export default {};
+export default {
+  props: {
+    name: String,
+    course: String
+  }
+};
 </script>
 
 <style></style>
