@@ -34,14 +34,15 @@ export default {
       }
     };
   },
-
+  mounted() {
+    this.$store.dispatch("unSetUser");
+  },
   methods: {
     async login() {
       let data = {
         email: this.email
       };
       let user = (await StudentService.getStudent(data)).data;
-
       let checkPassword = password => {
         return password === this.password;
       };
@@ -49,6 +50,7 @@ export default {
       if (user) {
         if (checkPassword(user.password)) {
           await this.$store.dispatch("setUser", user);
+          console.log("here");
           this.$router.push({ path: "/dashboard" });
         }
       }

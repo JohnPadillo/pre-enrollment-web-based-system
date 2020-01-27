@@ -2,7 +2,7 @@
   <v-container fluid>
     <v-layout>
       <v-flex>
-        <preEnrollmentForm :name="name"></preEnrollmentForm>
+        <preEnrollmentForm :name="name" :course="course"></preEnrollmentForm>
       </v-flex>
     </v-layout>
   </v-container>
@@ -15,7 +15,8 @@ export default {
       name:
         this.$store.state.user.first_name +
         " " +
-        this.$store.state.user.last_name
+        this.$store.state.user.last_name,
+      course: this.$store.state.user.course.code
     };
   }
 };

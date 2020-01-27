@@ -44,17 +44,15 @@ export default {
   },
   computed: {
     isLoggedIn() {
-      let isUser = this.$store.state.user;
-      if (isUser) {
+      let user = this.$store.state.user;
+      if (user) {
         return true;
       } else {
         return false;
       }
     }
   },
-  data: () => ({
-    isUser: false
-  }),
+  data: () => ({}),
   methods: {
     async logout() {
       await this.$store.dispatch("unSetUser");
