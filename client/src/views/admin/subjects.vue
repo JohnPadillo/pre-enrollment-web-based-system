@@ -12,23 +12,28 @@
             @close="closeAddDialog"
             @save="action === 'edit' ? saveEditSubject() : addSubject()"
           >
-            <v-text-field label="Subject Code" v-model="subject_code" outlined></v-text-field>
+            <v-text-field label="Subject Code" :readonly="action === 'edit'" v-model="subject_code" outlined></v-text-field>
             <v-text-field
-              :readonly="action === 'edit'"
               label="Subject Name"
               v-model="subject_name"
               outlined
             ></v-text-field>
           </addDialog>
         </toolbarNav>
+        <confirmationDialog
+          :dialog="confirmationDialog"
+          :title="confirmDialogTitle"
+          @no="closeConfirmDialog"
+          @yes="deleteSubjectNow"
+        ></confirmationDialog>
         <v-data-table class="mt-5" :headers="headers" :items="subjects">
           <template v-slot:item="props">
             <tr>
               <td>{{ props.item.code }}</td>
               <td>{{ props.item.name }}</td>
               <td>
-                <editButton @edit="editSubject(props.item)" />
-                <deleteButton @delete="deleteSubject(props.item)" />
+                <editButton @edit="editSubject(props.item.id)" />
+                <deleteButton @delete="deleteSubject(props.item.id)" />
               </td>
             </tr>
           </template>
@@ -39,24 +44,19 @@
 </template>
 
 <script>
+import SubjectService from "@/services/SubjectService.js"
 export default {
   data() {
     return {
       title: "Subjects",
+      id: "",
       action: "",
       openAddDialog: false,
+      confirmationDialog: false,
+      confirmDialogTitle: 'delete',
       subject_name: "",
       subject_code: "",
-      subjects: [
-        {
-          name: "General Science 1",
-          code: "GenSci1"
-        },
-        {
-          name: "Math 1",
-          code: "Math1"
-        }
-      ],
+      subjects: [],
       headers: [
         {
           text: "Subject Code",
@@ -72,7 +72,13 @@ export default {
       ]
     };
   },
+  mounted(){
+    this.getSubjects()
+  },
   methods: {
+    async getSubjects() {
+      this.subjects = (await SubjectService.getSubjects()).data
+    },
     add() {
       this.action = "add";
       this.openAddDialog = true;
@@ -85,42 +91,51 @@ export default {
       this.subject_code = "";
       this.subject_name = "";
     },
-    addSubject() {
+    async addSubject() {
       let data = {
         name: this.subject_name,
         code: this.subject_code
-      };
-      this.subjects.push(data);
+      }
+
+      await SubjectService.addSubject(data)
+      this.getSubjects()
       this.openAddDialog = false;
       this.reset();
+      
     },
-    editSubject(data) {
+    async editSubject(id) {
       this.action = "edit";
-      let subject = this.subjects.find(subject => {
-        return subject.name === data.name;
-      });
-
+      let subject = (await SubjectService.getSubject(id)).data
+      this.id = subject.id
       this.subject_code = subject.code;
       this.subject_name = subject.name;
       this.openAddDialog = true;
-      console.log(this.action);
     },
-    saveEditSubject() {
-      let subject = this.subjects.find(subject => {
-        return subject.name === this.subject_name;
-      });
+    async saveEditSubject() {
+      let data = {
+        name: this.subject_name,
+        id: this.id
+      }
 
-      subject.code = this.subject_code;
+      await SubjectService.editSubject(data)
+
       this.openAddDialog = false;
+      this.getSubjects()
       this.reset();
     },
 
-    deleteSubject(data) {
-      let index = this.subjects.findIndex(subject => {
-        return subject.name === data.name;
-      });
+    deleteSubject(id) {
+      this.confirmationDialog = !this.confirmationDialog
+      this.id = id
+    },
 
-      this.subjects.splice(index, 1);
+    async deleteSubjectNow(){
+      await SubjectService.deleteSubject(this.id)
+      this.confirmationDialog = !this.confirmationDialog
+      this.getSubjects()
+    },
+    async closeConfirmDialog() {
+      this.confirmationDialog = !this.confirmationDialog
     }
   }
 };

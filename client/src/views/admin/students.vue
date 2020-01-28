@@ -80,6 +80,9 @@ export default {
   methods: {
     async getData() {
       this.students = (await StudentService.getStudents()).data;
+      this.students = this.students.filter(student => {
+        return student.status !== 1 
+      })
       this.defaultStudents = this.students;
     },
     async getCourses() {
