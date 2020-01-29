@@ -58,7 +58,7 @@
 
 <script>
 import RegisterForm from "@/components/Form.vue";
-import CourseService from "@/services/CourseService";
+import ProgramService from "@/services/ProgramService";
 import StudentService from "@/services/StudentService";
 export default {
   mounted() {
@@ -90,7 +90,7 @@ export default {
   },
   methods: {
     async getCourse() {
-      this.courses = (await CourseService.getCourses()).data;
+      this.courses = (await ProgramService.getPrograms()).data;
       console.log(this.courses);
     },
     async register() {

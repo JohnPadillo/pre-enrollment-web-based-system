@@ -4,8 +4,8 @@ import VueRouter from "vue-router";
 // Admin
 import AdminRegister from "../views/admin/register";
 import AdminDashboard from "../views/admin/dashboard";
-import AdminCourses from "../views/admin/courses";
-import AdminSubjects from "../views/admin/subjects";
+import AdminProgram from "../views/admin/program";
+import AdminCourse from "../views/admin/course";
 import AdminStudents from "../views/admin/students";
 import AdminDeparmtent from "../views/admin/department";
 
@@ -47,9 +47,9 @@ const routes = [
     component: AdminRegister
   },
   {
-    path: "/admin/courses",
-    name: "AdminCourses",
-    component: AdminCourses
+    path: "/admin/programs",
+    name: "AdminProgram",
+    component: AdminProgram
   },
   {
     path: "/admin/students",
@@ -57,9 +57,9 @@ const routes = [
     component: AdminStudents
   },
   {
-    path: "/admin/subjects",
-    name: "AdminSubjects",
-    component: AdminSubjects
+    path: "/admin/courses",
+    name: "AdminCourse",
+    component: AdminCourse
   }
 ];
 

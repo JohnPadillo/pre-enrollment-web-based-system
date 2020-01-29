@@ -11,15 +11,10 @@
         </v-list-item-content>
       </v-list-item>
 
-      <v-divider></v-divider> -->
+    <v-divider></v-divider>-->
 
     <v-list dense nav>
-      <v-list-item
-        v-for="item in items"
-        :key="item.title"
-        link
-        :to="{ path: item.link }"
-      >
+      <v-list-item v-for="item in items" :key="item.title" link :to="{ path: item.link }">
         <v-list-item-icon>
           <v-icon>{{ item.icon }}</v-icon>
         </v-list-item-icon>
@@ -35,11 +30,11 @@
 <script>
 export default {
   computed: {
-    items(){
-      if(this.$store.state.user.status == 1){
-        return this.items1
+    items() {
+      if (this.$store.state.user.status == 1) {
+        return this.items1;
       } else {
-        return this.items2
+        return this.items2;
       }
     }
   },
@@ -48,14 +43,13 @@ export default {
       items1: [
         { title: "Dashboard", icon: "mdi-view-dashboard", link: "/admin" },
         { title: "Departments", icon: "mdi-image", link: "/admin/department" },
-        { title: "Courses", icon: "mdi-image", link: "/admin/courses" },
-        { title: "Subjects", icon: "mdi-help-box", link: "/admin/subjects" },
-        { title: "Students", icon: "mdi-help-box", link: "/admin/students" },
-
+        { title: "Programs", icon: "mdi-image", link: "/admin/programs" },
+        { title: "Courses", icon: "mdi-help-box", link: "/admin/courses" },
+        { title: "Students", icon: "mdi-help-box", link: "/admin/students" }
       ],
       items2: [
-        { title: "Dashboard", icon: "mdi-view-dashboard", link: "/dashboard" },
-       // { title: "Profile", icon: "mdi-image", link: "" },
+        { title: "Dashboard", icon: "mdi-view-dashboard", link: "/dashboard" }
+        // { title: "Profile", icon: "mdi-image", link: "" },
       ],
       right: null
     };

@@ -46,12 +46,15 @@ export default {
       let checkPassword = password => {
         return password === this.password;
       };
-
       if (user) {
         if (checkPassword(user.password)) {
           await this.$store.dispatch("setUser", user);
-          console.log("here");
-          this.$router.push({ path: "/dashboard" });
+
+          if (user.status === 1) {
+            this.$router.push({ path: "/admin" });
+          } else {
+            this.$router.push({ path: "/dashboard" });
+          }
         }
       }
     },

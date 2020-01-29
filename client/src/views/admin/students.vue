@@ -2,10 +2,6 @@
   <v-container fluid>
     <v-layout>
       <v-flex>
-        <toolbarNav :title="title">
-          <addButton :title="title" @add="add" />
-        </toolbarNav>
-
         <addDialog :dialog="openAddDialog" :title="title" ref="addDialog" @close="closeAddDialog">
           <v-text-field label="Stundent Name" v-model="student_name" outlined></v-text-field>
           <v-select
@@ -23,7 +19,7 @@
             <v-select
               :items="courses"
               v-model="selected_course"
-              label="Course"
+              label="Program"
               item-text="code"
               item-value="id"
               solo
@@ -33,18 +29,45 @@
             ></v-select>
           </v-col>
         </v-layout>
-        <v-data-table class="mt-1" :headers="headers" :items="students">
-          <template v-slot:item="props">
-            <tr>
-              <td>{{ props.item.first_name }} {{ props.item.last_name }}</td>
-              <td>{{ props.item.course.code }}</td>
-              <td>
-                <editButton />
-                <deleteButton />
-              </td>
-            </tr>
-          </template>
-        </v-data-table>
+        <v-card>
+          <v-card-title>
+            Students
+            <v-spacer></v-spacer>
+            <!-- <v-row class="d-flex" cols="12" sm="3">
+              <v-select
+                :items="courses"
+                v-model="selected_course"
+                label="Program"
+                item-text="code"
+                item-value="id"
+                dense
+                clearable
+                @click:clear="resetSelectCourse"
+                @input="selectCourse"
+              ></v-select>
+            </v-row>-->
+            <v-text-field
+              v-model="search"
+              append-icon="search"
+              label="Search"
+              single-line
+              hide-details
+            ></v-text-field>
+            <addButton :title="title" @add="add" />
+          </v-card-title>
+          <v-data-table :headers="headers" :items="students" :search="search">
+            <template v-slot:item="props">
+              <tr>
+                <td>{{ props.item.name }}</td>
+                <td>{{ props.item.course.code }}</td>
+                <td align="center">
+                  <editButton />
+                  <deleteButton />
+                </td>
+              </tr>
+            </template>
+          </v-data-table>
+        </v-card>
       </v-flex>
     </v-layout>
   </v-container>
@@ -52,7 +75,7 @@
 
 <script>
 import StudentService from "@/services/StudentService";
-import CourseService from "@/services/CourseService";
+import ProgramService from "@/services/ProgramService";
 
 export default {
   mounted() {
@@ -63,6 +86,7 @@ export default {
   data() {
     return {
       title: "Students",
+      search: "",
       openAddDialog: false,
       student_name: "",
       student_course: "",
@@ -72,8 +96,8 @@ export default {
       courses: [],
       headers: [
         { text: "Student Name", value: "name" },
-        { text: "Student Course", value: "course" },
-        { text: "Actions" }
+        { text: "Student Program", value: "course.code" },
+        { text: "Actions", align: "center" }
       ]
     };
   },
@@ -81,12 +105,12 @@ export default {
     async getData() {
       this.students = (await StudentService.getStudents()).data;
       this.students = this.students.filter(student => {
-        return student.status !== 1 
-      })
+        return student.status !== 1;
+      });
       this.defaultStudents = this.students;
     },
     async getCourses() {
-      let courses = (await CourseService.getCourses()).data;
+      let courses = (await ProgramService.getPrograms()).data;
 
       this.courses = courses.map(course => {
         return {

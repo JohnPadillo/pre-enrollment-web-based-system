@@ -2,45 +2,48 @@
   <v-container fluid>
     <v-layout>
       <v-flex>
-        <toolbarNav :title="title">
-          <addButton :title="title" @add="add" />
-
-          <addDialog
-            :dialog="openDialog"
-            :title="title"
-            ref="addDialog"
-            @close="closeDialog"
-            @save="action === 'edit' ? saveEditDepartment() : addDepartment()"
-          >
-            <v-text-field label="Department Name" v-model="department_name" outlined></v-text-field>
-
-            <!-- <v-select
-              v-model="course_department"
-              :items="departments"
-              label="Department"
-              item-text="name"
-              item-value="id"
-              outlined
-            ></v-select>-->
-          </addDialog>
-        </toolbarNav>
+        <addDialog
+          :dialog="openDialog"
+          :title="title"
+          ref="addDialog"
+          @close="closeDialog"
+          @save="action === 'edit' ? saveEditDepartment() : addDepartment()"
+        >
+          <v-text-field label="Department Name" v-model="department_name" outlined></v-text-field>
+        </addDialog>
         <confirmationDialog
           :dialog="confirmationDialog"
           :title="confirmDialogTitle"
           @no="closeConfirmDialog"
           @yes="deleteDepartment"
         ></confirmationDialog>
-        <v-data-table class="mt-5" :headers="headers" :items="departments">
-          <template v-slot:item="props">
-            <tr>
-              <td>{{ props.item.name }}</td>
-              <td>
-                <editButton @edit="getEditDepartment(props.item.id)" />
-                <deleteButton @delete="getDeleteDepartment(props.item.id)" />
-              </td>
-            </tr>
-          </template>
-        </v-data-table>
+
+        <v-card>
+          <v-card-title>
+            Departments
+            <v-spacer></v-spacer>
+            <v-text-field
+              v-model="search"
+              append-icon="search"
+              label="Search"
+              single-line
+              hide-details
+              clearable
+            ></v-text-field>
+            <addButton :title="title" @add="add" />
+          </v-card-title>
+          <v-data-table :headers="headers" :items="departments" :search="search">
+            <template v-slot:item="props">
+              <tr>
+                <td>{{ props.item.name }}</td>
+                <td align="center">
+                  <editButton @edit="getEditDepartment(props.item.id)" />
+                  <deleteButton @delete="getDeleteDepartment(props.item.id)" />
+                </td>
+              </tr>
+            </template>
+          </v-data-table>
+        </v-card>
       </v-flex>
     </v-layout>
   </v-container>
@@ -52,13 +55,13 @@ export default {
   data() {
     return {
       id: null,
+      search: "",
       confirmDialogTitle: "",
       action: "",
       title: "Department",
       department_name: "",
       openDialog: false,
       confirmationDialog: false,
-      // courses: [],
       departments: [],
       headers: [
         {

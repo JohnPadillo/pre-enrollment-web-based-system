@@ -18,9 +18,13 @@
         <span class="mr-2">Latest Release</span>
         <v-icon>mdi-open-in-new</v-icon>
       </v-btn>-->
-      <v-btn text :to="{ path: '/register' }" v-if="!isLoggedIn">Register</v-btn>
+      <v-btn text :to="{ path: '/register' }" v-if="!isLoggedIn"
+        >Register</v-btn
+      >
       <v-btn text :to="{ path: '/' }" v-if="!isLoggedIn">Login</v-btn>
-      <v-btn text :to="{ path: '/' }" v-if="isLoggedIn" @click="logout">Logout</v-btn>
+      <v-btn text :to="{ path: '/' }" v-if="isLoggedIn" @click="logout"
+        >Logout</v-btn
+      >
     </v-app-bar>
     <navBar v-if="isLoggedIn" />
     <v-content>
