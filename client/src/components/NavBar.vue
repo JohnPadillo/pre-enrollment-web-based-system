@@ -45,7 +45,8 @@ export default {
         { title: "Departments", icon: "mdi-image", link: "/admin/department" },
         { title: "Programs", icon: "mdi-image", link: "/admin/programs" },
         { title: "Courses", icon: "mdi-help-box", link: "/admin/courses" },
-        { title: "Students", icon: "mdi-help-box", link: "/admin/students" }
+        { title: "Students", icon: "mdi-help-box", link: "/admin/students" },
+        { title: "Curriculum", icon: "mdi-help-box", link: "/admin/curriculum" }
       ],
       items2: [
         { title: "Dashboard", icon: "mdi-view-dashboard", link: "/dashboard" }

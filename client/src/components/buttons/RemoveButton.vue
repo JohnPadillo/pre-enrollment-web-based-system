@@ -1,16 +1,17 @@
 <template>
   <v-tooltip top>
     <template v-slot:activator="{ on }">
-      <v-btn small class="mx-2" fab dark color="yellow darken-3" @click="remove" v-on="on">
-        <v-icon dark>delete</v-icon>
+      <v-btn x-small class="mx-2" fab dark color="pink" @click="remove" v-on="on">
+        <v-icon dark>mdi-minus</v-icon>
       </v-btn>
     </template>
-    <span>Delete</span>
+    <span>Remove</span>
   </v-tooltip>
 </template>
 
 <script>
 export default {
+  props: ["title"],
   methods: {
     remove() {
       this.$emit("delete");

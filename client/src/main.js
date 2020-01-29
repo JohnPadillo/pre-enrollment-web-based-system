@@ -8,6 +8,7 @@ import vuetify from "./plugins/vuetify";
 import AddButton from "./components/buttons/AddButton";
 import EditButton from "./components/buttons/EditButton";
 import DeleteButton from "./components/buttons/DeleteButton";
+import RemoveButton from "./components/buttons/RemoveButton";
 
 // Dialog
 import AddDialog from "./components/dialogs/AddDialog";
@@ -27,10 +28,11 @@ Vue.config.productionTip = false;
 Vue.component("AddButton", AddButton);
 Vue.component("EditButton", EditButton);
 Vue.component("DeleteButton", DeleteButton);
+Vue.component("RemoveButton", RemoveButton);
 
 // Dialog
 Vue.component("AddDialog", AddDialog);
-Vue.component("Dialog", Dialog);
+Vue.component("formDialog", Dialog);
 
 Vue.component("ConfirmationDialog", ConfirmationDialog);
 

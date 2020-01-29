@@ -8,6 +8,7 @@ import AdminProgram from "../views/admin/program";
 import AdminCourse from "../views/admin/course";
 import AdminStudents from "../views/admin/students";
 import AdminDeparmtent from "../views/admin/department";
+import AdminCurriculum from "../views/admin/curriculum";
 
 // Student
 import StudentRegister from "../views/students/register";
@@ -16,25 +17,21 @@ import Login from "../views/login";
 Vue.use(VueRouter);
 
 const routes = [
-  {
-    path: "/admin/department",
-    name: "AdminDepartment",
-    component: AdminDeparmtent
-  },
-  {
-    path: "/register",
-    name: "StudentRegister",
-    component: StudentRegister
-  },
+  // Admin Router
   {
     path: "/",
     name: "Login",
     component: Login
   },
   {
-    path: "/dashboard",
-    name: "StudentDashboard",
-    component: StudentDashboard
+    path: "/admin/curriculum",
+    name: "AdminCurriculum",
+    component: AdminCurriculum
+  },
+  {
+    path: "/admin/department",
+    name: "AdminDepartment",
+    component: AdminDeparmtent
   },
   {
     path: "/admin",
@@ -60,6 +57,18 @@ const routes = [
     path: "/admin/courses",
     name: "AdminCourse",
     component: AdminCourse
+  },
+
+  // Student router
+  {
+    path: "/dashboard",
+    name: "StudentDashboard",
+    component: StudentDashboard
+  },
+  {
+    path: "/register",
+    name: "StudentRegister",
+    component: StudentRegister
   }
 ];
 

@@ -77,7 +77,7 @@ export default {
           value: "code"
         },
         {
-          text: "Course Name",
+          text: "Course Description",
           value: "name",
           align: "center"
         },

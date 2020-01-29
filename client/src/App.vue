@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-app-bar clipped-left app color="cyan" dark>
+    <v-app-bar clipped-left app color="yellow" dark>
       <div class="d-flex align-center">
         <v-img
           alt="STI Logo"
@@ -18,13 +18,20 @@
         <span class="mr-2">Latest Release</span>
         <v-icon>mdi-open-in-new</v-icon>
       </v-btn>-->
-      <v-btn text :to="{ path: '/register' }" v-if="!isLoggedIn"
-        >Register</v-btn
-      >
-      <v-btn text :to="{ path: '/' }" v-if="!isLoggedIn">Login</v-btn>
-      <v-btn text :to="{ path: '/' }" v-if="isLoggedIn" @click="logout"
-        >Logout</v-btn
-      >
+      <v-btn
+        color="light-blue darken-4"
+        text
+        :to="{ path: '/register' }"
+        v-if="!isLoggedIn"
+      >Register</v-btn>
+      <v-btn color="light-blue darken-4" text :to="{ path: '/' }" v-if="!isLoggedIn">Login</v-btn>
+      <v-btn
+        color="light-blue darken-4"
+        text
+        :to="{ path: '/' }"
+        v-if="isLoggedIn"
+        @click="logout"
+      >Logout</v-btn>
     </v-app-bar>
     <navBar v-if="isLoggedIn" />
     <v-content>
