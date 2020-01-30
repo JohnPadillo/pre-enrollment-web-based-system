@@ -22,6 +22,13 @@
             </v-col>
           </v-row>
         </addDialog>
+
+        <confirmationDialog
+          :dialog="confirmationDialog"
+          :title="confirmDialogTitle"
+          @no="closeConfirmDialog"
+          @yes="removeCurriculum"
+        ></confirmationDialog>
         <!-- form -->
         <formDialog
           :dialog="openDialog"
@@ -68,7 +75,7 @@
                       <td></td>
                       <td></td>
                       <td>
-                        <removeButton @delete="removeCourse(props.item.id)" />
+                        <removeButton v-if="action != 'view'" @delete="removeCourse(props.item)" />
                       </td>
                     </tr>
                   </template>
@@ -100,7 +107,7 @@
                       <td></td>
                       <td></td>
                       <td>
-                        <removeButton @delete="removeCourse(props.item.id)" />
+                        <removeButton v-if="action != 'view'" @delete="removeCourse(props.item)" />
                       </td>
                     </tr>
                   </template>
@@ -132,7 +139,7 @@
                       <td></td>
                       <td></td>
                       <td>
-                        <removeButton @delete="removeCourse(props.item.id)" />
+                        <removeButton v-if="action != 'view'" @delete="removeCourse(props.item)" />
                       </td>
                     </tr>
                   </template>
@@ -163,7 +170,7 @@
                       <td></td>
                       <td></td>
                       <td>
-                        <removeButton @delete="removeCourse(props.item.id)" />
+                        <removeButton v-if="action != 'view'" @delete="removeCourse(props.item)" />
                       </td>
                     </tr>
                   </template>
@@ -195,7 +202,7 @@
                       <td></td>
                       <td></td>
                       <td>
-                        <removeButton @delete="removeCourse(props.item.id)" />
+                        <removeButton v-if="action != 'view'" @delete="removeCourse(props.item)" />
                       </td>
                     </tr>
                   </template>
@@ -226,7 +233,7 @@
                       <td></td>
                       <td></td>
                       <td>
-                        <removeButton @delete="removeCourse(props.item.id)" />
+                        <removeButton v-if="action != 'view'" @delete="removeCourse(props.item)" />
                       </td>
                     </tr>
                   </template>
@@ -258,7 +265,7 @@
                       <td></td>
                       <td></td>
                       <td>
-                        <removeButton @delete="removeCourse(props.item.id)" />
+                        <removeButton v-if="action != 'view'" @delete="removeCourse(props.item)" />
                       </td>
                     </tr>
                   </template>
@@ -290,7 +297,7 @@
                       <td></td>
                       <td></td>
                       <td>
-                        <removeButton @delete="removeCourse(props.item.id)" />
+                        <removeButton v-if="action != 'view'" @delete="removeCourse(props.item)" />
                       </td>
                     </tr>
                   </template>
@@ -322,8 +329,8 @@
                 <td>{{ props.item.name }}</td>
                 <td align="center">
                   <viewButton @view="viewCurriculum(props.item.id)" />
-                  <editButton />
-                  <deleteButton />
+                  <editButton @edit="editCurriculum(props.item.id)" />
+                  <deleteButton @delete="deleteCurriculum(props.item)" />
                 </td>
               </tr>
             </template>
@@ -344,7 +351,10 @@ export default {
     return {
       title: "Curriculum",
       search: "",
+      delete_id: "",
       openDialog: false,
+      confirmationDialog: false,
+      confirmDialogTitle: "delete",
       action: "",
       openAddDialog: false,
       courses: [],
@@ -414,6 +424,7 @@ export default {
       this.openDialog = false;
       this.subjects = [];
       this.programId = null;
+      this.action = "";
     },
     closeAddDialog() {
       this.openAddDialog = false;
@@ -509,16 +520,30 @@ export default {
         yearSemId: this.yearSemId
       };
       this.subjects.push(data);
-      console.log(this.subjects);
       this.closeAddDialog();
       this.resetAddCourse();
     },
-    async removeCourse(id) {
-      let index = await this.subjects.filter(course => {
-        return course.id == id;
+    async removeCourse(data) {
+      let response = await this.subjects.filter(course => {
+        return course.course_id == data.course_id && course.id == data.id;
       });
-      await this.subjects.splice(index[0], 1);
-      // console.log(this.firstYearfirstSem);
+
+      let index = this.subjects.findIndex(response => {
+        return response.course_id == data.course_id && response.id == data.id;
+      });
+
+      await this.subjects.splice(index, 1);
+      console.log(index);
+      console.log(response);
+      console.log(this.subjects);
+
+      // console.log(this.subjects)
+      // if (this.action == "edit") {
+      //   let data = await this.subjetcs.find(course => {
+      //     return course.id == id;
+      //   });
+      //   console.log(data);
+      // }
     },
     getChecklistByYearSem(id) {
       if (id == "11") {
@@ -615,6 +640,51 @@ export default {
       });
       console.log(data);
       this.subjects = data;
+    },
+
+    async editCurriculum(id) {
+      this.action = "edit";
+      this.openDialog = true;
+      this.programId = id;
+      this.subjects = (await CurriculumService.getCurriculum(id)).data;
+
+      console.log(this.subjects);
+
+      let data = this.subjects.map(data => {
+        let name = data.subject.name;
+        let code = data.subject.code;
+        let year = data.subject.year;
+        let semester = data.subject.semester;
+        let id = year + "" + semester;
+        let course_id = data.subject.id;
+
+        return {
+          name: name,
+          code: code,
+          year: year,
+          semester: semester,
+          id: id,
+          course_id: course_id
+        };
+      });
+      console.log(data);
+      this.subjects = data;
+    },
+
+    async deleteCurriculum(data) {
+      this.delete_id = data.id;
+      this.confirmationDialog = true;
+    },
+
+    closeConfirmDialog() {
+      this.confirmationDialog = false;
+    },
+
+    async removeCurriculum() {
+      await CurriculumService.deleteCurriculum(this.delete_id);
+      this.getCurriculums();
+      this.closeConfirmDialog();
+      this.delete_id = "";
     }
   }
 };

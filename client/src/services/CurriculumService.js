@@ -14,6 +14,6 @@ export default {
     return Api().patch(`edit/curriculum/${params.id}`, params);
   },
   deleteCurriculum(id) {
-    return Api().delete(`/delete/curriculum//${id}`);
+    return Api().delete(`/delete/curriculum/${id}`);
   }
 };
