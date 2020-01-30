@@ -35,7 +35,7 @@
           :title="title"
           :maxWidth="1000"
           @close="closeDialog"
-          @save="saveCurriculum"
+          @save="action == 'add' ? saveCurriculum() : saveEditCurriculum()"
         >
           <v-row>
             <v-col cols="12" sm="6" md="4">
@@ -329,7 +329,7 @@
                 <td>{{ props.item.name }}</td>
                 <td align="center">
                   <viewButton @view="viewCurriculum(props.item.id)" />
-                  <editButton @edit="editCurriculum(props.item.id)" />
+                  <editButton @edit="editCurriculum(props.item)" />
                   <deleteButton @delete="deleteCurriculum(props.item)" />
                 </td>
               </tr>
@@ -619,6 +619,32 @@ export default {
       this.getCurriculums();
     },
 
+    async saveEditCurriculum() {
+      for (let i = 0; i < this.subjects.length; i++) {
+        this.subjects[i].program_id = this.programId;
+      }
+
+      let data = this.subjects.map(data => {
+        let CourseId = data.program_id;
+        let SubjectId = data.course_id;
+        let year = data.year;
+        let semester = data.semester;
+
+        return {
+          id: CourseId,
+          CourseId: CourseId,
+          SubjectId: SubjectId,
+          year: year,
+          semester: semester
+        };
+      });
+      console.log(data);
+      await CurriculumService.editCurriculum(data);
+      this.closeDialog();
+      this.subjects = [];
+      this.getCurriculums();
+    },
+
     async viewCurriculum(id) {
       this.action = "view";
       this.openDialog = true;
@@ -642,15 +668,13 @@ export default {
       this.subjects = data;
     },
 
-    async editCurriculum(id) {
+    async editCurriculum(data) {
       this.action = "edit";
       this.openDialog = true;
-      this.programId = id;
-      this.subjects = (await CurriculumService.getCurriculum(id)).data;
+      this.programId = data.id;
+      this.subjects = (await CurriculumService.getCurriculum(data.id)).data;
 
-      console.log(this.subjects);
-
-      let data = this.subjects.map(data => {
+      let response = this.subjects.map(data => {
         let name = data.subject.name;
         let code = data.subject.code;
         let year = data.subject.year;
@@ -667,8 +691,7 @@ export default {
           course_id: course_id
         };
       });
-      console.log(data);
-      this.subjects = data;
+      this.subjects = response;
     },
 
     async deleteCurriculum(data) {
