@@ -9,6 +9,7 @@ import AddButton from "./components/buttons/AddButton";
 import EditButton from "./components/buttons/EditButton";
 import DeleteButton from "./components/buttons/DeleteButton";
 import RemoveButton from "./components/buttons/RemoveButton";
+import ViewButton from "./components/buttons/ViewButton";
 
 // Dialog
 import AddDialog from "./components/dialogs/AddDialog";
@@ -29,6 +30,7 @@ Vue.component("AddButton", AddButton);
 Vue.component("EditButton", EditButton);
 Vue.component("DeleteButton", DeleteButton);
 Vue.component("RemoveButton", RemoveButton);
+Vue.component("ViewButton", ViewButton);
 
 // Dialog
 Vue.component("AddDialog", AddDialog);

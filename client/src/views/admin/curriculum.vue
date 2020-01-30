@@ -50,13 +50,13 @@
                 <v-card-title>
                   1st Year 1st Sem
                   <v-spacer></v-spacer>
-                  <addButton id="11" ref="add11" @add="add11()"></addButton>
+                  <addButton v-if="action != 'view'" id="11" ref="add11" @add="add11()"></addButton>
                 </v-card-title>
 
                 <v-data-table
                   :headers="formHeaders"
-                  :items="getChecklistByYearSem(11)"
                   hide-default-footer
+                  :items="getChecklistByYearSem(11)"
                 >
                   <template v-slot:item="props">
                     <tr>
@@ -82,7 +82,7 @@
                 <v-card-title>
                   1st Year 2nd Sem
                   <v-spacer></v-spacer>
-                  <addButton id="12" ref="add12" @add="add12()"></addButton>
+                  <addButton v-if="action != 'view'" id="12" ref="add12" @add="add12()"></addButton>
                 </v-card-title>
 
                 <v-data-table
@@ -115,7 +115,7 @@
                 <v-card-title>
                   2nd Year 1st Sem
                   <v-spacer></v-spacer>
-                  <addButton id="21" ref="add21" @add="add21()"></addButton>
+                  <addButton v-if="action != 'view'" id="21" ref="add21" @add="add21()"></addButton>
                 </v-card-title>
                 <v-data-table
                   :headers="formHeaders"
@@ -146,7 +146,7 @@
                 <v-card-title>
                   2nd Year 2nd Sem
                   <v-spacer></v-spacer>
-                  <addButton id="22" ref="add22" @add="add22()"></addButton>
+                  <addButton v-if="action != 'view'" id="22" ref="add22" @add="add22()"></addButton>
                 </v-card-title>
                 <v-data-table
                   :headers="formHeaders"
@@ -178,7 +178,7 @@
                 <v-card-title>
                   3rd Year 1st Sem
                   <v-spacer></v-spacer>
-                  <addButton id="31" ref="add31" @add="add31()"></addButton>
+                  <addButton v-if="action != 'view'" id="31" ref="add31" @add="add31()"></addButton>
                 </v-card-title>
                 <v-data-table
                   :headers="formHeaders"
@@ -209,7 +209,7 @@
                 <v-card-title>
                   3rd Year 2nd Sem
                   <v-spacer></v-spacer>
-                  <addButton id="32" ref="add32" @add="add32()"></addButton>
+                  <addButton v-if="action != 'view'" id="32" ref="add32" @add="add32()"></addButton>
                 </v-card-title>
                 <v-data-table
                   :headers="formHeaders"
@@ -241,7 +241,7 @@
                 <v-card-title>
                   4th Year 1st Sem
                   <v-spacer></v-spacer>
-                  <addButton id="41" ref="add41" @add="add41()"></addButton>
+                  <addButton v-if="action != 'view'" id="41" ref="add41" @add="add41()"></addButton>
                 </v-card-title>
                 <v-data-table
                   :headers="formHeaders"
@@ -273,7 +273,7 @@
                   4th Year 2nd Sem
                   <v-spacer></v-spacer>
 
-                  <addButton id="42" ref="add42" @add="add42()"></addButton>
+                  <addButton v-if="action != 'view'" id="42" ref="add42" @add="add42()"></addButton>
                 </v-card-title>
                 <v-data-table
                   :headers="formHeaders"
@@ -318,8 +318,10 @@
           <v-data-table :headers="headers" :items="curriculums" :search="search">
             <template v-slot:item="props">
               <tr>
+                <td>{{ props.item.code }}</td>
                 <td>{{ props.item.name }}</td>
                 <td align="center">
+                  <viewButton @view="viewCurriculum(props.item.id)" />
                   <editButton />
                   <deleteButton />
                 </td>
@@ -335,18 +337,15 @@
 <script>
 import ProgramService from "@/services/ProgramService";
 import CourseService from "@/services/CourseService";
+import CurriculumService from "@/services/CurriculumService";
 
 export default {
-  watch: {
-    programId(value) {
-      console.log(value);
-    }
-  },
   data() {
     return {
       title: "Curriculum",
       search: "",
       openDialog: false,
+      action: "",
       openAddDialog: false,
       courses: [],
       programId: null,
@@ -354,12 +353,14 @@ export default {
       programs: [],
       curriculums: [],
       checklist: [],
-
+      subjects: [],
       yearSemId: null,
       headers: [
         {
-          text: "Course Code",
-          value: "course"
+          text: "Program Code"
+        },
+        {
+          text: "Program Name"
         },
         {
           text: "Action",
@@ -394,10 +395,25 @@ export default {
       ]
     };
   },
+  mounted() {
+    this.getCurriculums();
+    this.getPrograms();
+  },
   methods: {
+    async getCurriculums() {
+      let response = (await CurriculumService.getCurriculums()).data;
+      let data = [...new Set(response.map(item => item.CourseId))];
+      let curriculumArray = [];
+      for (let i = 0; i < data.length; i++) {
+        curriculumArray.push((await ProgramService.getProgram(data[i])).data);
+      }
+
+      this.curriculums = curriculumArray;
+    },
     closeDialog() {
       this.openDialog = false;
-      this.checklist = [];
+      this.subjects = [];
+      this.programId = null;
     },
     closeAddDialog() {
       this.openAddDialog = false;
@@ -406,6 +422,7 @@ export default {
       this.programs = (await ProgramService.getPrograms()).data;
     },
     async add() {
+      this.action = "add";
       this.getPrograms();
       this.openDialog = true;
     },
@@ -413,49 +430,41 @@ export default {
       this.courses = (await CourseService.getCourses()).data;
     },
     async add11() {
-      console.log(this.$refs.add11.$options._parentVnode.data.attrs.id);
       this.yearSemId = this.$refs.add11.$options._parentVnode.data.attrs.id;
       this.getCourses();
       this.openAddDialog = true;
     },
     async add12() {
-      console.log(this.$refs.add12.$options._parentVnode.data.attrs.id);
       this.yearSemId = this.$refs.add12.$options._parentVnode.data.attrs.id;
       this.getCourses();
       this.openAddDialog = true;
     },
     async add21() {
-      console.log(this.$refs.add21.$options._parentVnode.data.attrs.id);
       this.yearSemId = this.$refs.add21.$options._parentVnode.data.attrs.id;
       this.getCourses();
       this.openAddDialog = true;
     },
     async add22() {
-      console.log(this.$refs.add22.$options._parentVnode.data.attrs.id);
       this.yearSemId = this.$refs.add22.$options._parentVnode.data.attrs.id;
       this.getCourses();
       this.openAddDialog = true;
     },
     async add31() {
-      console.log(this.$refs.add31.$options._parentVnode.data.attrs.id);
       this.yearSemId = this.$refs.add31.$options._parentVnode.data.attrs.id;
       this.getCourses();
       this.openAddDialog = true;
     },
     async add32() {
-      console.log(this.$refs.add32.$options._parentVnode.data.attrs.id);
       this.yearSemId = this.$refs.add32.$options._parentVnode.data.attrs.id;
       this.getCourses();
       this.openAddDialog = true;
     },
     async add41() {
-      console.log(this.$refs.add41.$options._parentVnode.data.attrs.id);
       this.yearSemId = this.$refs.add41.$options._parentVnode.data.attrs.id;
       this.getCourses();
       this.openAddDialog = true;
     },
     async add42() {
-      console.log(this.$refs.add42.$options._parentVnode.data.attrs.id);
       this.yearSemId = this.$refs.add42.$options._parentVnode.data.attrs.id;
       this.getCourses();
       this.openAddDialog = true;
@@ -465,41 +474,147 @@ export default {
     },
     async addCourse() {
       let course = (await CourseService.getCourse(this.courseId)).data;
+      let year, semester;
+      if (this.yearSemId == 11) {
+        (year = 1), (semester = 1);
+      }
+      if (this.yearSemId == 12) {
+        (year = 1), (semester = 2);
+      }
+      if (this.yearSemId == 21) {
+        (year = 2), (semester = 1);
+      }
+      if (this.yearSemId == 22) {
+        (year = 2), (semester = 2);
+      }
+      if (this.yearSemId == 31) {
+        (year = 3), (semester = 1);
+      }
+      if (this.yearSemId == 32) {
+        (year = 3), (semester = 2);
+      }
+      if (this.yearSemId == 41) {
+        (year = 4), (semester = 1);
+      }
+      if (this.yearSemId == 42) {
+        (year = 4), (semester = 2);
+      }
       let data = {
-        id: this.courseId,
-        yearSemId: this.yearSemId,
+        program_id: this.programId,
+        course_id: this.courseId,
+        year: year,
+        semester: semester,
         name: course.name,
-        code: course.code
+        code: course.code,
+        yearSemId: this.yearSemId
       };
-      this.checklist.push(data);
-
-      // if (
-      //   data.yearSemId == this.$refs.add11.$options._parentVnode.data.attrs.id
-      // ) {
-      //   this.getChecklistByYearSem(data.yearSemId);
-      // }
-      // console.log(data);
+      this.subjects.push(data);
+      console.log(this.subjects);
       this.closeAddDialog();
       this.resetAddCourse();
     },
     async removeCourse(id) {
-      let index = await this.checklist.filter(course => {
+      let index = await this.subjects.filter(course => {
         return course.id == id;
       });
-      await this.checklist.splice(index[0], 1);
+      await this.subjects.splice(index[0], 1);
       // console.log(this.firstYearfirstSem);
     },
     getChecklistByYearSem(id) {
-      let response = this.checklist.filter(data => {
-        return data.yearSemId == id;
-      });
+      if (id == "11") {
+        return this.subjects.filter(data => {
+          return data.year == 1 && data.semester == 1;
+        });
+      }
+      if (id == "12") {
+        return this.subjects.filter(data => {
+          return data.year == 1 && data.semester == 2;
+        });
+      }
+      if (id == "21") {
+        return this.subjects.filter(data => {
+          return data.year == 2 && data.semester == 1;
+        });
+      }
+      if (id == "22") {
+        return this.subjects.filter(data => {
+          return data.year == 2 && data.semester == 2;
+        });
+      }
+      if (id == "31") {
+        return this.subjects.filter(data => {
+          return data.year == 3 && data.semester == 1;
+        });
+      }
+      if (id == "32") {
+        return this.subjects.filter(data => {
+          return data.year == 3 && data.semester == 2;
+        });
+      }
+      if (id == "41") {
+        return this.subjects.filter(data => {
+          return data.year == 4 && data.semester == 1;
+        });
+      }
+      if (id == "42") {
+        return this.subjects.filter(data => {
+          return data.year == 4 && data.semester == 2;
+        });
+      }
 
-      console.log(response);
-      return response;
+      // let response = this.checklist.filter(data => {
+      //   return data.yearSemId == id;
+      // });
+
+      // console.log(this.subjects);
+      // return response;
     },
     async saveCurriculum() {
-      console.log(this.programId);
-      console.log(this.checklist);
+      for (let i = 0; i < this.subjects.length; i++) {
+        this.subjects[i].program_id = this.programId;
+      }
+
+      let data = this.subjects.map(data => {
+        let CourseId = data.program_id;
+        let SubjectId = data.course_id;
+        let year = data.year;
+        let semester = data.semester;
+
+        return {
+          CourseId: CourseId,
+          SubjectId: SubjectId,
+          year: year,
+          semester: semester
+        };
+      });
+
+      await CurriculumService.addCurriculum(data);
+      this.closeDialog();
+      this.subjects = [];
+      this.getCurriculums();
+    },
+
+    async viewCurriculum(id) {
+      this.action = "view";
+      this.openDialog = true;
+      this.programId = id;
+      this.subjects = (await CurriculumService.getCurriculum(id)).data;
+
+      let data = this.subjects.map(data => {
+        let name = data.subject.name;
+        let code = data.subject.code;
+        let year = data.subject.year;
+        let semester = data.subject.semester;
+
+        return {
+          name: name,
+          code: code,
+          year: year,
+          semester: semester
+        };
+      });
+      console.log(data);
+      this.subjects = data;
     }
   }
 };
