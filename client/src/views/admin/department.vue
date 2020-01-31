@@ -67,7 +67,7 @@ export default {
         {
           text: "Department Name",
           value: "name",
-          align: "center"
+          align: "left"
         },
         {
           text: "Action",

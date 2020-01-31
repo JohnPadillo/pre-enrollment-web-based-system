@@ -61,7 +61,7 @@
                 </v-card-title>
 
                 <v-data-table
-                  :headers="formHeaders"
+                  :headers="this.$route.name == 'AdminCurriculum' ? formHeaders2 :formHeaders"
                   hide-default-footer
                   :items="getChecklistByYearSem(11)"
                 >
@@ -93,10 +93,12 @@
                 </v-card-title>
 
                 <v-data-table
-                  :headers="formHeaders"
+                  :headers="this.$route.name == 'AdminCurriculum' ? formHeaders2 :formHeaders"
                   :items="getChecklistByYearSem(12)"
                   hide-default-footer
                 >
+                  
+
                   <template v-slot:item="props">
                     <tr>
                       <td>{{ props.item.code }}</td>
@@ -125,7 +127,7 @@
                   <addButton v-if="action != 'view'" id="21" ref="add21" @add="add21()"></addButton>
                 </v-card-title>
                 <v-data-table
-                  :headers="formHeaders"
+                  :headers="this.$route.name == 'AdminCurriculum' ? formHeaders2 :formHeaders"
                   :items="getChecklistByYearSem(21)"
                   hide-default-footer
                 >
@@ -156,7 +158,7 @@
                   <addButton v-if="action != 'view'" id="22" ref="add22" @add="add22()"></addButton>
                 </v-card-title>
                 <v-data-table
-                  :headers="formHeaders"
+                  :headers="this.$route.name == 'AdminCurriculum' ? formHeaders2 :formHeaders"
                   :items="getChecklistByYearSem(22)"
                   hide-default-footer
                 >
@@ -188,7 +190,7 @@
                   <addButton v-if="action != 'view'" id="31" ref="add31" @add="add31()"></addButton>
                 </v-card-title>
                 <v-data-table
-                  :headers="formHeaders"
+                  :headers="this.$route.name == 'AdminCurriculum' ? formHeaders2 :formHeaders"
                   :items="getChecklistByYearSem(31)"
                   hide-default-footer
                 >
@@ -219,7 +221,7 @@
                   <addButton v-if="action != 'view'" id="32" ref="add32" @add="add32()"></addButton>
                 </v-card-title>
                 <v-data-table
-                  :headers="formHeaders"
+                  :headers="this.$route.name == 'AdminCurriculum' ? formHeaders2 :formHeaders"
                   :items="getChecklistByYearSem(32)"
                   hide-default-footer
                 >
@@ -251,7 +253,7 @@
                   <addButton v-if="action != 'view'" id="41" ref="add41" @add="add41()"></addButton>
                 </v-card-title>
                 <v-data-table
-                  :headers="formHeaders"
+                  :headers="this.$route.name == 'AdminCurriculum' ? formHeaders2 :formHeaders"
                   :items="getChecklistByYearSem(41)"
                   hide-default-footer
                 >
@@ -283,7 +285,7 @@
                   <addButton v-if="action != 'view'" id="42" ref="add42" @add="add42()"></addButton>
                 </v-card-title>
                 <v-data-table
-                  :headers="formHeaders"
+                  :headers="this.$route.name == 'AdminCurriculum' ? formHeaders2 :formHeaders"
                   :items="getChecklistByYearSem(42)"
                   hide-default-footer
                 >
@@ -402,10 +404,34 @@ export default {
         {
           text: "Action"
         }
+      ],
+      formHeaders2: [
+        {
+          text: "Course Code"
+        },
+        {
+          text: "Course Description"
+        },
+        {
+          text: "Reg. Units"
+        },
+        {
+          text: "Earned Unit"
+        },
+        {
+          text: "Prequisites"
+        },
+        {
+          text: "Term"
+        },
+        {
+          text: "Action"
+        }
       ]
     };
   },
   mounted() {
+    console.log(this.$route.name)
     this.getCurriculums();
     this.getPrograms();
   },
