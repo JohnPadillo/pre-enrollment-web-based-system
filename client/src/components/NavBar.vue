@@ -14,7 +14,12 @@
     <v-divider></v-divider>-->
 
     <v-list dense nav>
-      <v-list-item v-for="item in items" :key="item.title" link :to="{ path: item.link }">
+      <v-list-item
+        v-for="item in items"
+        :key="item.title"
+        link
+        :to="{ path: item.link }"
+      >
         <v-list-item-icon>
           <v-icon>{{ item.icon }}</v-icon>
         </v-list-item-icon>
@@ -42,11 +47,15 @@ export default {
     return {
       items1: [
         { title: "Dashboard", icon: "mdi-view-dashboard", link: "/admin" },
-        { title: "Departments", icon: "mdi-image", link: "/admin/department" },
-        { title: "Programs", icon: "mdi-image", link: "/admin/programs" },
-        { title: "Courses", icon: "mdi-help-box", link: "/admin/courses" },
-        { title: "Students", icon: "mdi-help-box", link: "/admin/students" },
-        { title: "Curriculum", icon: "mdi-help-box", link: "/admin/curriculum" }
+        { title: "Departments", icon: "mdi-store", link: "/admin/department" },
+        { title: "Programs", icon: "mdi-school", link: "/admin/programs" },
+        { title: "Courses", icon: "subject", link: "/admin/courses" },
+        { title: "Students", icon: "assignment_ind", link: "/admin/students" },
+        {
+          title: "Curriculum",
+          icon: "local_library",
+          link: "/admin/curriculum"
+        }
       ],
       items2: [
         { title: "Dashboard", icon: "mdi-view-dashboard", link: "/dashboard" }

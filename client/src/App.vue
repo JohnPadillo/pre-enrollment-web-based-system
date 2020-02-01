@@ -3,35 +3,47 @@
     <v-app-bar clipped-left app color="yellow" dark>
       <div class="d-flex align-center">
         <v-img
+          width="80"
           alt="STI Logo"
           class="shrink mr-2"
           contain
           src="./assets/sti_logo.png"
           transition="scale-transition"
-          width="80"
         />
       </div>
 
       <v-spacer></v-spacer>
 
+      <v-btn text v-if="isLoggedIn" color="light-blue darken-4"
+        >Hello {{ $store.state.user.first_name }}</v-btn
+      >
+
       <!-- <v-btn href="https://github.com/vuetifyjs/vuetify/releases/latest" target="_blank" text>
         <span class="mr-2">Latest Release</span>
         <v-icon>mdi-open-in-new</v-icon>
       </v-btn>-->
-      <v-btn
+      <!-- <v-btn
         color="light-blue darken-4"
         text
         :to="{ path: '/register' }"
         v-if="!isLoggedIn"
-      >Register</v-btn>
-      <v-btn color="light-blue darken-4" text :to="{ path: '/' }" v-if="!isLoggedIn">Login</v-btn>
+        >Register</v-btn
+      > -->
+      <v-btn
+        color="light-blue darken-4"
+        text
+        :to="{ path: '/' }"
+        v-if="!isLoggedIn"
+        >Login</v-btn
+      >
       <v-btn
         color="light-blue darken-4"
         text
         :to="{ path: '/' }"
         v-if="isLoggedIn"
         @click="logout"
-      >Logout</v-btn>
+        >Logout</v-btn
+      >
     </v-app-bar>
     <navBar v-if="isLoggedIn" />
     <v-content>

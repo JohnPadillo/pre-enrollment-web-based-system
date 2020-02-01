@@ -1,7 +1,7 @@
 <template>
   <v-tooltip top>
     <template v-slot:activator="{ on }">
-      <v-btn small class="mx-2" fab dark color="yellow darken-3" @click="remove" v-on="on">
+      <v-btn small class="mx-2" fab dark color="pink" @click="remove" v-on="on">
         <v-icon dark>delete</v-icon>
       </v-btn>
     </template>

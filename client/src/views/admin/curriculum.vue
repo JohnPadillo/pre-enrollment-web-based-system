@@ -10,7 +10,7 @@
           @save="addCourse"
         >
           <v-row>
-            <v-col cols="12" sm="6" md="4">
+            <v-col cols="12" sm="12" md="12">
               <v-select
                 v-model="courseId"
                 :items="courses"
@@ -18,7 +18,17 @@
                 item-text="code"
                 item-value="id"
                 outlined
-              ></v-select>
+              >
+                <!-- <template slot="selection" slot-scope="data">
+                  // HTML that describe how select should render selected items
+                  {{ data.item.name }} - {{ data.item.description }}
+                </template> -->
+                <template slot="item" slot-scope="data">
+                  <!-- // HTML that describe how select should render items when the
+                  select is open -->
+                  {{ data.item.code }} - {{ data.item.name }}
+                </template>
+              </v-select>
             </v-col>
           </v-row>
         </addDialog>
@@ -46,6 +56,7 @@
                 item-text="code"
                 item-value="id"
                 outlined
+                :readonly="action == 'edit'"
               ></v-select>
             </v-col>
           </v-row>
@@ -57,11 +68,20 @@
                 <v-card-title>
                   1st Year 1st Sem
                   <v-spacer></v-spacer>
-                  <addButton v-if="action != 'view'" id="11" ref="add11" @add="add11()"></addButton>
+                  <addButton
+                    v-if="action != 'view'"
+                    id="11"
+                    ref="add11"
+                    @add="add11()"
+                  ></addButton>
                 </v-card-title>
 
                 <v-data-table
-                  :headers="this.$route.name == 'AdminCurriculum' ? formHeaders2 :formHeaders"
+                  :headers="
+                    this.$route.name == 'AdminCurriculum'
+                      ? formHeaders2
+                      : formHeaders
+                  "
                   hide-default-footer
                   :items="getChecklistByYearSem(11)"
                 >
@@ -75,7 +95,10 @@
                       <td></td>
                       <td></td>
                       <td>
-                        <removeButton v-if="action != 'view'" @delete="removeCourse(props.item)" />
+                        <removeButton
+                          v-if="action != 'view'"
+                          @delete="removeCourse(props.item)"
+                        />
                       </td>
                     </tr>
                   </template>
@@ -89,16 +112,23 @@
                 <v-card-title>
                   1st Year 2nd Sem
                   <v-spacer></v-spacer>
-                  <addButton v-if="action != 'view'" id="12" ref="add12" @add="add12()"></addButton>
+                  <addButton
+                    v-if="action != 'view'"
+                    id="12"
+                    ref="add12"
+                    @add="add12()"
+                  ></addButton>
                 </v-card-title>
 
                 <v-data-table
-                  :headers="this.$route.name == 'AdminCurriculum' ? formHeaders2 :formHeaders"
+                  :headers="
+                    this.$route.name == 'AdminCurriculum'
+                      ? formHeaders2
+                      : formHeaders
+                  "
                   :items="getChecklistByYearSem(12)"
                   hide-default-footer
                 >
-                  
-
                   <template v-slot:item="props">
                     <tr>
                       <td>{{ props.item.code }}</td>
@@ -109,7 +139,10 @@
                       <td></td>
                       <td></td>
                       <td>
-                        <removeButton v-if="action != 'view'" @delete="removeCourse(props.item)" />
+                        <removeButton
+                          v-if="action != 'view'"
+                          @delete="removeCourse(props.item)"
+                        />
                       </td>
                     </tr>
                   </template>
@@ -124,10 +157,19 @@
                 <v-card-title>
                   2nd Year 1st Sem
                   <v-spacer></v-spacer>
-                  <addButton v-if="action != 'view'" id="21" ref="add21" @add="add21()"></addButton>
+                  <addButton
+                    v-if="action != 'view'"
+                    id="21"
+                    ref="add21"
+                    @add="add21()"
+                  ></addButton>
                 </v-card-title>
                 <v-data-table
-                  :headers="this.$route.name == 'AdminCurriculum' ? formHeaders2 :formHeaders"
+                  :headers="
+                    this.$route.name == 'AdminCurriculum'
+                      ? formHeaders2
+                      : formHeaders
+                  "
                   :items="getChecklistByYearSem(21)"
                   hide-default-footer
                 >
@@ -141,7 +183,10 @@
                       <td></td>
                       <td></td>
                       <td>
-                        <removeButton v-if="action != 'view'" @delete="removeCourse(props.item)" />
+                        <removeButton
+                          v-if="action != 'view'"
+                          @delete="removeCourse(props.item)"
+                        />
                       </td>
                     </tr>
                   </template>
@@ -155,10 +200,19 @@
                 <v-card-title>
                   2nd Year 2nd Sem
                   <v-spacer></v-spacer>
-                  <addButton v-if="action != 'view'" id="22" ref="add22" @add="add22()"></addButton>
+                  <addButton
+                    v-if="action != 'view'"
+                    id="22"
+                    ref="add22"
+                    @add="add22()"
+                  ></addButton>
                 </v-card-title>
                 <v-data-table
-                  :headers="this.$route.name == 'AdminCurriculum' ? formHeaders2 :formHeaders"
+                  :headers="
+                    this.$route.name == 'AdminCurriculum'
+                      ? formHeaders2
+                      : formHeaders
+                  "
                   :items="getChecklistByYearSem(22)"
                   hide-default-footer
                 >
@@ -172,7 +226,10 @@
                       <td></td>
                       <td></td>
                       <td>
-                        <removeButton v-if="action != 'view'" @delete="removeCourse(props.item)" />
+                        <removeButton
+                          v-if="action != 'view'"
+                          @delete="removeCourse(props.item)"
+                        />
                       </td>
                     </tr>
                   </template>
@@ -187,10 +244,19 @@
                 <v-card-title>
                   3rd Year 1st Sem
                   <v-spacer></v-spacer>
-                  <addButton v-if="action != 'view'" id="31" ref="add31" @add="add31()"></addButton>
+                  <addButton
+                    v-if="action != 'view'"
+                    id="31"
+                    ref="add31"
+                    @add="add31()"
+                  ></addButton>
                 </v-card-title>
                 <v-data-table
-                  :headers="this.$route.name == 'AdminCurriculum' ? formHeaders2 :formHeaders"
+                  :headers="
+                    this.$route.name == 'AdminCurriculum'
+                      ? formHeaders2
+                      : formHeaders
+                  "
                   :items="getChecklistByYearSem(31)"
                   hide-default-footer
                 >
@@ -204,7 +270,10 @@
                       <td></td>
                       <td></td>
                       <td>
-                        <removeButton v-if="action != 'view'" @delete="removeCourse(props.item)" />
+                        <removeButton
+                          v-if="action != 'view'"
+                          @delete="removeCourse(props.item)"
+                        />
                       </td>
                     </tr>
                   </template>
@@ -218,10 +287,19 @@
                 <v-card-title>
                   3rd Year 2nd Sem
                   <v-spacer></v-spacer>
-                  <addButton v-if="action != 'view'" id="32" ref="add32" @add="add32()"></addButton>
+                  <addButton
+                    v-if="action != 'view'"
+                    id="32"
+                    ref="add32"
+                    @add="add32()"
+                  ></addButton>
                 </v-card-title>
                 <v-data-table
-                  :headers="this.$route.name == 'AdminCurriculum' ? formHeaders2 :formHeaders"
+                  :headers="
+                    this.$route.name == 'AdminCurriculum'
+                      ? formHeaders2
+                      : formHeaders
+                  "
                   :items="getChecklistByYearSem(32)"
                   hide-default-footer
                 >
@@ -235,7 +313,10 @@
                       <td></td>
                       <td></td>
                       <td>
-                        <removeButton v-if="action != 'view'" @delete="removeCourse(props.item)" />
+                        <removeButton
+                          v-if="action != 'view'"
+                          @delete="removeCourse(props.item)"
+                        />
                       </td>
                     </tr>
                   </template>
@@ -250,10 +331,19 @@
                 <v-card-title>
                   4th Year 1st Sem
                   <v-spacer></v-spacer>
-                  <addButton v-if="action != 'view'" id="41" ref="add41" @add="add41()"></addButton>
+                  <addButton
+                    v-if="action != 'view'"
+                    id="41"
+                    ref="add41"
+                    @add="add41()"
+                  ></addButton>
                 </v-card-title>
                 <v-data-table
-                  :headers="this.$route.name == 'AdminCurriculum' ? formHeaders2 :formHeaders"
+                  :headers="
+                    this.$route.name == 'AdminCurriculum'
+                      ? formHeaders2
+                      : formHeaders
+                  "
                   :items="getChecklistByYearSem(41)"
                   hide-default-footer
                 >
@@ -267,7 +357,10 @@
                       <td></td>
                       <td></td>
                       <td>
-                        <removeButton v-if="action != 'view'" @delete="removeCourse(props.item)" />
+                        <removeButton
+                          v-if="action != 'view'"
+                          @delete="removeCourse(props.item)"
+                        />
                       </td>
                     </tr>
                   </template>
@@ -282,10 +375,19 @@
                   4th Year 2nd Sem
                   <v-spacer></v-spacer>
 
-                  <addButton v-if="action != 'view'" id="42" ref="add42" @add="add42()"></addButton>
+                  <addButton
+                    v-if="action != 'view'"
+                    id="42"
+                    ref="add42"
+                    @add="add42()"
+                  ></addButton>
                 </v-card-title>
                 <v-data-table
-                  :headers="this.$route.name == 'AdminCurriculum' ? formHeaders2 :formHeaders"
+                  :headers="
+                    this.$route.name == 'AdminCurriculum'
+                      ? formHeaders2
+                      : formHeaders
+                  "
                   :items="getChecklistByYearSem(42)"
                   hide-default-footer
                 >
@@ -299,7 +401,10 @@
                       <td></td>
                       <td></td>
                       <td>
-                        <removeButton v-if="action != 'view'" @delete="removeCourse(props.item)" />
+                        <removeButton
+                          v-if="action != 'view'"
+                          @delete="removeCourse(props.item)"
+                        />
                       </td>
                     </tr>
                   </template>
@@ -324,7 +429,11 @@
             ></v-text-field>
             <addButton :title="title" @add="add" />
           </v-card-title>
-          <v-data-table :headers="headers" :items="curriculums" :search="search">
+          <v-data-table
+            :headers="headers"
+            :items="curriculums"
+            :search="search"
+          >
             <template v-slot:item="props">
               <tr>
                 <td>{{ props.item.code }}</td>
@@ -396,7 +505,7 @@ export default {
           text: "Earned Unit"
         },
         {
-          text: "Prequisites"
+          text: "Prerequisites"
         },
         {
           text: "Term"
@@ -419,7 +528,7 @@ export default {
           text: "Earned Unit"
         },
         {
-          text: "Prequisites"
+          text: "Prerequisites"
         },
         {
           text: "Term"
@@ -431,7 +540,6 @@ export default {
     };
   },
   mounted() {
-    console.log(this.$route.name)
     this.getCurriculums();
     this.getPrograms();
   },
@@ -453,6 +561,7 @@ export default {
       this.action = "";
     },
     closeAddDialog() {
+      this.courseId = null
       this.openAddDialog = false;
     },
     async getPrograms() {
@@ -465,6 +574,7 @@ export default {
     },
     async getCourses() {
       this.courses = (await CourseService.getCourses()).data;
+      console.log(this.courses);
     },
     async add11() {
       this.yearSemId = this.$refs.add11.$options._parentVnode.data.attrs.id;
@@ -550,18 +660,15 @@ export default {
       this.resetAddCourse();
     },
     async removeCourse(data) {
-      let response = await this.subjects.filter(course => {
-        return course.course_id == data.course_id && course.id == data.id;
-      });
+      // let response = await this.subjects.filter(course => {
+      //   return course.course_id == data.course_id && course.id == data.id;
+      // });
 
       let index = this.subjects.findIndex(response => {
         return response.course_id == data.course_id && response.id == data.id;
       });
 
       await this.subjects.splice(index, 1);
-      console.log(index);
-      console.log(response);
-      console.log(this.subjects);
 
       // console.log(this.subjects)
       // if (this.action == "edit") {
@@ -666,9 +773,9 @@ export default {
       });
       console.log(data);
       await CurriculumService.editCurriculum(data);
-      this.closeDialog();
       this.subjects = [];
       this.getCurriculums();
+      this.closeDialog();
     },
 
     async viewCurriculum(id) {
@@ -690,7 +797,6 @@ export default {
           semester: semester
         };
       });
-      console.log(data);
       this.subjects = data;
     },
 

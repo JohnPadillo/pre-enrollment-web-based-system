@@ -3,7 +3,7 @@
     <v-dialog v-model="dialog" persistent :max-width="max">
       <v-card>
         <v-card-title>
-          <span class="headline">New {{ title }}</span>
+          <!-- <span class="headline">New {{ title }}</span> -->
         </v-card-title>
         <v-card-text>
           <v-container>

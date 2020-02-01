@@ -15,7 +15,11 @@
             v-model="course_code"
             outlined
           ></v-text-field>
-          <v-text-field label="Course Name" v-model="course_name" outlined></v-text-field>
+          <v-text-field
+            label="Course Name"
+            v-model="course_name"
+            outlined
+          ></v-text-field>
         </addDialog>
         <confirmationDialog
           :dialog="confirmationDialog"

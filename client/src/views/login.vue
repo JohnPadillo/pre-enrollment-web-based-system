@@ -3,7 +3,12 @@
     <v-layout>
       <v-flex>
         <registerForm :title="title" @register="login">
-          <v-text-field label="Email" v-model="email" outlined :rules="[rules.required]"></v-text-field>
+          <v-text-field
+            label="Email"
+            v-model="email"
+            outlined
+            :rules="[rules.required]"
+          ></v-text-field>
           <v-text-field
             label="Password"
             v-model="password"
@@ -19,7 +24,7 @@
 
 <script>
 import RegisterForm from "@/components/Form.vue";
-import StudentService from "@/services/StudentService";
+import LoginService from "@/services/Login";
 export default {
   components: {
     RegisterForm
@@ -42,7 +47,8 @@ export default {
       let data = {
         email: this.email
       };
-      let user = (await StudentService.getStudent(data)).data;
+      let user = (await LoginService.login(data)).data;
+
       let checkPassword = password => {
         return password === this.password;
       };

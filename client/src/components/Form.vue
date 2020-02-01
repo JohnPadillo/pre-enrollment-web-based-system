@@ -10,9 +10,14 @@
             <slot></slot>
           </div>
           <div class="pl-4 pr-4 pb-4">
-            <v-btn block color="blue darken-4" dark height="50" @click="register">{{
-              title
-            }}</v-btn>
+            <v-btn
+              block
+              color="blue darken-4"
+              dark
+              height="50"
+              @click="register"
+              >{{ title }}</v-btn
+            >
           </div>
         </div>
       </v-form>
