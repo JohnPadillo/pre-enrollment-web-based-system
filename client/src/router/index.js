@@ -9,6 +9,7 @@ import AdminCourse from "../views/admin/course";
 import AdminStudents from "../views/admin/students";
 import AdminDeparmtent from "../views/admin/department";
 import AdminCurriculum from "../views/admin/curriculum";
+import AdminSchedule from "../views/admin/schedule";
 
 // Student
 import StudentRegister from "../views/students/register";
@@ -57,6 +58,11 @@ const routes = [
     path: "/admin/courses",
     name: "AdminCourse",
     component: AdminCourse
+  },
+  {
+    path: "/admin/schedule",
+    name: "AdminSchedule",
+    component: AdminSchedule
   },
 
   // Student router

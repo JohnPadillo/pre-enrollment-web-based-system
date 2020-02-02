@@ -9,8 +9,16 @@
           @close="closeDialog"
           @save="action === 'add' ? addProgram() : editProgram()"
         >
-          <v-text-field label="Course Name" v-model="program_name" outlined></v-text-field>
-          <v-text-field v-model="program_code" label="Course Code" outlined></v-text-field>
+          <v-text-field
+            label="Course Name"
+            v-model="program_name"
+            outlined
+          ></v-text-field>
+          <v-text-field
+            v-model="program_code"
+            label="Course Code"
+            outlined
+          ></v-text-field>
 
           <v-select
             v-model="program_department"
@@ -45,9 +53,9 @@
           <v-data-table :headers="headers" :items="programs" :search="search">
             <template v-slot:item="props">
               <tr>
-                <td align="center">{{ props.item.code }}</td>
+                <td>{{ props.item.code }}</td>
                 <td>{{ props.item.name }}</td>
-                <td align="center">{{ props.item.department }}</td>
+                <td>{{ props.item.department }}</td>
                 <td align="center">
                   <editButton @edit="edit(props.item.id)" />
                   <deleteButton @delete="remove(props.item.id)" />
