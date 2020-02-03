@@ -57,34 +57,40 @@
                     @cancel="cancelEdit"
                     @open="openEdit"
                     @close="closeEdit"
+                    large
                   >
                     {{ props.item.course_name }}
                     <template v-slot:input>
-                      <v-text-field
+                      <v-select
+                        :items="courses"
                         v-model="props.item.course_name"
                         label="Course Description"
-                        single-line
-                        counter
-                      ></v-text-field>
+                        item-text="code"
+                        item-value="code"
+                      ></v-select>
                     </template>
                   </v-edit-dialog>
                 </td>
-                <td>{{ props.item.section }}</td>
+                <td>{{ props.item.section ? props.item.section : sectionId }}</td>
                 <td>{{ props.item.units }}</td>
                 <td>{{ props.item.day }}</td>
                 <td>{{ props.item.time }}</td>
                 <td>{{ props.item.room }}</td>
                 <td>
-                  <removeButton></removeButton>
+                  <removeButton @delete="removeClass(props.item)"></removeButton>
                 </td>
               </tr>
             </template>
           </v-data-table>
+          <v-snackbar v-model="snack" :timeout="3000" :color="snackColor">
+            {{ snackText }}
+            <v-btn text @click="snack = false">Close</v-btn>
+          </v-snackbar>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" text @click="close">Close</v-btn>
-          <v-btn color="blue darken-1" text @click="dialog = false">Save</v-btn>
+          <v-btn color="blue darken-1" text @click="save">Save</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -94,6 +100,8 @@
 <script>
 import ProgramService from "@/services/ProgramService";
 import SectionService from "@/services/SectionService";
+import CurriculumService from "@/services/CurriculumService";
+
 export default {
   props: {
     dialog: Boolean
@@ -134,15 +142,22 @@ export default {
       programs: [],
       programId: "",
       sections: [],
-      sectionId: ""
+      sectionId: "",
+      courses: [],
+      course_name: "",
+      snack: false,
+      snackText: "",
+      snackColor: ""
     };
   },
   methods: {
     close() {
       this.$emit("close");
     },
+    save() {
+      this.$emit("save");
+    },
     add() {
-      console.log("add");
       let data = {
         class_no: "",
         course_name: "",
@@ -156,13 +171,20 @@ export default {
       this.schedules.push(data);
     },
     saveEdit() {
+      this.snack = true;
+      this.snackColor = "success";
+      this.snackText = "Data saved";
       console.log(this.schedules);
     },
     cancelEdit() {
-      console.log("cancel");
+      this.snack = true;
+      this.snackColor = "error";
+      this.snackText = "Canceled";
     },
     openEdit() {
-      console.log("edit");
+      this.snack = true;
+      this.snackColor = "info";
+      this.snackText = "Dialog opened";
     },
     closeEdit() {
       console.log("Dialog closed");
@@ -178,14 +200,52 @@ export default {
       this.sections = (await SectionService.getSections()).data;
     },
 
+    // get all courses according to its program
+    async getCourses() {
+      let data = (await CurriculumService.getCurriculums()).data;
+      this.courses = data
+        .filter(data => {
+          return this.programId == data.CourseId;
+        })
+        .map(data => {
+          let id = data.subjects.id;
+          let code = data.subjects.code;
+          let name = data.subjects.name;
+          let units = data.subjects.unit;
+
+          return {
+            id: id,
+            code: code,
+            name: name,
+            units: units
+          };
+        });
+    },
+
     async programIdSelected() {
-      console.log(this.programId);
       await this.getSections();
-      console.log(this.sections);
       this.sections = await this.sections.filter(data => {
         return this.programId == data.course.id;
       });
+      await this.getCourses();
+    },
+
+    async removeClass(item) {
+      const index = this.schedules.indexOf(item);
+      this.schedules.splice(index, 1);
+    },
+
+    setCourse(data) {
+      console.log(data.course_name);
+      let index = this.schedules.indexOf(data);
+      console.log("index", index);
+      this.schedules[index].course_name = data.course_name;
     }
+
+    // saveEditCourse(data) {
+    //   let index = this.schedules.indexOf(data);
+    //   this.schedules[index].course_name = data.course_name;
+    // }
   }
 };
 </script>

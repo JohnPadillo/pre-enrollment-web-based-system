@@ -52,7 +52,7 @@ export default {
           link: "/admin/curriculum"
         },
         {
-          title: "Schedules",
+          title: "Schedules | Classes",
           icon: "mdi-calendar-clock",
           link: "/admin/schedule"
         }
