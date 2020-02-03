@@ -17,27 +17,17 @@
             item-text="code"
             item-value="code"
             outlined
-          ></v-select> -->
+          ></v-select>-->
 
           <v-form ref="registerForm">
-            <v-text-field
-              label="First Name"
-              v-model="firstName"
-              outlined
-              :rules="[rules.required]"
-            ></v-text-field>
+            <v-text-field label="First Name" v-model="firstName" outlined :rules="[rules.required]"></v-text-field>
             <v-text-field
               label="Middle Name"
               v-model="middleName"
               outlined
               :rules="[rules.required]"
             ></v-text-field>
-            <v-text-field
-              label="Last Name"
-              v-model="lastName"
-              outlined
-              :rules="[rules.required]"
-            ></v-text-field>
+            <v-text-field label="Last Name" v-model="lastName" outlined :rules="[rules.required]"></v-text-field>
             <v-text-field
               label="Permanent Address"
               v-model="permanentAddress"

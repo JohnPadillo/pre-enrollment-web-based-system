@@ -40,12 +40,7 @@
                     <v-card-title>
                       1st Year 1st Sem
                       <v-spacer></v-spacer>
-                      <addButton
-                        v-if="action != 'view'"
-                        id="11"
-                        ref="add11"
-                        @add="add11()"
-                      ></addButton>
+                      <addButton v-if="action != 'view'" id="11" ref="add11" @add="add11()"></addButton>
                     </v-card-title>
 
                     <v-data-table
@@ -84,12 +79,7 @@
                     <v-card-title>
                       1st Year 2nd Sem
                       <v-spacer></v-spacer>
-                      <addButton
-                        v-if="action != 'view'"
-                        id="12"
-                        ref="add12"
-                        @add="add12()"
-                      ></addButton>
+                      <addButton v-if="action != 'view'" id="12" ref="add12" @add="add12()"></addButton>
                     </v-card-title>
 
                     <v-data-table
@@ -129,12 +119,7 @@
                     <v-card-title>
                       2nd Year 1st Sem
                       <v-spacer></v-spacer>
-                      <addButton
-                        v-if="action != 'view'"
-                        id="21"
-                        ref="add21"
-                        @add="add21()"
-                      ></addButton>
+                      <addButton v-if="action != 'view'" id="21" ref="add21" @add="add21()"></addButton>
                     </v-card-title>
                     <v-data-table
                       :headers="
@@ -172,12 +157,7 @@
                     <v-card-title>
                       2nd Year 2nd Sem
                       <v-spacer></v-spacer>
-                      <addButton
-                        v-if="action != 'view'"
-                        id="22"
-                        ref="add22"
-                        @add="add22()"
-                      ></addButton>
+                      <addButton v-if="action != 'view'" id="22" ref="add22" @add="add22()"></addButton>
                     </v-card-title>
                     <v-data-table
                       :headers="
@@ -216,12 +196,7 @@
                     <v-card-title>
                       3rd Year 1st Sem
                       <v-spacer></v-spacer>
-                      <addButton
-                        v-if="action != 'view'"
-                        id="31"
-                        ref="add31"
-                        @add="add31()"
-                      ></addButton>
+                      <addButton v-if="action != 'view'" id="31" ref="add31" @add="add31()"></addButton>
                     </v-card-title>
                     <v-data-table
                       :headers="
@@ -259,12 +234,7 @@
                     <v-card-title>
                       3rd Year 2nd Sem
                       <v-spacer></v-spacer>
-                      <addButton
-                        v-if="action != 'view'"
-                        id="32"
-                        ref="add32"
-                        @add="add32()"
-                      ></addButton>
+                      <addButton v-if="action != 'view'" id="32" ref="add32" @add="add32()"></addButton>
                     </v-card-title>
                     <v-data-table
                       :headers="
@@ -303,12 +273,7 @@
                     <v-card-title>
                       4th Year 1st Sem
                       <v-spacer></v-spacer>
-                      <addButton
-                        v-if="action != 'view'"
-                        id="41"
-                        ref="add41"
-                        @add="add41()"
-                      ></addButton>
+                      <addButton v-if="action != 'view'" id="41" ref="add41" @add="add41()"></addButton>
                     </v-card-title>
                     <v-data-table
                       :headers="
@@ -347,12 +312,7 @@
                       4th Year 2nd Sem
                       <v-spacer></v-spacer>
 
-                      <addButton
-                        v-if="action != 'view'"
-                        id="42"
-                        ref="add42"
-                        @add="add42()"
-                      ></addButton>
+                      <addButton v-if="action != 'view'" id="42" ref="add42" @add="add42()"></addButton>
                     </v-card-title>
                     <v-data-table
                       :headers="
@@ -387,8 +347,9 @@
             </v-container>
           </v-card>
         </v-dialog>
-      </v-flex> </v-layout
-  ></v-container>
+      </v-flex>
+    </v-layout>
+  </v-container>
 </template>
 
 <script>
