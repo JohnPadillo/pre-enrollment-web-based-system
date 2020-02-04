@@ -84,6 +84,7 @@
                   "
                   hide-default-footer
                   :items="getChecklistByYearSem(11)"
+                  
                 >
                   <template v-slot:item="props">
                     <tr>
@@ -432,7 +433,7 @@
           <v-data-table
             :headers="headers"
             :items="curriculums"
-            :search="search"
+            :search="search" dense
           >
             <template v-slot:item="props">
               <tr>
