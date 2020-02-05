@@ -15,7 +15,7 @@
               <v-btn @click="selectedCategory = 1">
                 <v-icon>mdi-calendar-blank</v-icon>Schedule
               </v-btn>
-              <v-btn @click="selectedCategory = 2">
+              <v-btn @click="selectedCategory = 2; getClasses()">
                 <v-icon>mdi-clock</v-icon>Class
               </v-btn>
             </v-btn-toggle>
@@ -81,7 +81,23 @@
                 ></v-text-field>
                 <addButton :title="title" @add="addClass" />
               </v-card-title>
-              <v-data-table :headers="classHeaders" :items="classes" search></v-data-table>
+              <v-data-table :headers="classHeaders" :items="classes" search>
+                <template v-slot:item="props">
+                  <tr>
+                    <td>{{ props.item.class_no }}</td>
+                    <td>{{ props.item.subject.name }}</td>
+                    <td>{{ props.item.section.code }}</td>
+                    <td>{{ props.item.subject.units }}</td>
+                    <td>{{ props.item.day }}</td>
+                    <td>{{ props.item.time_start + " - " + props.item.time_end }}</td>
+                    <td>{{ props.item.room.code }}</td>
+                    <td>
+                      <editButton />
+                      <deleteButton />
+                    </td>
+                  </tr>
+                </template>
+              </v-data-table>
               <v-row justify="center">
                 <v-dialog v-model="classDialog" persistent max-width="600px">
                   <v-card>
@@ -287,12 +303,11 @@ import ProgramService from "@/services/ProgramService";
 import SectionService from "@/services/SectionService";
 import CurriculumService from "@/services/CurriculumService";
 import RoomService from "@/services/RoomService";
+import ClassService from "@/services/ClassService";
 
 export default {
-  // watch: {
-  //   time(val) {
-  //     console.log(val);
-  //   }
+  // mounted() {
+  //   this.getClasses();
   // },
   components: {
     ScheduleForm
@@ -405,6 +420,10 @@ export default {
     };
   },
   methods: {
+    async getClasses() {
+      this.classes = (await ClassService.getClasses()).data;
+      console.log(this.classes);
+    },
     async getPrograms() {
       this.classPrograms = (await ProgramService.getPrograms()).data;
     },
