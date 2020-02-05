@@ -9,16 +9,8 @@
           @close="closeDialog"
           @save="action === 'add' ? addProgram() : editProgram()"
         >
-          <v-text-field
-            label="Course Name"
-            v-model="program_name"
-            outlined
-          ></v-text-field>
-          <v-text-field
-            v-model="program_code"
-            label="Course Code"
-            outlined
-          ></v-text-field>
+          <v-text-field label="Course Name" v-model="program_name" outlined></v-text-field>
+          <v-text-field v-model="program_code" label="Course Code" outlined></v-text-field>
 
           <v-select
             v-model="program_department"
@@ -50,7 +42,14 @@
             ></v-text-field>
             <addButton :title="title" @add="add" />
           </v-card-title>
-          <v-data-table :headers="headers" :items="programs" :search="search" dense>
+          <v-data-table
+            :headers="headers"
+            :items="programs"
+            :search="search"
+            dense
+            :loading="programLoading"
+            loading-text="Loading..."
+          >
             <template v-slot:item="props">
               <tr>
                 <td>{{ props.item.code }}</td>
@@ -86,6 +85,7 @@ export default {
       search: "",
       action: "",
       confirmationDialog: false,
+      programLoading: false,
       confirmDialogTitle: "delete",
       program_department: "",
       program_name: "",
@@ -122,7 +122,9 @@ export default {
   },
   methods: {
     async getPrograms() {
+      this.programLoading = true;
       this.programs = (await ProgramService.getPrograms()).data;
+      this.programLoading = false;
     },
     async getDepartments() {
       this.departments = (await DepartmentService.getDepartments()).data;

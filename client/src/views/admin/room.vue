@@ -34,7 +34,14 @@
             ></v-text-field>
             <addButton :title="title" @add="add" />
           </v-card-title>
-          <v-data-table :headers="headers" :items="rooms" :search="search" dense>
+          <v-data-table
+            :headers="headers"
+            :items="rooms"
+            :search="search"
+            dense
+            :loading="roomLoading"
+            loading-text="Loading..."
+          >
             <template v-slot:item="props">
               <tr>
                 <td>{{ props.item.code }}</td>
@@ -63,10 +70,12 @@ export default {
       rooms: [],
       headers: [
         {
-          text: "Code"
+          text: "Code",
+          value: "code"
         },
         {
-          text: "Name"
+          text: "Name",
+          value: "name"
         },
         {
           text: "Actions"
@@ -77,6 +86,7 @@ export default {
       room_code: "",
       room_id: "",
       confirmationDialog: false,
+      roomLoading: false,
       confirmDialogTitle: "delete"
     };
   },
@@ -85,8 +95,9 @@ export default {
   },
   methods: {
     async getRooms() {
+      this.roomLoading = true;
       this.rooms = (await RoomService.getRooms()).data;
-      console.log(this.rooms);
+      this.roomLoading = false;
     },
     closeAddDialog() {
       this.addDialog = false;

@@ -27,10 +27,10 @@
               </v-row>
               <v-list>
                 <strong>Student Name:</strong>
-                {{ user.name }}
+                {{ user.name == null ? "-" : user.name }}
                 <br />
                 <strong>Program:</strong>
-                {{ user.course.code }}
+                {{ user.course.code == null ? "-" : user.course.code }}
               </v-list>
 
               <!-- 1st Year -->

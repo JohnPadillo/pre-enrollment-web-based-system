@@ -58,7 +58,14 @@
             ></v-text-field>
             <addButton :title="title" @add="add" />
           </v-card-title>
-          <v-data-table :headers="headers" :items="sections" :search="search" dense>
+          <v-data-table
+            :headers="headers"
+            :items="sections"
+            :search="search"
+            dense
+            :loading="sectionLoading"
+            loading-text="Loading..."
+          >
             <template v-slot:item="props">
               <tr>
                 <td>{{ props.item.course.code }}</td>
@@ -152,13 +159,15 @@ export default {
       section_semester: "",
       programs: [],
       confirmationDialog: false,
+      sectionLoading: false,
       confirmDialogTitle: "delete"
     };
   },
   methods: {
     async getSections() {
+      this.sectionLoading = true;
       this.sections = (await SectionService.getSections()).data;
-      console.log(this.sections);
+      this.sectionLoading = false;
     },
     async getPrograms() {
       this.programs = (await ProgramService.getPrograms()).data;

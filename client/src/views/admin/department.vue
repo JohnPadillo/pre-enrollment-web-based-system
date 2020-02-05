@@ -32,7 +32,14 @@
             ></v-text-field>
             <addButton :title="title" @add="add" />
           </v-card-title>
-          <v-data-table :headers="headers" :items="departments" :search="search" dense>
+          <v-data-table
+            :headers="headers"
+            :items="departments"
+            :search="search"
+            dense
+            :loading="departmentLoading"
+            loading-text="Loading..."
+          >
             <template v-slot:item="props">
               <tr>
                 <td>{{ props.item.name }}</td>
@@ -57,6 +64,7 @@ export default {
       id: null,
       search: "",
       confirmDialogTitle: "",
+      departmentLoading: false,
       action: "",
       title: "Department",
       department_name: "",
@@ -81,7 +89,9 @@ export default {
   },
   methods: {
     async getDepartments() {
+      this.departmentLoading = true;
       this.departments = (await DepartmentService.getDepartments()).data;
+      this.departmentLoading = false;
     },
     add() {
       this.action = "add";

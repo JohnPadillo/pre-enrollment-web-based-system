@@ -85,9 +85,9 @@
                     <tr>
                       <td>{{ props.item.code }}</td>
                       <td>{{ props.item.name }}</td>
+                      <td align="center">{{ props.item.units }}</td>
                       <td></td>
-                      <td></td>
-                      <td></td>
+                      <td>{{ props.item.prerequisites }}</td>
                       <td></td>
                       <td></td>
                       <td>
@@ -122,7 +122,7 @@
                     <tr>
                       <td>{{ props.item.code }}</td>
                       <td>{{ props.item.name }}</td>
-                      <td></td>
+                      <td align="center">{{ props.item.units }}</td>
                       <td></td>
                       <td></td>
                       <td></td>
@@ -159,7 +159,7 @@
                     <tr>
                       <td>{{ props.item.code }}</td>
                       <td>{{ props.item.name }}</td>
-                      <td></td>
+                      <td align="center">{{ props.item.units }}</td>
                       <td></td>
                       <td></td>
                       <td></td>
@@ -195,7 +195,7 @@
                     <tr>
                       <td>{{ props.item.code }}</td>
                       <td>{{ props.item.name }}</td>
-                      <td></td>
+                      <td align="center">{{ props.item.units }}</td>
                       <td></td>
                       <td></td>
                       <td></td>
@@ -232,7 +232,7 @@
                     <tr>
                       <td>{{ props.item.code }}</td>
                       <td>{{ props.item.name }}</td>
-                      <td></td>
+                      <td align="center">{{ props.item.units }}</td>
                       <td></td>
                       <td></td>
                       <td></td>
@@ -268,7 +268,7 @@
                     <tr>
                       <td>{{ props.item.code }}</td>
                       <td>{{ props.item.name }}</td>
-                      <td></td>
+                      <td align="center">{{ props.item.units }}</td>
                       <td></td>
                       <td></td>
                       <td></td>
@@ -305,7 +305,7 @@
                     <tr>
                       <td>{{ props.item.code }}</td>
                       <td>{{ props.item.name }}</td>
-                      <td></td>
+                      <td align="center">{{ props.item.units }}</td>
                       <td></td>
                       <td></td>
                       <td></td>
@@ -342,7 +342,7 @@
                     <tr>
                       <td>{{ props.item.code }}</td>
                       <td>{{ props.item.name }}</td>
-                      <td></td>
+                      <td align="center">{{ props.item.units }}</td>
                       <td></td>
                       <td></td>
                       <td></td>
@@ -375,7 +375,7 @@
           </v-card-title>
           <v-data-table
             :loading="curriculumLoading"
-            loading-text="Loading... Please wait"
+            loading-text="Loading..."
             :headers="headers"
             :items="curriculums"
             :search="search"
@@ -495,13 +495,13 @@ export default {
     async getCurriculums() {
       this.curriculumLoading = true
       let response = (await CurriculumService.getCurriculums()).data;
+      // console.log(response)
       let data = [...new Set(response.map(item => item.CourseId))];
-      console.log(data)
+      // console.log(data)
       let curriculumArray = [];
       for (let i = 0; i < data.length; i++) {
         curriculumArray.push((await ProgramService.getProgram(data[i])).data);
       }
-      console.log(curriculumArray)
       this.curriculums = curriculumArray;
       this.curriculumLoading = false
     },
@@ -525,7 +525,6 @@ export default {
     },
     async getCourses() {
       this.courses = (await CourseService.getCourses()).data;
-      console.log(this.courses);
     },
     async add11() {
       this.yearSemId = this.$refs.add11.$options._parentVnode.data.attrs.id;
@@ -734,21 +733,28 @@ export default {
       this.openDialog = true;
       this.programId = id;
       this.subjects = (await CurriculumService.getCurriculum(id)).data;
+      console.log(this.subjects)
 
-      let data = this.subjects.map(data => {
+      let data = await this.subjects.map(data => {
         let name = data.subject.name;
         let code = data.subject.code;
+        let units = data.subject.units;
+        let prerequisites = data.subject.prerequisites;
         let year = data.subject.year;
         let semester = data.subject.semester;
 
         return {
           name: name,
           code: code,
+          units: units,
+          prerequisites: prerequisites,
           year: year,
           semester: semester
         };
       });
       this.subjects = data;
+      console.log(this.subjects)
+
     },
 
     async editCurriculum(data) {

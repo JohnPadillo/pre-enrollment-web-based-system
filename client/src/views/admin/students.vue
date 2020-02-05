@@ -128,7 +128,14 @@
             ></v-text-field>
             <addButton :title="title" @add="add" />
           </v-card-title>
-          <v-data-table :headers="headers" :items="students" :search="search">
+          <v-data-table
+            :headers="headers"
+            :items="students"
+            :search="search"
+            :loading="studentLoading"
+            loading-text="Loading..."
+            dense
+          >
             <template v-slot:item="props">
               <tr>
                 <td>{{ props.item.name }}</td>
@@ -173,6 +180,7 @@ export default {
       search: "",
       openAddDialog: false,
       confirmationDialog: false,
+      studentLoading: false,
       confirmDialogTitle: "delete",
       firstName: "",
       lastName: "",
@@ -202,8 +210,10 @@ export default {
   },
   methods: {
     async getData() {
+      this.studentLoading = true;
       this.students = (await StudentService.getStudents()).data;
       this.defaultStudents = this.students;
+      this.studentLoading = false;
     },
     async getStudent(id) {
       return (await StudentService.getStudent(id)).data;
