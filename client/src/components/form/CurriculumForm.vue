@@ -44,6 +44,7 @@
                     </v-card-title>
 
                     <v-data-table
+                      disable-pagination
                       :headers="
                         this.$route.name == 'AdminCurriculum'
                           ? formHeaders2
@@ -83,6 +84,7 @@
                     </v-card-title>
 
                     <v-data-table
+                      disable-pagination
                       :headers="
                         this.$route.name == 'AdminCurriculum'
                           ? formHeaders2
@@ -122,6 +124,7 @@
                       <addButton v-if="action != 'view'" id="21" ref="add21" @add="add21()"></addButton>
                     </v-card-title>
                     <v-data-table
+                      disable-pagination
                       :headers="
                         this.$route.name == 'AdminCurriculum'
                           ? formHeaders2

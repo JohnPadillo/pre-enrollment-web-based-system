@@ -77,6 +77,7 @@
                 </v-card-title>
 
                 <v-data-table
+                  disable-pagination
                   :headers="
                     this.$route.name == 'AdminCurriculum'
                       ? formHeaders2
@@ -121,6 +122,7 @@
                 </v-card-title>
 
                 <v-data-table
+                  disable-pagination
                   :headers="
                     this.$route.name == 'AdminCurriculum'
                       ? formHeaders2
@@ -165,6 +167,7 @@
                   ></addButton>
                 </v-card-title>
                 <v-data-table
+                  disable-pagination
                   :headers="
                     this.$route.name == 'AdminCurriculum'
                       ? formHeaders2
@@ -208,6 +211,7 @@
                   ></addButton>
                 </v-card-title>
                 <v-data-table
+                  disable-pagination
                   :headers="
                     this.$route.name == 'AdminCurriculum'
                       ? formHeaders2
@@ -252,6 +256,7 @@
                   ></addButton>
                 </v-card-title>
                 <v-data-table
+                  disable-pagination
                   :headers="
                     this.$route.name == 'AdminCurriculum'
                       ? formHeaders2
@@ -295,6 +300,7 @@
                   ></addButton>
                 </v-card-title>
                 <v-data-table
+                  disable-pagination
                   :headers="
                     this.$route.name == 'AdminCurriculum'
                       ? formHeaders2
@@ -339,6 +345,7 @@
                   ></addButton>
                 </v-card-title>
                 <v-data-table
+                  disable-pagination
                   :headers="
                     this.$route.name == 'AdminCurriculum'
                       ? formHeaders2
@@ -383,6 +390,7 @@
                   ></addButton>
                 </v-card-title>
                 <v-data-table
+                  disable-pagination
                   :headers="
                     this.$route.name == 'AdminCurriculum'
                       ? formHeaders2
@@ -561,7 +569,7 @@ export default {
       this.action = "";
     },
     closeAddDialog() {
-      this.courseId = null
+      this.courseId = null;
       this.openAddDialog = false;
     },
     async getPrograms() {
