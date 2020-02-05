@@ -50,7 +50,7 @@
             ></v-text-field>
             <addButton :title="title" @add="add" />
           </v-card-title>
-          <v-data-table :headers="headers" :items="programs" :search="search">
+          <v-data-table :headers="headers" :items="programs" :search="search" dense>
             <template v-slot:item="props">
               <tr>
                 <td>{{ props.item.code }}</td>

@@ -2,6 +2,17 @@
   <v-container fluid>
     <v-layout>
       <v-flex>
+        <v-select
+        label="Program"
+        v-model="programId"
+        :items="programs"
+        item-text="code"
+        item-value="id"
+        clearable
+        @click:clear="resetCourses"
+        @input="filterCourseByProgramId"
+        >
+        </v-select>
         <addDialog
           :dialog="openAddDialog"
           :title="title"
@@ -42,7 +53,7 @@
             ></v-text-field>
             <addButton :title="title" @add="add" />
           </v-card-title>
-          <v-data-table :headers="headers" :items="subjects" :search="search">
+          <v-data-table :headers="headers" :items="subjects" :search="search" dense>
             <template v-slot:item="props">
               <tr>
                 <td>{{ props.item.code }}</td>
@@ -62,6 +73,8 @@
 
 <script>
 import CourseService from "@/services/CourseService.js";
+import ProgramService from "@/services/ProgramService.js"
+import CurriculumService from "@/services/CurriculumService.js"
 export default {
   data() {
     return {
@@ -75,6 +88,10 @@ export default {
       course_name: "",
       course_code: "",
       subjects: [],
+      programId: null,
+      programs: [],
+      curriculums: [],
+      defaultSubjects: [],
       headers: [
         {
           text: "Course Code",
@@ -94,10 +111,46 @@ export default {
   },
   mounted() {
     this.getCourses();
+    this.getPrograms();
+    this.getCurriculum()
   },
   methods: {
+    async filterCourseByProgramId(){
+      let response = this.curriculums.filter(data => {
+        return data.CourseId == this.programId
+      })
+
+      let data = await response.map(data => {
+        let id = data.subjects.id
+        let code = data.subjects.code
+        let name = data.subjects.name
+        let units = data.subjects.units
+        let prerequisites = data.subjects.prerequisites
+
+        return {
+          id: id,
+          code: code,
+          name: name,
+          units: units,
+          prerequisites: prerequisites
+        }
+      })
+
+      this.subjects = data
+    },
+    async getCurriculum() {
+      this.curriculums = (await CurriculumService.getCurriculums()).data
+      console.log(this.curriculums)
+    },
+    async getPrograms() {
+      this.programs = (await ProgramService.getPrograms()).data
+    },
     async getCourses() {
       this.subjects = (await CourseService.getCourses()).data;
+      this.defaultSubjects = this.subjects 
+    },
+    async resetCourses() {
+      this.getCourses()
     },
     add() {
       this.action = "add";
