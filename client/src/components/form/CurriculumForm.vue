@@ -163,6 +163,7 @@
                       <addButton v-if="action != 'view'" id="22" ref="add22" @add="add22()"></addButton>
                     </v-card-title>
                     <v-data-table
+                      disable-pagination
                       :headers="
                         this.$route.name == 'AdminCurriculum'
                           ? formHeaders2
@@ -202,6 +203,7 @@
                       <addButton v-if="action != 'view'" id="31" ref="add31" @add="add31()"></addButton>
                     </v-card-title>
                     <v-data-table
+                      disable-pagination
                       :headers="
                         this.$route.name == 'AdminCurriculum'
                           ? formHeaders2
@@ -240,6 +242,7 @@
                       <addButton v-if="action != 'view'" id="32" ref="add32" @add="add32()"></addButton>
                     </v-card-title>
                     <v-data-table
+                      disable-pagination
                       :headers="
                         this.$route.name == 'AdminCurriculum'
                           ? formHeaders2
@@ -279,6 +282,7 @@
                       <addButton v-if="action != 'view'" id="41" ref="add41" @add="add41()"></addButton>
                     </v-card-title>
                     <v-data-table
+                      disable-pagination
                       :headers="
                         this.$route.name == 'AdminCurriculum'
                           ? formHeaders2
@@ -318,6 +322,7 @@
                       <addButton v-if="action != 'view'" id="42" ref="add42" @add="add42()"></addButton>
                     </v-card-title>
                     <v-data-table
+                      disable-pagination
                       :headers="
                         this.$route.name == 'AdminCurriculum'
                           ? formHeaders2
