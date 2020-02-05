@@ -10,6 +10,8 @@ import AdminStudents from "../views/admin/students";
 import AdminDeparmtent from "../views/admin/department";
 import AdminCurriculum from "../views/admin/curriculum";
 import AdminSchedule from "../views/admin/schedule";
+import AdminSection from "../views/admin/section";
+import AdminRoom from "../views/admin/room";
 
 // Student
 import StudentRegister from "../views/students/register";
@@ -58,6 +60,16 @@ const routes = [
     path: "/admin/courses",
     name: "AdminCourse",
     component: AdminCourse
+  },
+  {
+    path: "/admin/sections",
+    name: "AdminSection",
+    component: AdminSection
+  },
+  {
+    path: "/admin/rooms",
+    name: "AdminRoom",
+    component: AdminRoom
   },
   {
     path: "/admin/schedule",

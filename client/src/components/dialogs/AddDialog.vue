@@ -3,7 +3,7 @@
     <v-dialog v-model="dialog" persistent max-width="600px">
       <v-card>
         <v-card-title>
-          <!-- <span class="headline">New {{ title }}</span> -->
+          <span class="headline">{{ title }}</span>
         </v-card-title>
         <v-card-text>
           <v-container>

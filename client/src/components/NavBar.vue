@@ -51,6 +51,9 @@ export default {
           icon: "local_library",
           link: "/admin/curriculum"
         },
+        { title: "Sections", icon: "view_carousel", link: "/admin/sections" },
+        { title: "Rooms", icon: "room", link: "/admin/rooms" },
+
         {
           title: "Schedules | Classes",
           icon: "mdi-calendar-clock",

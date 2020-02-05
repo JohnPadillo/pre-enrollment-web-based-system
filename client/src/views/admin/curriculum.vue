@@ -22,10 +22,10 @@
                 <!-- <template slot="selection" slot-scope="data">
                   // HTML that describe how select should render selected items
                   {{ data.item.name }} - {{ data.item.description }}
-                </template> -->
+                </template>-->
                 <template slot="item" slot-scope="data">
                   <!-- // HTML that describe how select should render items when the
-                  select is open -->
+                  select is open-->
                   {{ data.item.code }} - {{ data.item.name }}
                 </template>
               </v-select>
@@ -68,12 +68,7 @@
                 <v-card-title>
                   1st Year 1st Sem
                   <v-spacer></v-spacer>
-                  <addButton
-                    v-if="action != 'view'"
-                    id="11"
-                    ref="add11"
-                    @add="add11()"
-                  ></addButton>
+                  <addButton v-if="action != 'view'" id="11" ref="add11" @add="add11()"></addButton>
                 </v-card-title>
 
                 <v-data-table
@@ -85,7 +80,6 @@
                   "
                   hide-default-footer
                   :items="getChecklistByYearSem(11)"
-                  
                 >
                   <template v-slot:item="props">
                     <tr>
@@ -97,10 +91,7 @@
                       <td></td>
                       <td></td>
                       <td>
-                        <removeButton
-                          v-if="action != 'view'"
-                          @delete="removeCourse(props.item)"
-                        />
+                        <removeButton v-if="action != 'view'" @delete="removeCourse(props.item)" />
                       </td>
                     </tr>
                   </template>
@@ -114,12 +105,7 @@
                 <v-card-title>
                   1st Year 2nd Sem
                   <v-spacer></v-spacer>
-                  <addButton
-                    v-if="action != 'view'"
-                    id="12"
-                    ref="add12"
-                    @add="add12()"
-                  ></addButton>
+                  <addButton v-if="action != 'view'" id="12" ref="add12" @add="add12()"></addButton>
                 </v-card-title>
 
                 <v-data-table
@@ -142,10 +128,7 @@
                       <td></td>
                       <td></td>
                       <td>
-                        <removeButton
-                          v-if="action != 'view'"
-                          @delete="removeCourse(props.item)"
-                        />
+                        <removeButton v-if="action != 'view'" @delete="removeCourse(props.item)" />
                       </td>
                     </tr>
                   </template>
@@ -160,12 +143,7 @@
                 <v-card-title>
                   2nd Year 1st Sem
                   <v-spacer></v-spacer>
-                  <addButton
-                    v-if="action != 'view'"
-                    id="21"
-                    ref="add21"
-                    @add="add21()"
-                  ></addButton>
+                  <addButton v-if="action != 'view'" id="21" ref="add21" @add="add21()"></addButton>
                 </v-card-title>
                 <v-data-table
                   disable-pagination
@@ -187,10 +165,7 @@
                       <td></td>
                       <td></td>
                       <td>
-                        <removeButton
-                          v-if="action != 'view'"
-                          @delete="removeCourse(props.item)"
-                        />
+                        <removeButton v-if="action != 'view'" @delete="removeCourse(props.item)" />
                       </td>
                     </tr>
                   </template>
@@ -204,12 +179,7 @@
                 <v-card-title>
                   2nd Year 2nd Sem
                   <v-spacer></v-spacer>
-                  <addButton
-                    v-if="action != 'view'"
-                    id="22"
-                    ref="add22"
-                    @add="add22()"
-                  ></addButton>
+                  <addButton v-if="action != 'view'" id="22" ref="add22" @add="add22()"></addButton>
                 </v-card-title>
                 <v-data-table
                   disable-pagination
@@ -231,10 +201,7 @@
                       <td></td>
                       <td></td>
                       <td>
-                        <removeButton
-                          v-if="action != 'view'"
-                          @delete="removeCourse(props.item)"
-                        />
+                        <removeButton v-if="action != 'view'" @delete="removeCourse(props.item)" />
                       </td>
                     </tr>
                   </template>
@@ -249,12 +216,7 @@
                 <v-card-title>
                   3rd Year 1st Sem
                   <v-spacer></v-spacer>
-                  <addButton
-                    v-if="action != 'view'"
-                    id="31"
-                    ref="add31"
-                    @add="add31()"
-                  ></addButton>
+                  <addButton v-if="action != 'view'" id="31" ref="add31" @add="add31()"></addButton>
                 </v-card-title>
                 <v-data-table
                   disable-pagination
@@ -276,10 +238,7 @@
                       <td></td>
                       <td></td>
                       <td>
-                        <removeButton
-                          v-if="action != 'view'"
-                          @delete="removeCourse(props.item)"
-                        />
+                        <removeButton v-if="action != 'view'" @delete="removeCourse(props.item)" />
                       </td>
                     </tr>
                   </template>
@@ -293,12 +252,7 @@
                 <v-card-title>
                   3rd Year 2nd Sem
                   <v-spacer></v-spacer>
-                  <addButton
-                    v-if="action != 'view'"
-                    id="32"
-                    ref="add32"
-                    @add="add32()"
-                  ></addButton>
+                  <addButton v-if="action != 'view'" id="32" ref="add32" @add="add32()"></addButton>
                 </v-card-title>
                 <v-data-table
                   disable-pagination
@@ -320,10 +274,7 @@
                       <td></td>
                       <td></td>
                       <td>
-                        <removeButton
-                          v-if="action != 'view'"
-                          @delete="removeCourse(props.item)"
-                        />
+                        <removeButton v-if="action != 'view'" @delete="removeCourse(props.item)" />
                       </td>
                     </tr>
                   </template>
@@ -338,12 +289,7 @@
                 <v-card-title>
                   4th Year 1st Sem
                   <v-spacer></v-spacer>
-                  <addButton
-                    v-if="action != 'view'"
-                    id="41"
-                    ref="add41"
-                    @add="add41()"
-                  ></addButton>
+                  <addButton v-if="action != 'view'" id="41" ref="add41" @add="add41()"></addButton>
                 </v-card-title>
                 <v-data-table
                   disable-pagination
@@ -365,10 +311,7 @@
                       <td></td>
                       <td></td>
                       <td>
-                        <removeButton
-                          v-if="action != 'view'"
-                          @delete="removeCourse(props.item)"
-                        />
+                        <removeButton v-if="action != 'view'" @delete="removeCourse(props.item)" />
                       </td>
                     </tr>
                   </template>
@@ -383,12 +326,7 @@
                   4th Year 2nd Sem
                   <v-spacer></v-spacer>
 
-                  <addButton
-                    v-if="action != 'view'"
-                    id="42"
-                    ref="add42"
-                    @add="add42()"
-                  ></addButton>
+                  <addButton v-if="action != 'view'" id="42" ref="add42" @add="add42()"></addButton>
                 </v-card-title>
                 <v-data-table
                   disable-pagination
@@ -410,10 +348,7 @@
                       <td></td>
                       <td></td>
                       <td>
-                        <removeButton
-                          v-if="action != 'view'"
-                          @delete="removeCourse(props.item)"
-                        />
+                        <removeButton v-if="action != 'view'" @delete="removeCourse(props.item)" />
                       </td>
                     </tr>
                   </template>
@@ -439,9 +374,12 @@
             <addButton :title="title" @add="add" />
           </v-card-title>
           <v-data-table
+            :loading="curriculumLoading"
+            loading-text="Loading... Please wait"
             :headers="headers"
             :items="curriculums"
-            :search="search" dense
+            :search="search"
+            dense
           >
             <template v-slot:item="props">
               <tr>
@@ -545,7 +483,8 @@ export default {
         {
           text: "Action"
         }
-      ]
+      ],
+      curriculumLoading: false
     };
   },
   mounted() {
@@ -554,14 +493,17 @@ export default {
   },
   methods: {
     async getCurriculums() {
+      this.curriculumLoading = true
       let response = (await CurriculumService.getCurriculums()).data;
       let data = [...new Set(response.map(item => item.CourseId))];
+      console.log(data)
       let curriculumArray = [];
       for (let i = 0; i < data.length; i++) {
         curriculumArray.push((await ProgramService.getProgram(data[i])).data);
       }
-
+      console.log(curriculumArray)
       this.curriculums = curriculumArray;
+      this.curriculumLoading = false
     },
     closeDialog() {
       this.openDialog = false;
