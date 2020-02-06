@@ -15,7 +15,12 @@
               <v-btn @click="selectedCategory = 1">
                 <v-icon>mdi-calendar-blank</v-icon>Schedule
               </v-btn>
-              <v-btn @click="selectedCategory = 2; getClasses()">
+              <v-btn
+                @click="
+                  selectedCategory = 2;
+                  getClasses();
+                "
+              >
                 <v-icon>mdi-clock</v-icon>Class
               </v-btn>
             </v-btn-toggle>
@@ -36,27 +41,6 @@
                   clearable
                 ></v-text-field>
                 <addButton :title="title" @add="addSchedule" />
-
-                <!-- <v-menu
-              ref="menu"
-              v-model="timePicker"
-              :close-on-content-click="false"
-              :nudge-right="40"
-              :return-value.sync="time"
-              transition="scale-transition"
-              offset-y
-              max-width="290px"
-              min-width="290px"
-            >
-              <template v-slot:activator="{ on }">
-                <v-btn id="button" @click="openTimePicker" v-on="on">
-                  {{
-                  time ? title : "Time"
-                  }}
-                </v-btn>
-              </template>
-              <v-time-picker v-if="timePicker" v-model="time" scrollable></v-time-picker>
-                </v-menu>-->
               </v-card-title>
               <scheduleForm
                 ref="scheduleForm"
@@ -81,6 +65,12 @@
                 ></v-text-field>
                 <addButton :title="title" @add="addClass" />
               </v-card-title>
+              <confirmationDialog
+                :dialog="classConfirmationDialog"
+                :title="classConfirmDialogTitle"
+                @no="closeClassConfirmDialog"
+                @yes="deleteClass"
+              ></confirmationDialog>
               <v-data-table :headers="classHeaders" :items="classes" search>
                 <template v-slot:item="props">
                   <tr>
@@ -92,8 +82,8 @@
                     <td>{{ props.item.time_start + " - " + props.item.time_end }}</td>
                     <td>{{ props.item.room.code }}</td>
                     <td>
-                      <editButton />
-                      <deleteButton />
+                      <editButton @edit="editClass(props.item)" />
+                      <deleteButton @delete="deleteItem(props.item.id)" />
                     </td>
                   </tr>
                 </template>
@@ -106,185 +96,173 @@
                     </v-card-title>
                     <v-card-text>
                       <v-container>
-                        <v-row>
-                          <v-col cols="12" sm="6" md="4">
-                            <v-select
-                              v-model="classProgramId"
-                              :items="classPrograms"
-                              label="Program"
-                              item-text="code"
-                              item-value="id"
-                              @input="classProgramSelected"
-                            ></v-select>
-                          </v-col>
-                        </v-row>
-                        <v-row>
-                          <v-col cols="12" sm="6" md="4">
-                            <v-text-field label="Class No." v-model="classClassNo" type="number"></v-text-field>
-                          </v-col>
-                          <v-col cols="12" sm="6" md="4">
-                            <v-select
-                              v-model="classSectionId"
-                              :items="classSections"
-                              label="Section"
-                              item-text="code"
-                              item-value="id"
-                            ></v-select>
-                          </v-col>
-                          <v-col cols="12" sm="6" md="4">
-                            <v-select
-                              v-model="classCourseId"
-                              :items="classCourses"
-                              label="Course"
-                              item-text="code"
-                              item-value="id"
-                            ></v-select>
-                          </v-col>
-                          <v-col cols="12" sm="6" md="6">
-                            <v-text-field label="Units" readonly></v-text-field>
-                          </v-col>
-                          <v-col cols="12" sm="6" md="6">
-                            <v-select
-                              v-model="classRoomId"
-                              :items="classRooms"
-                              label="Room"
-                              item-text="code"
-                              item-value="id"
-                            ></v-select>
-                          </v-col>
-                          <v-col cols="12" sm="6">
-                            <v-autocomplete
-                              v-model="classDay"
-                              :items="days"
-                              dense
-                              chips
-                              small-chips
-                              label="Days"
-                              multiple
-                            ></v-autocomplete>
-                          </v-col>
+                        <v-form ref="classForm">
+                          <v-row>
+                            <v-col cols="12" sm="6" md="4">
+                              <v-select
+                                v-model="classProgramId"
+                                :rules="[classRules.required]"
+                                :items="classPrograms"
+                                label="Program"
+                                item-text="code"
+                                item-value="id"
+                                @input="classProgramSelected"
+                              ></v-select>
+                            </v-col>
+                          </v-row>
+                          <v-row>
+                            <v-col cols="12" sm="6" md="4">
+                              <v-text-field
+                                label="Class No."
+                                v-model="classClassNo"
+                                type="number"
+                                :rules="[classRules.required]"
+                              ></v-text-field>
+                            </v-col>
+                            <v-col cols="12" sm="6" md="4">
+                              <v-select
+                                v-model="classSectionId"
+                                :rules="[classRules.required]"
+                                :items="classSections"
+                                label="Section"
+                                item-text="code"
+                                item-value="id"
+                              ></v-select>
+                            </v-col>
+                            <v-col cols="12" sm="6" md="4">
+                              <v-select
+                                v-model="classCourseId"
+                                :rules="[classRules.required]"
+                                :items="classCourses"
+                                label="Course"
+                                item-text="code"
+                                item-value="id"
+                                @input="setClassUnits()"
+                              ></v-select>
+                            </v-col>
+                            <v-col cols="12" sm="6" md="6">
+                              <v-text-field label="Units" readonly v-model="classUnits"></v-text-field>
+                            </v-col>
+                            <v-col cols="12" sm="6" md="6">
+                              <v-select
+                                v-model="classRoomId"
+                                :rules="[classRules.required]"
+                                :items="classRooms"
+                                label="Room"
+                                item-text="code"
+                                item-value="id"
+                              ></v-select>
+                            </v-col>
+                            <v-col cols="12" sm="6">
+                              <v-autocomplete
+                                v-model="classDay"
+                                :rules="[classRules.required]"
+                                :items="days"
+                                item-text="text"
+                                item-value="value"
+                                dense
+                                chips
+                                small-chips
+                                label="Days"
+                                multiple
+                              ></v-autocomplete>
+                            </v-col>
 
-                          <v-col cols="12" sm="3">
-                            <v-dialog
-                              ref="startTimedialog"
-                              v-model="classStartTimeDialog"
-                              :return-value.sync="classTimeStart"
-                              persistent
-                              width="290px"
-                            >
-                              <template v-slot:activator="{ on }">
-                                <v-text-field
+                            <v-col cols="12" sm="3">
+                              <v-dialog
+                                ref="startTimedialog"
+                                v-model="classStartTimeDialog"
+                                :return-value.sync="classTimeStart"
+                                persistent
+                                width="290px"
+                              >
+                                <template v-slot:activator="{ on }">
+                                  <v-text-field
+                                    :rules="[classRules.required]"
+                                    v-model="classTimeStart"
+                                    label="Time Start"
+                                    prepend-icon="access_time"
+                                    readonly
+                                    v-on="on"
+                                  ></v-text-field>
+                                </template>
+                                <v-time-picker
+                                  v-if="classStartTimeDialog"
                                   v-model="classTimeStart"
-                                  label="Time Start"
-                                  prepend-icon="access_time"
-                                  readonly
-                                  v-on="on"
-                                ></v-text-field>
-                              </template>
-                              <v-time-picker
-                                v-if="classStartTimeDialog"
-                                v-model="classTimeStart"
-                                full-width
-                                :max="classTimeEnd"
-                              >
-                                <v-spacer></v-spacer>
-                                <v-btn
-                                  text
-                                  color="primary"
-                                  @click="classStartTimeDialog = false"
-                                >Cancel</v-btn>
-                                <v-btn
-                                  text
-                                  color="primary"
-                                  @click="
-                                    $refs.startTimedialog.save(classTimeStart)
-                                  "
-                                >OK</v-btn>
-                              </v-time-picker>
-                            </v-dialog>
-                          </v-col>
+                                  full-width
+                                  :max="classTimeEnd"
+                                >
+                                  <v-spacer></v-spacer>
+                                  <v-btn
+                                    text
+                                    color="primary"
+                                    @click="classStartTimeDialog = false"
+                                  >Cancel</v-btn>
+                                  <v-btn
+                                    text
+                                    color="primary"
+                                    @click="
+                                      $refs.startTimedialog.save(classTimeStart)
+                                    "
+                                  >OK</v-btn>
+                                </v-time-picker>
+                              </v-dialog>
+                            </v-col>
 
-                          <v-col cols="12" sm="3">
-                            <v-dialog
-                              ref="endTimedialog"
-                              v-model="classEndTimeDialog"
-                              :return-value.sync="classTimeEnd"
-                              persistent
-                              width="290px"
-                            >
-                              <template v-slot:activator="{ on }">
-                                <v-text-field
+                            <v-col cols="12" sm="3">
+                              <v-dialog
+                                ref="endTimedialog"
+                                v-model="classEndTimeDialog"
+                                :return-value.sync="classTimeEnd"
+                                persistent
+                                width="290px"
+                              >
+                                <template v-slot:activator="{ on }">
+                                  <v-text-field
+                                    v-model="classTimeEnd"
+                                    :rules="[classRules.required]"
+                                    label="Time End"
+                                    prepend-icon="access_time"
+                                    readonly
+                                    v-on="on"
+                                  ></v-text-field>
+                                </template>
+                                <v-time-picker
+                                  v-if="classEndTimeDialog"
                                   v-model="classTimeEnd"
-                                  label="Time End"
-                                  prepend-icon="access_time"
-                                  readonly
-                                  v-on="on"
-                                ></v-text-field>
-                              </template>
-                              <v-time-picker
-                                v-if="classEndTimeDialog"
-                                v-model="classTimeEnd"
-                                full-width
-                                :min="classTimeStart"
-                              >
-                                <v-spacer></v-spacer>
-                                <v-btn
-                                  text
-                                  color="primary"
-                                  @click="classEndTimeDialog = false"
-                                >Cancel</v-btn>
-                                <v-btn
-                                  text
-                                  color="primary"
-                                  @click="
-                                    $refs.endTimedialog.save(classTimeEnd)
-                                  "
-                                >OK</v-btn>
-                              </v-time-picker>
-                            </v-dialog>
-                          </v-col>
-
-                          <!-- <v-col cols="12" sm="6"> -->
-                          <!-- <v-dialog v-model="classTimeDialog" persistent max-width="290">
-                            <template v-slot:activator="{ on }">
-                              <v-btn color="primary" dark v-on="on">Time</v-btn>
-                            </template>
-                            <v-card width="200">
-                              <v-card-text>
-                                <v-row justify="space-around" align="center">
-                                  <v-col style="width: 290px; flex: 0 1 auto;">
-                                    <h2>Start:</h2>
-                                    <v-time-picker v-model="classTimeStart" :max="classTimeEnd"></v-time-picker>
-                                  </v-col>
-                                  <v-col style="width: 290px; flex: 0 1 auto;">
-                                    <h2>End:</h2>
-                                    <v-time-picker v-model="classTimeEnd" :min="classTimeStart"></v-time-picker>
-                                  </v-col>
-                                </v-row>
-                              </v-card-text>
-                              <v-card-actions>
-                                <v-spacer></v-spacer>
-                                <v-btn
-                                  color="green darken-1"
-                                  text
-                                  @click="classTimeDialog = false"
-                                >Disagree</v-btn>
-                                <v-btn
-                                  color="green darken-1"
-                                  text
-                                  @click="classTimeDialog = false"
-                                >Agree</v-btn>
-                              </v-card-actions>
-                            </v-card>
-                          </v-dialog>-->
-                          <!-- </v-col> -->
-                        </v-row>
+                                  full-width
+                                  :min="classTimeStart"
+                                >
+                                  <v-spacer></v-spacer>
+                                  <v-btn
+                                    text
+                                    color="primary"
+                                    @click="classEndTimeDialog = false"
+                                  >Cancel</v-btn>
+                                  <v-btn
+                                    text
+                                    color="primary"
+                                    @click="
+                                      $refs.endTimedialog.save(classTimeEnd)
+                                    "
+                                  >OK</v-btn>
+                                </v-time-picker>
+                              </v-dialog>
+                            </v-col>
+                          </v-row>
+                        </v-form>
                       </v-container>
                     </v-card-text>
                     <v-card-actions>
                       <v-spacer></v-spacer>
                       <v-btn color="blue darken-1" text @click="closeClassDialog">Close</v-btn>
-                      <v-btn color="blue darken-1" text @click="saveClass">Save</v-btn>
+                      <v-btn
+                        color="blue darken-1"
+                        text
+                        @click="
+                          action == 'add' ? saveAddClass() : saveEditClass()
+                        "
+                      >Save</v-btn>
                     </v-card-actions>
                   </v-card>
                 </v-dialog>
@@ -371,17 +349,20 @@ export default {
       ],
       selectedCategory: 1,
       toggle_exclusive: undefined,
+      class_id: null,
       classes: [],
-      classProgramId: "", // v-model for class v-select
+      classProgramId: null, // v-model for class v-select
       classPrograms: [], // items for class v-select
-      classSectionId: "",
+      classSectionId: null,
       classSections: [],
-      classCourseId: "",
+      classCourseId: null,
       classCourses: [],
-      classRoomId: "",
+      classRoomId: null,
       classRooms: [],
       classClassNo: "",
       classUnits: "",
+      classConfirmationDialog: false,
+      classConfirmDialogTitle: "delete",
       days: [
         {
           text: "Monday",
@@ -408,21 +389,23 @@ export default {
           value: "SAT"
         },
         {
-          text: "SUNDAY",
+          text: "Sunday",
           value: "SUN"
         }
       ],
-      classDay: "",
+      classDay: null,
       classStartTimeDialog: false,
       classEndTimeDialog: false,
       classTimeStart: null,
-      classTimeEnd: null
+      classTimeEnd: null,
+      classRules: {
+        required: value => !!value || "Required."
+      }
     };
   },
   methods: {
     async getClasses() {
       this.classes = (await ClassService.getClasses()).data;
-      console.log(this.classes);
     },
     async getPrograms() {
       this.classPrograms = (await ProgramService.getPrograms()).data;
@@ -431,7 +414,10 @@ export default {
       this.classSections = (await SectionService.getSections()).data;
     },
     async getCourses() {
-      let data = (await CurriculumService.getCurriculums()).data;
+      let data = await Promise.all(
+        (await CurriculumService.getCurriculums()).data
+      );
+
       this.classCourses = data
         .filter(data => {
           return this.classProgramId == data.CourseId;
@@ -440,7 +426,7 @@ export default {
           let id = data.subjects.id;
           let code = data.subjects.code;
           let name = data.subjects.name;
-          let units = data.subjects.unit;
+          let units = data.subjects.units;
 
           return {
             id: id,
@@ -452,7 +438,6 @@ export default {
     },
     async getRooms() {
       this.classRooms = (await RoomService.getRooms()).data;
-      console.log(this.classRooms);
     },
     async classProgramSelected() {
       await this.getSections();
@@ -468,6 +453,7 @@ export default {
       this.openScheduleDialog = true;
     },
     addClass() {
+      this.action = "add";
       this.classDialog = true;
       this.getPrograms();
       this.getRooms();
@@ -477,6 +463,7 @@ export default {
       this.openScheduleDialog = false;
     },
     closeClassDialog() {
+      this.resetClassForm();
       this.classDialog = false;
     },
     resetSchedule() {
@@ -496,20 +483,116 @@ export default {
       this.closeScheduleDialog();
       this.resetSchedule();
     },
-    saveClass() {
-      this.closeClassDialog();
+    async saveAddClass() {
+      if (this.$refs.classForm.validate()) {
+        let classDays = "";
+        for (let i = 0; i < this.classDay.length; i++) {
+          classDays +=
+            "" + this.classDay[i] + (i < this.classDay.length - 1 ? "/" : "");
+        }
+
+        this.classDay = await classDays;
+        let data = {
+          class_no: this.classClassNo,
+          CourseId: this.classProgramId,
+          SubjectId: this.classCourseId,
+          SectionId: this.classSectionId,
+          RoomId: this.classRoomId,
+          day: this.classDay,
+          time_start: this.classTimeStart,
+          time_end: this.classTimeEnd
+        };
+
+        console.log(data);
+
+        await ClassService.addClass(data);
+        this.closeClassDialog();
+        this.getClasses();
+      }
+    },
+
+    // set units when course is selected
+    async setClassUnits() {
+      let data = await Promise.all(
+        this.classCourses.filter(course => {
+          return course.id == this.classCourseId;
+        })
+      );
+      this.classUnits = data[0].units;
+    },
+
+    async editClass(data) {
+      this.action = "edit";
+      this.getPrograms();
+      this.getSections();
+      this.getCourses();
+      this.getRooms();
+      this.class_id = data.id;
+      this.classProgramId = data.course.id;
+      this.classClassNo = data.class_no;
+      (this.classCourseId = data.subject.id),
+        (this.classSectionId = data.section.id),
+        (this.classRoomId = data.room.id);
+      this.classUnits = data.subject.units;
+
+      let classday = data.day.split("-");
+
+      this.classDay = classday;
+      this.classTimeStart = data.time_start;
+      this.classTimeEnd = data.time_end;
+
+      this.classDialog = true;
+    },
+
+    async saveEditClass() {
+      let classDays = "";
+      for (let i = 0; i < this.classDay.length; i++) {
+        classDays +=
+          "" + this.classDay[i] + (i < this.classDay.length - 1 ? "/" : "");
+      }
+
+      this.classDay = await classDays;
       let data = {
+        id: this.class_id,
         class_no: this.classClassNo,
-        ProgramId: this.classProgramId,
-        CourseId: this.classCourseId,
+        CourseId: this.classProgramId,
+        SubjectId: this.classCourseId,
         SectionId: this.classSectionId,
         RoomId: this.classRoomId,
-        units: this.classUnits,
         day: this.classDay,
-        time: this.classTimeStart + "-" + this.classTimeEnd
+        time_start: this.classTimeStart,
+        time_end: this.classTimeEnd
       };
+      await ClassService.editClass(data);
+      this.closeClassDialog();
+      this.getClasses();
+    },
 
-      console.log(data);
+    closeClassConfirmDialog() {
+      this.classConfirmationDialog = false;
+    },
+
+    deleteItem(id) {
+      this.classConfirmationDialog = true;
+      this.class_id = id;
+    },
+
+    async deleteClass() {
+      await ClassService.deleteClass(this.class_id);
+      this.closeClassConfirmDialog();
+      this.getClasses();
+    },
+
+    // reset classform
+    resetClassForm() {
+      (this.classClassNo = ""), (this.classCourseId = null);
+      this.classProgramId = null;
+      this.classUnits = "";
+      this.classSectionId = null;
+      this.classRoomId = null;
+      this.classDay = null;
+      this.classTimeStart = null;
+      this.classTimeEnd = null;
     }
   }
 };

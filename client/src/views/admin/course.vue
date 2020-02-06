@@ -165,10 +165,9 @@ export default {
       this.subjects = data;
     },
     async getPrerequisites() {
-      this.prerequisites = this.subjects.filter(data => {
+      this.prerequisites = await this.subjects.filter(data => {
         return data.id != this.id;
       });
-      console.log("pre" + this.prerequisites);
     },
     async getCurriculum() {
       this.curriculums = (await CurriculumService.getCurriculums()).data;
@@ -197,7 +196,6 @@ export default {
           let prerequisiteArray = [];
 
           if (data.prerequisites) {
-            console.log(data.prerequisites);
             let prerequisites = await data.prerequisites.split(",");
 
             for (let prerequisite of prerequisites) {
@@ -278,17 +276,16 @@ export default {
         prerequisites: await prerequisites
       };
 
-      // await CourseService.addCourse(data);
-      console.log(data);
+      await CourseService.addCourse(data);
       this.getCourses();
       this.openAddDialog = false;
       this.reset();
     },
     async editCourse(id) {
-      await this.getPrerequisites();
       this.action = "edit";
       let subject = (await CourseService.getCourse(id)).data;
       this.id = subject.id;
+      await this.getPrerequisites();
       this.course_code = subject.code;
       this.course_name = subject.name;
       this.course_units = subject.units;
@@ -307,10 +304,16 @@ export default {
         ? prerequisiteArray
         : "";
       this.openAddDialog = true;
-
-      console.log(prerequisiteArray);
     },
     async saveEditCourse() {
+      if (typeof this.course_prerequisites[0] == "object") {
+        this.course_prerequisites = await Promise.all(
+          this.course_prerequisites.map(data => {
+            return data.id;
+          })
+        );
+      }
+
       let prerequisites = "";
       for (let i = 0; i < this.course_prerequisites.length; i++) {
         prerequisites +=
