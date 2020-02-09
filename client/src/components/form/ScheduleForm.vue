@@ -29,7 +29,11 @@
               ></v-select>
             </v-col>
           </v-row>
-          <v-data-table :headers="headers" :items="schedules" hide-default-footer>
+          <v-data-table
+            :headers="headers"
+            :items="schedules"
+            hide-default-footer
+          >
             <template v-slot:item="props">
               <tr>
                 <td>
@@ -39,14 +43,21 @@
                     @cancel="cancelEdit"
                     @open="openEdit"
                     @close="closeEdit"
+                    large
                   >
                     {{
-                    props.item.class_no ? props.item.class_no : "------------"
+                      props.item.class_no ? props.item.class_no : "------------"
                     }}
-                    <template
-                      v-slot:input
-                    >
-                      <v-text-field v-model="props.item.class_no" label="Class No" single-line></v-text-field>
+                    <template v-slot:input>
+                      <!-- <v-text-field v-model="props.item.class_no" label="Class No" single-line></v-text-field> -->
+                      <v-select
+                        :items="classes"
+                        v-model="props.item.class_no"
+                        label="Class"
+                        item-text="class_no"
+                        item-value="class_no"
+                        @input="setClass(props.item)"
+                      ></v-select>
                     </template>
                   </v-edit-dialog>
                 </td>
@@ -71,13 +82,17 @@
                     </template>
                   </v-edit-dialog>
                 </td>
-                <td>{{ props.item.section ? props.item.section : sectionId }}</td>
+                <td>
+                  {{ props.item.section ? props.item.section : sectionId }}
+                </td>
                 <td>{{ props.item.units }}</td>
                 <td>{{ props.item.day }}</td>
                 <td>{{ props.item.time }}</td>
                 <td>{{ props.item.room }}</td>
                 <td>
-                  <removeButton @delete="removeClass(props.item)"></removeButton>
+                  <removeButton
+                    @delete="removeClass(props.item)"
+                  ></removeButton>
                 </td>
               </tr>
             </template>
@@ -101,6 +116,7 @@
 import ProgramService from "@/services/ProgramService";
 import SectionService from "@/services/SectionService";
 import CurriculumService from "@/services/CurriculumService";
+import ClassService from "@/services/ClassService";
 
 export default {
   props: {
@@ -145,6 +161,7 @@ export default {
       sectionId: "",
       courses: [],
       course_name: "",
+      classes: [],
       snack: false,
       snackText: "",
       snackColor: ""
@@ -158,6 +175,7 @@ export default {
       this.$emit("save");
     },
     add() {
+      this.getClasses();
       let data = {
         class_no: "",
         course_name: "",
@@ -167,14 +185,12 @@ export default {
         time: "",
         room: ""
       };
-
       this.schedules.push(data);
     },
     saveEdit() {
       this.snack = true;
       this.snackColor = "success";
       this.snackText = "Data saved";
-      console.log(this.schedules);
     },
     cancelEdit() {
       this.snack = true;
@@ -198,6 +214,12 @@ export default {
     // get all sections
     async getSections() {
       this.sections = (await SectionService.getSections()).data;
+    },
+
+    // get classes
+    async getClasses() {
+      this.classes = (await ClassService.getClasses()).data;
+      console.log(this.classes);
     },
 
     // get all courses according to its program
@@ -240,6 +262,25 @@ export default {
       let index = this.schedules.indexOf(data);
       console.log("index", index);
       this.schedules[index].course_name = data.course_name;
+    },
+
+    setClass(data) {
+      let response = this.classes.filter(response => {
+        return response.class_no == data.class_no;
+      });
+
+      let index = this.schedules.indexOf(data);
+
+      this.schedules[index].course_name = response[0].subject.name;
+      this.schedules[index].section = response[0].section.code;
+      this.schedules[index].units = response[0].subject.units;
+      this.schedules[index].day = response[0].day;
+      this.schedules[
+        index
+      ].time = `${response[0].time_start} - ${response[0].time_end}`;
+      this.schedules[index].room = response[0].room.code;
+
+      console.log(response);
     }
 
     // saveEditCourse(data) {

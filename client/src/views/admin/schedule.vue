@@ -11,7 +11,11 @@
               item-text="text"
               item-value="code"
             ></v-select>-->
-            <v-btn-toggle color="blue darken-4" v-model="toggle_exclusive" mandatory>
+            <v-btn-toggle
+              color="blue darken-4"
+              v-model="toggle_exclusive"
+              mandatory
+            >
               <v-btn @click="selectedCategory = 1">
                 <v-icon>mdi-calendar-blank</v-icon>Schedule
               </v-btn>
@@ -79,7 +83,9 @@
                     <td>{{ props.item.section.code }}</td>
                     <td>{{ props.item.subject.units }}</td>
                     <td>{{ props.item.day }}</td>
-                    <td>{{ props.item.time_start + " - " + props.item.time_end }}</td>
+                    <td>
+                      {{ props.item.time_start + " - " + props.item.time_end }}
+                    </td>
                     <td>{{ props.item.room.code }}</td>
                     <td>
                       <editButton @edit="editClass(props.item)" />
@@ -141,7 +147,11 @@
                               ></v-select>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
-                              <v-text-field label="Units" readonly v-model="classUnits"></v-text-field>
+                              <v-text-field
+                                label="Units"
+                                readonly
+                                v-model="classUnits"
+                              ></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
                               <v-select
@@ -197,14 +207,16 @@
                                     text
                                     color="primary"
                                     @click="classStartTimeDialog = false"
-                                  >Cancel</v-btn>
+                                    >Cancel</v-btn
+                                  >
                                   <v-btn
                                     text
                                     color="primary"
                                     @click="
                                       $refs.startTimedialog.save(classTimeStart)
                                     "
-                                  >OK</v-btn>
+                                    >OK</v-btn
+                                  >
                                 </v-time-picker>
                               </v-dialog>
                             </v-col>
@@ -238,14 +250,16 @@
                                     text
                                     color="primary"
                                     @click="classEndTimeDialog = false"
-                                  >Cancel</v-btn>
+                                    >Cancel</v-btn
+                                  >
                                   <v-btn
                                     text
                                     color="primary"
                                     @click="
                                       $refs.endTimedialog.save(classTimeEnd)
                                     "
-                                  >OK</v-btn>
+                                    >OK</v-btn
+                                  >
                                 </v-time-picker>
                               </v-dialog>
                             </v-col>
@@ -255,14 +269,20 @@
                     </v-card-text>
                     <v-card-actions>
                       <v-spacer></v-spacer>
-                      <v-btn color="blue darken-1" text @click="closeClassDialog">Close</v-btn>
+                      <v-btn
+                        color="blue darken-1"
+                        text
+                        @click="closeClassDialog"
+                        >Close</v-btn
+                      >
                       <v-btn
                         color="blue darken-1"
                         text
                         @click="
                           action == 'add' ? saveAddClass() : saveEditClass()
                         "
-                      >Save</v-btn>
+                        >Save</v-btn
+                      >
                     </v-card-actions>
                   </v-card>
                 </v-dialog>
