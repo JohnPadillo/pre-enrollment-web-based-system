@@ -11,11 +11,7 @@
               item-text="text"
               item-value="code"
             ></v-select>-->
-            <v-btn-toggle
-              color="blue darken-4"
-              v-model="toggle_exclusive"
-              mandatory
-            >
+            <v-btn-toggle color="blue darken-4" v-model="toggle_exclusive" mandatory>
               <v-btn @click="selectedCategory = 1">
                 <v-icon>mdi-calendar-blank</v-icon>Schedule
               </v-btn>
@@ -52,7 +48,26 @@
                 @save="saveSchedule"
                 @close="closeScheduleDialog"
               ></scheduleForm>
-              <v-data-table :headers="scheduleHeaders" search></v-data-table>
+              <v-data-table
+                :headers="scheduleHeaders"
+                :items="schedules"
+                dense
+                :loading="scheduleLoading"
+                loading-text="Loading..."
+                :search="search"
+              >
+                <template v-slot:item="props">
+                  <tr>
+                    <td>{{ props.item.course.code }}</td>
+                    <td>{{ props.item.code }}</td>
+                    <td align="center">
+                      <viewButton />
+                      <editButton />
+                      <deleteButton />
+                    </td>
+                  </tr>
+                </template>
+              </v-data-table>
             </v-card>
             <!-- ================================================================================================================== -->
             <v-card v-if="selectedCategory == 2">
@@ -75,7 +90,7 @@
                 @no="closeClassConfirmDialog"
                 @yes="deleteClass"
               ></confirmationDialog>
-              <v-data-table :headers="classHeaders" :items="classes" search>
+              <v-data-table :headers="classHeaders" :items="classes" :search="searchClass">
                 <template v-slot:item="props">
                   <tr>
                     <td>{{ props.item.class_no }}</td>
@@ -83,9 +98,7 @@
                     <td>{{ props.item.section.code }}</td>
                     <td>{{ props.item.subject.units }}</td>
                     <td>{{ props.item.day }}</td>
-                    <td>
-                      {{ props.item.time_start + " - " + props.item.time_end }}
-                    </td>
+                    <td>{{ props.item.time_start + " - " + props.item.time_end }}</td>
                     <td>{{ props.item.room.code }}</td>
                     <td>
                       <editButton @edit="editClass(props.item)" />
@@ -147,11 +160,7 @@
                               ></v-select>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
-                              <v-text-field
-                                label="Units"
-                                readonly
-                                v-model="classUnits"
-                              ></v-text-field>
+                              <v-text-field label="Units" readonly v-model="classUnits"></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
                               <v-select
@@ -207,16 +216,14 @@
                                     text
                                     color="primary"
                                     @click="classStartTimeDialog = false"
-                                    >Cancel</v-btn
-                                  >
+                                  >Cancel</v-btn>
                                   <v-btn
                                     text
                                     color="primary"
                                     @click="
                                       $refs.startTimedialog.save(classTimeStart)
                                     "
-                                    >OK</v-btn
-                                  >
+                                  >OK</v-btn>
                                 </v-time-picker>
                               </v-dialog>
                             </v-col>
@@ -250,16 +257,14 @@
                                     text
                                     color="primary"
                                     @click="classEndTimeDialog = false"
-                                    >Cancel</v-btn
-                                  >
+                                  >Cancel</v-btn>
                                   <v-btn
                                     text
                                     color="primary"
                                     @click="
                                       $refs.endTimedialog.save(classTimeEnd)
                                     "
-                                    >OK</v-btn
-                                  >
+                                  >OK</v-btn>
                                 </v-time-picker>
                               </v-dialog>
                             </v-col>
@@ -269,20 +274,14 @@
                     </v-card-text>
                     <v-card-actions>
                       <v-spacer></v-spacer>
-                      <v-btn
-                        color="blue darken-1"
-                        text
-                        @click="closeClassDialog"
-                        >Close</v-btn
-                      >
+                      <v-btn color="blue darken-1" text @click="closeClassDialog">Close</v-btn>
                       <v-btn
                         color="blue darken-1"
                         text
                         @click="
                           action == 'add' ? saveAddClass() : saveEditClass()
                         "
-                        >Save</v-btn
-                      >
+                      >Save</v-btn>
                     </v-card-actions>
                   </v-card>
                 </v-dialog>
@@ -302,11 +301,12 @@ import SectionService from "@/services/SectionService";
 import CurriculumService from "@/services/CurriculumService";
 import RoomService from "@/services/RoomService";
 import ClassService from "@/services/ClassService";
+import ScheduleService from "@/services/ScheduleService";
 
 export default {
-  // mounted() {
-  //   this.getClasses();
-  // },
+  mounted() {
+    this.getSchedules();
+  },
   components: {
     ScheduleForm
   },
@@ -322,13 +322,16 @@ export default {
       classDialog: false,
       scheduleHeaders: [
         {
-          text: "Program"
+          text: "Program",
+          value: "course.code"
         },
         {
-          text: "Section"
+          text: "Section",
+          value: "code"
         },
         {
-          text: "Action"
+          text: "Action",
+          align: "center"
         }
       ],
       category: [
@@ -343,25 +346,30 @@ export default {
       ],
       classHeaders: [
         {
-          text: "Class No."
+          text: "Class No.",
+          value: "class_no"
         },
         {
-          text: "Course Description"
+          text: "Course Description",
+          value: "subject.name"
         },
         {
-          text: "Section"
+          text: "Section",
+          value: "section.code"
         },
         {
           text: "Units"
         },
         {
-          text: "Day"
+          text: "Day",
+          value: "day"
         },
         {
           text: "Time"
         },
         {
-          text: "Room"
+          text: "Room",
+          value: "room.code"
         },
         {
           text: "Action"
@@ -420,10 +428,30 @@ export default {
       classTimeEnd: null,
       classRules: {
         required: value => !!value || "Required."
-      }
+      },
+      schedules: [],
+      scheduleLoading: false
     };
   },
   methods: {
+    async getSchedules() {
+      this.scheduleLoading = true;
+      let response = (await ScheduleService.getSchedules()).data;
+      console.log(response);
+
+      let data = [...new Set(response.map(item => item.section.id))];
+      console.log(data);
+
+      let scheduleArray = [];
+
+      for (let i = 0; i < data.length; i++) {
+        scheduleArray.push((await SectionService.getSection(data[i])).data);
+      }
+
+      this.schedules = scheduleArray;
+      console.log(this.schedules);
+      this.scheduleLoading = false;
+    },
     async getClasses() {
       this.classes = (await ClassService.getClasses()).data;
     },
@@ -487,18 +515,27 @@ export default {
       this.classDialog = false;
     },
     resetSchedule() {
-      (this.$refs.scheduleForm.programId = ""),
-        (this.$refs.scheduleForm.sectionId = ""),
-        (this.$refs.scheduleForm.programs = []);
+      this.$refs.scheduleForm.sectionId = "";
+      // this.$refs.scheduleForm.programs = [];
       this.$refs.scheduleForm.schedules = [];
+      this.$refs.scheduleForm.programId = "";
     },
-    saveSchedule() {
-      let data = {
-        programId: this.$refs.scheduleForm.programId,
-        sectionId: this.$refs.scheduleForm.sectionId
-      };
-      console.log(this.$refs.scheduleForm.schedules);
-      console.log(data);
+    async saveSchedule() {
+      // let data = {
+      //   programId: this.$refs.scheduleForm.programId,
+      //   sectionId: this.$refs.scheduleForm.sectionId
+      // };
+
+      let data = this.$refs.scheduleForm.schedules.map(data => {
+        return {
+          CourseId: this.$refs.scheduleForm.programId,
+          SectionId: this.$refs.scheduleForm.sectionId,
+          ClassId: data.id,
+          RoomId: data.roomId
+        };
+      });
+
+      await ScheduleService.addSchedule(data);
 
       this.closeScheduleDialog();
       this.resetSchedule();

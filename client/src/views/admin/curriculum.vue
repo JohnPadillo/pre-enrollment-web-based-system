@@ -493,7 +493,7 @@ export default {
   },
   methods: {
     async getCurriculums() {
-      this.curriculumLoading = true
+      this.curriculumLoading = true;
       let response = (await CurriculumService.getCurriculums()).data;
       // console.log(response)
       let data = [...new Set(response.map(item => item.CourseId))];
@@ -503,7 +503,7 @@ export default {
         curriculumArray.push((await ProgramService.getProgram(data[i])).data);
       }
       this.curriculums = curriculumArray;
-      this.curriculumLoading = false
+      this.curriculumLoading = false;
     },
     closeDialog() {
       this.openDialog = false;
@@ -733,7 +733,7 @@ export default {
       this.openDialog = true;
       this.programId = id;
       this.subjects = (await CurriculumService.getCurriculum(id)).data;
-      console.log(this.subjects)
+      console.log(this.subjects);
 
       let data = await this.subjects.map(data => {
         let name = data.subject.name;
@@ -753,8 +753,7 @@ export default {
         };
       });
       this.subjects = data;
-      console.log(this.subjects)
-
+      console.log(this.subjects);
     },
 
     async editCurriculum(data) {
