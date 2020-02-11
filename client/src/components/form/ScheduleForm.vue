@@ -59,6 +59,7 @@
                         label="Class"
                         item-text="class_no"
                         item-value="class_no"
+                        :disabled="action == 'view' ? true : false"
                         @input="setClass(props.item)"
                       ></v-select>
                     </template>
