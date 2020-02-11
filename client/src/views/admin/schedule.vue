@@ -45,6 +45,7 @@
               <scheduleForm
                 ref="scheduleForm"
                 :dialog="openScheduleDialog"
+                :action="action"
                 @save="saveSchedule"
                 @close="closeScheduleDialog"
               ></scheduleForm>
@@ -61,7 +62,7 @@
                     <td>{{ props.item.course.code }}</td>
                     <td>{{ props.item.code }}</td>
                     <td align="center">
-                      <viewButton />
+                      <viewButton @view="viewSchedule(props.item)" />
                       <editButton />
                       <deleteButton />
                     </td>
@@ -498,6 +499,7 @@ export default {
       this.timePicker = true;
     },
     addSchedule() {
+      this.action = "add";
       this.openScheduleDialog = true;
     },
     addClass() {
@@ -650,6 +652,39 @@ export default {
       this.classDay = null;
       this.classTimeStart = null;
       this.classTimeEnd = null;
+    },
+
+    // view schedule
+    async viewSchedule(data) {
+      this.action = "view";
+      this.openScheduleDialog = true;
+      this.$refs.scheduleForm.programId = data.course.id;
+      this.$refs.scheduleForm.sectionId = data.id;
+      let response = (await ScheduleService.getSchedules()).data;
+
+      let schedules = await Promise.all(
+        response
+          .filter(reponse => {
+            return reponse.SectionId == data.id;
+          })
+          .map(async data => {
+            let response = (await ClassService.getClass(data.ClassId)).data;
+            return {
+              id: response.id,
+              class_no: response.class_no,
+              course_name: response.subject.name,
+              section: response.section.name,
+              units: response.subject.units,
+              day: response.day,
+              time: `${response.time_start} - ${response.time_end}`,
+              room: response.room.code,
+              roomId: response.room.id
+            };
+          })
+      );
+
+      this.$refs.scheduleForm.schedules = schedules;
+      console.log(schedules);
     }
   }
 };

@@ -5,7 +5,7 @@
         <v-card-title>
           <span class="headline">Schedule</span>
           <v-spacer></v-spacer>
-          <addButton :title="title" @add="add" />
+          <addButton v-if="action != 'view'" :title="title" @add="add" />
         </v-card-title>
         <v-card-text>
           <v-row>
@@ -30,7 +30,11 @@
               ></v-select>
             </v-col>
           </v-row>
-          <v-data-table :headers="headers" :items="schedules" hide-default-footer>
+          <v-data-table
+            :headers="action != 'view' ? headers : headers2"
+            :items="schedules"
+            hide-default-footer
+          >
             <template v-slot:item="props">
               <tr>
                 <td>
@@ -60,34 +64,13 @@
                     </template>
                   </v-edit-dialog>
                 </td>
-                <td>
-                  <!-- <v-edit-dialog
-                    :return-value.sync="props.item.course_name"
-                    @save="saveEdit"
-                    @cancel="cancelEdit"
-                    @open="openEdit"
-                    @close="closeEdit"
-                    large
-                  >
-                    {{ props.item.course_name }}
-                    <template v-slot:input>
-                      <v-select
-                        :items="courses"
-                        v-model="props.item.course_name"
-                        label="Course Description"
-                        item-text="code"
-                        item-value="code"
-                      ></v-select>
-                    </template>
-                  </v-edit-dialog>-->
-                  {{ props.item.course_name }}
-                </td>
+                <td>{{ props.item.course_name }}</td>
                 <td>{{ props.item.section }}</td>
                 <td>{{ props.item.units }}</td>
                 <td>{{ props.item.day }}</td>
                 <td>{{ props.item.time }}</td>
                 <td>{{ props.item.room }}</td>
-                <td>
+                <td v-if="action != 'view'">
                   <removeButton @delete="removeClass(props.item)"></removeButton>
                 </td>
               </tr>
@@ -101,7 +84,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" text @click="close">Close</v-btn>
-          <v-btn color="blue darken-1" text @click="save">Save</v-btn>
+          <v-btn v-if="action != 'view'" color="blue darken-1" text @click="save">Save</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -116,10 +99,12 @@ import ClassService from "@/services/ClassService";
 
 export default {
   props: {
-    dialog: Boolean
+    dialog: Boolean,
+    action: String
   },
   mounted() {
     this.getPrograms();
+    this.getSections();
   },
   data() {
     return {
@@ -148,6 +133,29 @@ export default {
         },
         {
           text: "Action"
+        }
+      ],
+      headers2: [
+        {
+          text: "Class No."
+        },
+        {
+          text: "Course Description"
+        },
+        {
+          text: "Section"
+        },
+        {
+          text: "Units"
+        },
+        {
+          text: "Day"
+        },
+        {
+          text: "Time"
+        },
+        {
+          text: "Room"
         }
       ],
       schedules: [],
@@ -246,6 +254,7 @@ export default {
       this.sections = await this.sections.filter(data => {
         return this.programId == data.course.id;
       });
+      console.log("sections", this.sections);
       await this.getCourses();
     },
 
