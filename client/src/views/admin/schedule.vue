@@ -541,6 +541,7 @@ export default {
 
       this.closeScheduleDialog();
       this.resetSchedule();
+      this.getSchedules();
     },
     async saveAddClass() {
       if (this.$refs.classForm.validate()) {
