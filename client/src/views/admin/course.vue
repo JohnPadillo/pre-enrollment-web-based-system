@@ -416,8 +416,8 @@ export default {
 
       await CourseService.editCourse(data);
 
-      this.openAddDialog = false;
       this.getCourses();
+      this.openAddDialog = false;
       this.reset();
     },
 
