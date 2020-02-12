@@ -208,25 +208,62 @@ export default {
       let response = this.curriculums.filter(data => {
         return data.CourseId == this.programId;
       });
-      let data = await response.map(data => {
-        let id = data.subjects.id;
-        let code = data.subjects.code;
-        let name = data.subjects.name;
-        let units = data.subjects.units;
-        let prerequisites = data.subjects.prerequisites;
-        let year = data.year;
-        let semester = data.semester;
+      let data = await Promise.all(
+        response.map(async data => {
+          let id = data.subjects.id;
+          let code = data.subjects.code;
+          let name = data.subjects.name;
+          let units = data.subjects.units;
+          // let prerequisites = data.subjects.prerequisites;
+          let year = data.year;
+          let semester = data.semester;
 
-        return {
-          id: id,
-          code: code,
-          name: name,
-          units: units,
-          prerequisites: prerequisites,
-          year: year,
-          semester: semester
-        };
-      });
+          let prerequisiteArray = [];
+
+          if (data.subjects.prerequisites) {
+            let prerequisites = await data.subjects.prerequisites.split(",");
+
+            for (let prerequisite of prerequisites) {
+              let data = (await CourseService.getCourse(prerequisite)).data;
+              prerequisiteArray.push(data);
+            }
+          }
+
+          let prerequisites = data.subjects.prerequisites
+            ? prerequisiteArray.map(data => {
+                return {
+                  id: data.id,
+                  code: data.code,
+                  name: data.name,
+                  units: data.units
+                };
+              })
+            : data.subjects.prerequisites;
+
+          let displayPrerequisites = "";
+          if (prerequisites) {
+            for (let i = 0; i < prerequisites.length; i++) {
+              displayPrerequisites +=
+                "" +
+                prerequisites[i].code +
+                (i < prerequisites.length - 1 ? ", " : "");
+            }
+          }
+
+          return {
+            id: id,
+            code: code,
+            name: name,
+            units: units,
+            // prerequisites: prerequisites,
+            prerequisites: data.subjects.prerequisites
+              ? displayPrerequisites
+              : data.subjects.prerequisites,
+            year: year,
+            semester: semester
+          };
+        })
+      );
       this.defaultSubjectsByProgramId = data;
       this.subjects = data;
     },
@@ -268,7 +305,6 @@ export default {
               prerequisiteArray.push(data);
             }
           }
-
           let prerequisites = data.prerequisites
             ? prerequisiteArray.map(data => {
                 return {
