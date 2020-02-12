@@ -2,16 +2,47 @@
   <v-container fluid>
     <v-layout>
       <v-flex>
-        <v-select
-          label="Program"
-          v-model="programId"
-          :items="programs"
-          item-text="code"
-          item-value="id"
-          clearable
-          @click:clear="resetCourses"
-          @input="filterCourseByProgramId"
-        ></v-select>
+        <v-row>
+          <v-spacer></v-spacer>
+          <v-col sm="12" md="2">
+            <v-select
+              label="Program"
+              v-model="programId"
+              :items="programs"
+              item-text="code"
+              item-value="id"
+              clearable
+              @click:clear="resetCourses"
+              @input="filterCourseByProgramId"
+            ></v-select>
+          </v-col>
+          <v-col sm="12" md="2">
+            <v-select
+              label="Year"
+              v-model="yearId"
+              :items="years"
+              item-text="name"
+              item-value="id"
+              clearable
+              :disabled="!this.programId"
+              @input="filterCourseByYear"
+              @click:clear="resetCourses"
+            ></v-select>
+          </v-col>
+          <v-col sm="12" md="2">
+            <v-select
+              label="Term"
+              v-model="semesterId"
+              :items="semesters"
+              item-text="name"
+              item-value="id"
+              clearable
+              :disabled="!this.yearId"
+              @input="filterCourseBySemester"
+              @click:clear="resetCourses"
+            ></v-select>
+          </v-col>
+        </v-row>
         <addDialog
           :dialog="openAddDialog"
           :title="title"
@@ -111,6 +142,8 @@ export default {
       programs: [],
       curriculums: [],
       defaultSubjects: [],
+      defaultSubjectsByProgramId: [],
+      defaultSubjectsByYearId: [],
       prerequisites: [],
       headers: [
         {
@@ -132,6 +165,36 @@ export default {
           text: "Actions",
           align: "center"
         }
+      ],
+      yearId: null,
+      years: [
+        {
+          name: "1st",
+          id: 1
+        },
+        {
+          name: "2nd",
+          id: 2
+        },
+        {
+          name: "3rd",
+          id: 3
+        },
+        {
+          name: "4th",
+          id: 4
+        }
+      ],
+      semesterId: null,
+      semesters: [
+        {
+          name: "1st",
+          id: 1
+        },
+        {
+          name: "2nd",
+          id: 2
+        }
       ]
     };
   },
@@ -145,23 +208,26 @@ export default {
       let response = this.curriculums.filter(data => {
         return data.CourseId == this.programId;
       });
-
       let data = await response.map(data => {
         let id = data.subjects.id;
         let code = data.subjects.code;
         let name = data.subjects.name;
         let units = data.subjects.units;
         let prerequisites = data.subjects.prerequisites;
+        let year = data.year;
+        let semester = data.semester;
 
         return {
           id: id,
           code: code,
           name: name,
           units: units,
-          prerequisites: prerequisites
+          prerequisites: prerequisites,
+          year: year,
+          semester: semester
         };
       });
-
+      this.defaultSubjectsByProgramId = data;
       this.subjects = data;
     },
     async getPrerequisites() {
@@ -178,7 +244,6 @@ export default {
     async getCourses() {
       this.courseLoading = true;
       let response = (await CourseService.getCourses()).data;
-
       this.subjects = await Promise.all(
         response.map(async data => {
           let id = data.id;
@@ -237,12 +302,31 @@ export default {
           };
         })
       );
-
       this.defaultSubjects = this.subjects;
       this.courseLoading = false;
     },
     async resetCourses() {
-      this.getCourses();
+      if (this.programId) {
+        await this.filterCourseByProgramId();
+      }
+      if (!this.programId) {
+        this.yearId = null;
+        this.semesterId = null;
+        this.getCourses();
+      }
+
+      if (this.yearId) {
+        await this.filterCourseByYear();
+      }
+
+      if (!this.yearId) {
+        this.semesterId = null;
+      }
+
+      // if (!this.programId) {
+      //   this.yearId = null;
+      //   this.semesterId = null;
+      // }
     },
     add() {
       this.getPrerequisites();
@@ -349,6 +433,22 @@ export default {
     },
     async closeConfirmDialog() {
       this.confirmationDialog = !this.confirmationDialog;
+    },
+
+    async filterCourseByYear() {
+      let data = this.defaultSubjectsByProgramId.filter(data => {
+        return data.year == this.yearId;
+      });
+      this.defaultSubjectsByYearId = data;
+      this.subjects = data;
+    },
+
+    async filterCourseBySemester() {
+      let data = this.defaultSubjectsByYearId.filter(data => {
+        return data.semester == this.semesterId;
+      });
+
+      this.subjects = data;
     }
   }
 };

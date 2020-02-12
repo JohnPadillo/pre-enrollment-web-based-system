@@ -66,7 +66,7 @@
             <v-col cols="12" sm="12" md="12">
               <v-card class="mt-5">
                 <v-card-title>
-                  1st Year 1st Sem
+                  1st Year 1st Term
                   <v-spacer></v-spacer>
                   <addButton v-if="action != 'view'" id="11" ref="add11" @add="add11()"></addButton>
                 </v-card-title>
@@ -103,7 +103,7 @@
             <v-col cols="12" sm="12" md="12">
               <v-card class="mt-5">
                 <v-card-title>
-                  1st Year 2nd Sem
+                  1st Year 2nd Term
                   <v-spacer></v-spacer>
                   <addButton v-if="action != 'view'" id="12" ref="add12" @add="add12()"></addButton>
                 </v-card-title>
@@ -141,7 +141,7 @@
             <v-col cols="12" sm="12" md="12">
               <v-card class="mt-5">
                 <v-card-title>
-                  2nd Year 1st Sem
+                  2nd Year 1st Term
                   <v-spacer></v-spacer>
                   <addButton v-if="action != 'view'" id="21" ref="add21" @add="add21()"></addButton>
                 </v-card-title>
@@ -177,7 +177,7 @@
             <v-col cols="12" sm="12" md="12">
               <v-card class="mt-5">
                 <v-card-title>
-                  2nd Year 2nd Sem
+                  2nd Year 2nd Term
                   <v-spacer></v-spacer>
                   <addButton v-if="action != 'view'" id="22" ref="add22" @add="add22()"></addButton>
                 </v-card-title>
@@ -214,7 +214,7 @@
             <v-col cols="12" sm="12" md="12">
               <v-card class="mt-5">
                 <v-card-title>
-                  3rd Year 1st Sem
+                  3rd Year 1st Term
                   <v-spacer></v-spacer>
                   <addButton v-if="action != 'view'" id="31" ref="add31" @add="add31()"></addButton>
                 </v-card-title>
@@ -250,7 +250,7 @@
             <v-col cols="12" sm="12" md="12">
               <v-card class="mt-5">
                 <v-card-title>
-                  3rd Year 2nd Sem
+                  3rd Year 2nd Term
                   <v-spacer></v-spacer>
                   <addButton v-if="action != 'view'" id="32" ref="add32" @add="add32()"></addButton>
                 </v-card-title>
@@ -287,7 +287,7 @@
             <v-col cols="12" sm="12" md="12">
               <v-card class="mt-5">
                 <v-card-title>
-                  4th Year 1st Sem
+                  4th Year 1st Term
                   <v-spacer></v-spacer>
                   <addButton v-if="action != 'view'" id="41" ref="add41" @add="add41()"></addButton>
                 </v-card-title>
@@ -323,7 +323,7 @@
             <v-col cols="12" sm="12" md="12">
               <v-card class="mt-5">
                 <v-card-title>
-                  4th Year 2nd Sem
+                  4th Year 2nd Term
                   <v-spacer></v-spacer>
 
                   <addButton v-if="action != 'view'" id="42" ref="add42" @add="add42()"></addButton>
@@ -425,10 +425,12 @@ export default {
       yearSemId: null,
       headers: [
         {
-          text: "Program Code"
+          text: "Program Code",
+          value: "code"
         },
         {
-          text: "Program Name"
+          text: "Program Name",
+          value: "name"
         },
         {
           text: "Action",
