@@ -3,12 +3,7 @@
     <v-layout>
       <v-flex>
         <registerForm :title="title" @register="login">
-          <v-text-field
-            label="Email"
-            v-model="email"
-            outlined
-            :rules="[rules.required]"
-          ></v-text-field>
+          <v-text-field label="Email" v-model="email" outlined :rules="[rules.required]"></v-text-field>
           <v-text-field
             label="Password"
             v-model="password"
@@ -48,6 +43,7 @@ export default {
         email: this.email
       };
       let user = (await LoginService.login(data)).data;
+      console.log(user);
 
       let checkPassword = password => {
         return password === this.password;
