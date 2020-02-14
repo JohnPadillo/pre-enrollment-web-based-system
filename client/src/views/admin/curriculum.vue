@@ -19,15 +19,7 @@
                 item-value="id"
                 outlined
               >
-                <!-- <template slot="selection" slot-scope="data">
-                  // HTML that describe how select should render selected items
-                  {{ data.item.name }} - {{ data.item.description }}
-                </template>-->
-                <template slot="item" slot-scope="data">
-                  <!-- // HTML that describe how select should render items when the
-                  select is open-->
-                  {{ data.item.code }} - {{ data.item.name }}
-                </template>
+                <template slot="item" slot-scope="data">{{ data.item.code }} - {{ data.item.name }}</template>
               </v-select>
             </v-col>
           </v-row>

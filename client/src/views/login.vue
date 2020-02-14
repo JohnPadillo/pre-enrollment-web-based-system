@@ -43,7 +43,6 @@ export default {
         email: this.email
       };
       let user = (await LoginService.login(data)).data;
-      console.log(user);
 
       let checkPassword = password => {
         return password === this.password;

@@ -158,7 +158,12 @@
                                 item-text="code"
                                 item-value="id"
                                 @input="setClassUnits()"
-                              ></v-select>
+                              >
+                                <template
+                                  slot="item"
+                                  slot-scope="data"
+                                >{{ data.item.code }} - {{ data.item.name }}</template>
+                              </v-select>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
                               <v-text-field label="Units" readonly v-model="classUnits"></v-text-field>
