@@ -23,6 +23,9 @@ import ToolbarNav from "@/components/Toolbar.vue";
 // Form
 import PreEnrollmentForm from "@/components/PreEnrollmentForm";
 
+// Snackbar
+import Snackbar from "@/components/Snackbar";
+
 Vue.config.productionTip = false;
 
 // Button
@@ -43,6 +46,9 @@ Vue.component("ToolbarNav", ToolbarNav);
 
 // Form
 Vue.component("PreEnrollmentForm", PreEnrollmentForm);
+
+// Snackbar
+Vue.component("Snackbar", Snackbar);
 
 new Vue({
   router,

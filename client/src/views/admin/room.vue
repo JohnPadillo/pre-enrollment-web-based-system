@@ -11,7 +11,6 @@
         >
           <v-form ref="roomForm">
             <v-text-field label="Room Name" v-model="room_name" outlined></v-text-field>
-            <v-text-field label="Room Code" v-model="room_code" outlined></v-text-field>
           </v-form>
         </addDialog>
         <confirmationDialog
@@ -44,7 +43,6 @@
           >
             <template v-slot:item="props">
               <tr>
-                <td>{{ props.item.code }}</td>
                 <td>{{ props.item.name }}</td>
                 <td align="center">
                   <editButton @edit="getEditItem(props.item)" />
@@ -70,20 +68,16 @@ export default {
       rooms: [],
       headers: [
         {
-          text: "Code",
-          value: "code"
-        },
-        {
           text: "Name",
           value: "name"
         },
         {
-          text: "Actions"
+          text: "Actions",
+          align: "center"
         }
       ],
       addDialog: false,
       room_name: "",
-      room_code: "",
       room_id: "",
       confirmationDialog: false,
       roomLoading: false,
@@ -108,8 +102,7 @@ export default {
     },
     async addRoom() {
       let data = {
-        name: this.room_name,
-        code: this.room_code
+        name: this.room_name
       };
 
       await RoomService.addRoom(data);
@@ -122,14 +115,12 @@ export default {
       this.addDialog = true;
       this.room_id = data.id;
       this.room_name = data.name;
-      this.room_code = data.code;
     },
 
     async editRoom() {
       let data = {
         id: this.room_id,
-        name: this.room_name,
-        code: this.room_code
+        name: this.room_name
       };
 
       await RoomService.editRoom(data);

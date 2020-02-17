@@ -23,7 +23,7 @@
               <template v-slot:item="props">
                 <tr>
                   <td>{{ props.item.class_no }}</td>
-                  <td>{{ props.item.course.name }}</td>
+                  <td>{{ props.item.subject.name }}</td>
                   <td>{{ props.item.section.name }}</td>
                   <td>{{ props.item.subject.units }}</td>
                   <td>{{ props.item.day }}</td>

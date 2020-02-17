@@ -5,7 +5,7 @@
         <v-card-title>
           <span class="headline">Schedule</span>
           <v-spacer></v-spacer>
-          <addButton v-if="action != 'view'" :title="title" @add="add" />
+          <!-- <addButton v-if="action != 'view'" :title="title" @add="add" /> -->
         </v-card-title>
         <v-card-text>
           <v-row>
@@ -16,6 +16,7 @@
                 label="Program"
                 item-text="code"
                 item-value="id"
+                :readonly="this.action == 'view'"
                 @input="programIdSelected"
               ></v-select>
             </v-col>
@@ -26,6 +27,8 @@
                 label="Section"
                 item-text="code"
                 item-value="id"
+                :readonly="this.action == 'view'"
+                :disabled="!this.programId"
                 @input="sectionIdSelected"
               ></v-select>
             </v-col>
@@ -33,38 +36,13 @@
           <v-data-table
             :headers="action != 'view' ? headers : headers2"
             :items="schedules"
+            disable-filtering
+            disable-sort
             hide-default-footer
           >
             <template v-slot:item="props">
               <tr>
-                <td>
-                  <v-edit-dialog
-                    :return-value.sync="props.item.class_no"
-                    @save="saveEdit"
-                    @cancel="cancelEdit"
-                    @open="openEdit"
-                    @close="closeEdit"
-                    large
-                  >
-                    {{
-                    props.item.class_no ? props.item.class_no : "Select Class"
-                    }}
-                    <template
-                      v-slot:input
-                    >
-                      <!-- <v-text-field v-model="props.item.class_no" label="Class No" single-line></v-text-field> -->
-                      <v-select
-                        :items="classes"
-                        v-model="props.item.class_no"
-                        label="Class"
-                        item-text="class_no"
-                        item-value="class_no"
-                        :disabled="action == 'view' ? true : false"
-                        @input="setClass(props.item)"
-                      ></v-select>
-                    </template>
-                  </v-edit-dialog>
-                </td>
+                <td>{{ props.item.class_no }}</td>
                 <td>{{ props.item.course_name }}</td>
                 <td>{{ props.item.section }}</td>
                 <td>{{ props.item.units }}</td>
@@ -102,6 +80,11 @@ export default {
   props: {
     dialog: Boolean,
     action: String
+  },
+  watch: {
+    programId: function() {
+      this.programIdSelected();
+    }
   },
   mounted() {
     this.getPrograms();
@@ -255,7 +238,6 @@ export default {
       this.sections = await this.sections.filter(data => {
         return this.programId == data.course.id;
       });
-      console.log("sections", this.sections);
       await this.getCourses();
     },
 
@@ -286,18 +268,39 @@ export default {
       this.schedules[
         index
       ].time = `${response[0].time_start} - ${response[0].time_end}`;
-      this.schedules[index].room = response[0].room.code;
+      this.schedules[index].room = response[0].room.name;
       this.schedules[index].roomId = response[0].room.id;
     },
 
     async sectionIdSelected() {
+      this.schedules = await [];
       await this.getClasses();
-      console.log(`id: ${this.sectionId}`);
       this.classes = await this.classes.filter(data => {
         return data.section.id == this.sectionId;
       });
 
-      console.log(await this.classes);
+      let classesLength = await this.classes.length;
+      let scheduleArray = [];
+      for (let i = 0; i < classesLength; i++) {
+        scheduleArray.push(this.classes[i]);
+      }
+
+      scheduleArray = await scheduleArray.map(data => {
+        return {
+          id: data.id,
+          class_no: data.class_no,
+          course_name: data.subject.name,
+          section: data.section.name,
+          units: data.subject.units,
+          day: data.day,
+          time: `${data.time_start} - ${data.time_end}`,
+          room: data.room.name,
+          roomId: data.room.id
+        };
+      });
+
+      this.schedules = await scheduleArray;
+      console.log(scheduleArray);
     }
 
     // saveEditCourse(data) {

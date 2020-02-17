@@ -19,7 +19,6 @@
               outlined
             ></v-select>
             <v-text-field label="Section Name" v-model="section_name" outlined></v-text-field>
-            <v-text-field label="Section Code" v-model="section_code" outlined></v-text-field>
             <v-select
               label="Year"
               :items="years"
@@ -69,7 +68,7 @@
             <template v-slot:item="props">
               <tr>
                 <td>{{ props.item.course.code }}</td>
-                <td>{{ props.item.code }}</td>
+                <td>{{ props.item.name }}</td>
                 <td align="center">{{ props.item.year }}</td>
                 <td align="center">{{ props.item.semester }}</td>
                 <td align="center">
@@ -153,7 +152,6 @@ export default {
       ],
       section_id: "",
       section_name: "",
-      section_code: "",
       section_programId: "",
       section_year: "",
       section_semester: "",
@@ -183,7 +181,6 @@ export default {
     async addSection() {
       let data = {
         name: this.section_name,
-        code: this.section_code,
         CourseId: this.section_programId,
         year: this.section_year,
         semester: this.section_semester
@@ -199,7 +196,6 @@ export default {
       this.section_id = data.id;
       this.section_programId = data.course.id;
       this.section_name = data.name;
-      this.section_code = data.code;
       this.section_year = data.year;
       this.section_semester = data.semester;
       this.addDialog = true;
@@ -208,7 +204,6 @@ export default {
       let data = {
         id: this.section_id,
         name: this.section_name,
-        code: this.section_code,
         CourseId: this.section_programId,
         year: this.section_year,
         semester: this.section_semester
