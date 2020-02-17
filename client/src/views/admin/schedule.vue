@@ -231,6 +231,15 @@
                                 </template>
                                 <v-time-picker
                                   v-if="classStartTimeDialog"
+                                  scrollable
+                                  @update:period="clickPeriod"
+                                  @click:hour="changeHour"
+                                  :allowed-hours="allowedHours"
+                                  :allowed-minutes="
+                                    timeHourPick == 21
+                                      ? limitedMinutes
+                                      : allowedMinutes
+                                  "
                                   v-model="classTimeStart"
                                   full-width
                                   :max="classTimeEnd"
@@ -262,6 +271,7 @@
                               >
                                 <template v-slot:activator="{ on }">
                                   <v-text-field
+                                    :disabled="classTimeStart ? false : true"
                                     v-model="classTimeEnd"
                                     :rules="[classRules.required]"
                                     label="Time End"
@@ -272,6 +282,15 @@
                                 </template>
                                 <v-time-picker
                                   v-if="classEndTimeDialog"
+                                  @update:period="clickPeriod"
+                                  @click:hour="changeHour"
+                                  :allowed-hours="allowedHours"
+                                  :allowed-minutes="
+                                    timeHourPick == 21
+                                      ? limitedMinutes
+                                      : allowedMinutes
+                                  "
+                                  scrollable
                                   v-model="classTimeEnd"
                                   full-width
                                   :min="classTimeStart"
@@ -460,10 +479,26 @@ export default {
       scheduleLoading: false,
       snackbarDialog: false,
       snackbarText: "",
-      snackbarColor: ""
+      snackbarColor: "",
+      timeHourPick: null
     };
   },
   methods: {
+    changeHour(eventData) {
+      this.timeHourPick = eventData;
+    },
+
+    clickPeriod(eventData) {
+      if (eventData == "am") {
+        this.timeHourPick -= 12;
+      } else {
+        this.timeHourPick += 12;
+      }
+    },
+    allowedHours: v => v >= 7 && v <= 21,
+    allowedMinutes: v => v >= 0,
+    limitedMinutes: v => v < 1,
+
     async getSchedules() {
       this.scheduleLoading = true;
       let response = (await ScheduleService.getSchedules()).data;
@@ -477,20 +512,6 @@ export default {
       for (let i = 0; i < data.length; i++) {
         scheduleArray.push((await SectionService.getSection(data[i])).data);
       }
-
-      // scheduleArray = await scheduleArray.map(data => {
-      //   return {
-      //     id: data.id,
-      //     class_no: data.class_no,
-      //     section: data.section.name,
-      //     units: data.subject.units,
-      //     day: data.day,
-      //     time: `${data.time_start} - ${data.time_end}`,
-      //     room: data.room.name,
-      //     RoomId: data.room.id
-      //   };
-      // });
-      // console.log(scheduleArray);
       this.schedules = scheduleArray;
       this.scheduleLoading = false;
     },
