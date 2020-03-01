@@ -729,23 +729,35 @@ export default {
       this.subjects = (await CurriculumService.getCurriculum(id)).data;
       console.log(this.subjects);
 
-      let data = await this.subjects.map(data => {
-        let name = data.subject.name;
-        let code = data.subject.code;
-        let units = data.subject.units;
-        let prerequisites = data.subject.prerequisites;
-        let year = data.subject.year;
-        let semester = data.subject.semester;
+      let data = await Promise.all(
+        this.subjects.map(async data => {
+          let name = data.subject.name;
+          let code = data.subject.code;
+          let units = data.subject.units;
+          let prerequisites = data.subject.prerequisites;
 
-        return {
-          name: name,
-          code: code,
-          units: units,
-          prerequisites: prerequisites,
-          year: year,
-          semester: semester
-        };
-      });
+          let prerequisitesName = [];
+          if (prerequisites) {
+            let prerequisitesData = prerequisites.split(",");
+            for (let prerequisite of prerequisitesData) {
+              let data = (await CourseService.getCourse(prerequisite)).data;
+              prerequisitesName.push(data.name);
+            }
+          }
+
+          let year = data.subject.year;
+          let semester = data.subject.semester;
+
+          return {
+            name: name,
+            code: code,
+            units: units,
+            prerequisites: prerequisites ? prerequisitesName.toString() : "",
+            year: year,
+            semester: semester
+          };
+        })
+      );
       this.subjects = data;
       console.log(this.subjects);
     },

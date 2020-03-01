@@ -7,6 +7,23 @@
             <v-toolbar dark color="primary">
               <v-card-title>Checklist</v-card-title>
               <v-spacer></v-spacer>
+              <v-tooltip top>
+                <template v-slot:activator="{ on }">
+                  <v-btn icon @click="changeEditDialog" v-on="on">
+                    <v-icon dark>mdi-pencil</v-icon>
+                  </v-btn>
+                </template>
+                <span>Edit</span>
+              </v-tooltip>
+
+              <v-tooltip v-if="editDialog == true" top>
+                <template v-slot:activator="{ on }">
+                  <v-btn icon @click="saveEditChecklist" v-on="on">
+                    <v-icon dark>mdi-content-save</v-icon>
+                  </v-btn>
+                </template>
+                <span>Save</span>
+              </v-tooltip>
               <v-btn icon dark @click="closeChecklistDialog">
                 <v-icon>mdi-close</v-icon>
               </v-btn>
@@ -57,10 +74,28 @@
                         <tr>
                           <td>{{ props.item.code }}</td>
                           <td>{{ props.item.name }}</td>
+                          <td>{{ props.item.units }}</td>
+                          <td v-if="editDialog == false" align="center">{{ props.item.grade }}</td>
+                          <td v-else>
+                            <v-edit-dialog
+                              :return-value.sync="props.item.grade"
+                              @save="saveEditGrade(props.item)"
+                              large
+                            >
+                              {{
+                              props.item.grade
+                              ? props.item.grade
+                              : "------------"
+                              }}
+                              <template
+                                v-slot:input
+                              >
+                                <v-select :items="grades" v-model="props.item.grade" label="Grades"></v-select>
+                              </template>
+                            </v-edit-dialog>
+                          </td>
                           <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
+                          <td>{{ getPrerequisites(props.item) }}</td>
                           <td></td>
                           <td>
                             <removeButton
@@ -97,10 +132,28 @@
                         <tr>
                           <td>{{ props.item.code }}</td>
                           <td>{{ props.item.name }}</td>
+                          <td>{{ props.item.units }}</td>
+                          <td v-if="editDialog == false" align="center">{{ props.item.grade }}</td>
+                          <td v-else>
+                            <v-edit-dialog
+                              :return-value.sync="props.item.grade"
+                              @save="saveEditGrade(props.item)"
+                              large
+                            >
+                              {{
+                              props.item.grade
+                              ? props.item.grade
+                              : "------------"
+                              }}
+                              <template
+                                v-slot:input
+                              >
+                                <v-select :items="grades" v-model="props.item.grade" label="Grades"></v-select>
+                              </template>
+                            </v-edit-dialog>
+                          </td>
                           <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
+                          <td>{{ getPrerequisites(props.item) }}</td>
                           <td></td>
                           <td>
                             <removeButton
@@ -137,10 +190,28 @@
                         <tr>
                           <td>{{ props.item.code }}</td>
                           <td>{{ props.item.name }}</td>
+                          <td>{{ props.item.units }}</td>
+                          <td v-if="editDialog == false" align="center">{{ props.item.grade }}</td>
+                          <td v-else>
+                            <v-edit-dialog
+                              :return-value.sync="props.item.grade"
+                              @save="saveEditGrade(props.item)"
+                              large
+                            >
+                              {{
+                              props.item.grade
+                              ? props.item.grade
+                              : "------------"
+                              }}
+                              <template
+                                v-slot:input
+                              >
+                                <v-select :items="grades" v-model="props.item.grade" label="Grades"></v-select>
+                              </template>
+                            </v-edit-dialog>
+                          </td>
                           <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
+                          <td>{{ getPrerequisites(props.item) }}</td>
                           <td></td>
                           <td>
                             <removeButton
@@ -176,10 +247,28 @@
                         <tr>
                           <td>{{ props.item.code }}</td>
                           <td>{{ props.item.name }}</td>
+                          <td>{{ props.item.units }}</td>
+                          <td v-if="editDialog == false" align="center">{{ props.item.grade }}</td>
+                          <td v-else>
+                            <v-edit-dialog
+                              :return-value.sync="props.item.grade"
+                              @save="saveEditGrade(props.item)"
+                              large
+                            >
+                              {{
+                              props.item.grade
+                              ? props.item.grade
+                              : "------------"
+                              }}
+                              <template
+                                v-slot:input
+                              >
+                                <v-select :items="grades" v-model="props.item.grade" label="Grades"></v-select>
+                              </template>
+                            </v-edit-dialog>
+                          </td>
                           <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
+                          <td>{{ getPrerequisites(props.item) }}</td>
                           <td></td>
                           <td>
                             <removeButton
@@ -216,10 +305,28 @@
                         <tr>
                           <td>{{ props.item.code }}</td>
                           <td>{{ props.item.name }}</td>
+                          <td>{{ props.item.units }}</td>
+                          <td v-if="editDialog == false" align="center">{{ props.item.grade }}</td>
+                          <td v-else>
+                            <v-edit-dialog
+                              :return-value.sync="props.item.grade"
+                              @save="saveEditGrade(props.item)"
+                              large
+                            >
+                              {{
+                              props.item.grade
+                              ? props.item.grade
+                              : "------------"
+                              }}
+                              <template
+                                v-slot:input
+                              >
+                                <v-select :items="grades" v-model="props.item.grade" label="Grades"></v-select>
+                              </template>
+                            </v-edit-dialog>
+                          </td>
                           <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
+                          <td>{{ getPrerequisites(props.item) }}</td>
                           <td></td>
                           <td>
                             <removeButton
@@ -255,10 +362,28 @@
                         <tr>
                           <td>{{ props.item.code }}</td>
                           <td>{{ props.item.name }}</td>
+                          <td>{{ props.item.units }}</td>
+                          <td v-if="editDialog == false" align="center">{{ props.item.grade }}</td>
+                          <td v-else>
+                            <v-edit-dialog
+                              :return-value.sync="props.item.grade"
+                              @save="saveEditGrade(props.item)"
+                              large
+                            >
+                              {{
+                              props.item.grade
+                              ? props.item.grade
+                              : "------------"
+                              }}
+                              <template
+                                v-slot:input
+                              >
+                                <v-select :items="grades" v-model="props.item.grade" label="Grades"></v-select>
+                              </template>
+                            </v-edit-dialog>
+                          </td>
                           <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
+                          <td>{{ getPrerequisites(props.item) }}</td>
                           <td></td>
                           <td>
                             <removeButton
@@ -295,10 +420,28 @@
                         <tr>
                           <td>{{ props.item.code }}</td>
                           <td>{{ props.item.name }}</td>
+                          <td>{{ props.item.units }}</td>
+                          <td v-if="editDialog == false" align="center">{{ props.item.grade }}</td>
+                          <td v-else>
+                            <v-edit-dialog
+                              :return-value.sync="props.item.grade"
+                              @save="saveEditGrade(props.item)"
+                              large
+                            >
+                              {{
+                              props.item.grade
+                              ? props.item.grade
+                              : "------------"
+                              }}
+                              <template
+                                v-slot:input
+                              >
+                                <v-select :items="grades" v-model="props.item.grade" label="Grades"></v-select>
+                              </template>
+                            </v-edit-dialog>
+                          </td>
                           <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
+                          <td>{{ getPrerequisites(props.item) }}</td>
                           <td></td>
                           <td>
                             <removeButton
@@ -335,10 +478,28 @@
                         <tr>
                           <td>{{ props.item.code }}</td>
                           <td>{{ props.item.name }}</td>
+                          <td>{{ props.item.units }}</td>
+                          <td v-if="editDialog == false" align="center">{{ props.item.grade }}</td>
+                          <td v-else>
+                            <v-edit-dialog
+                              :return-value.sync="props.item.grade"
+                              @save="saveEditGrade(props.item)"
+                              large
+                            >
+                              {{
+                              props.item.grade
+                              ? props.item.grade
+                              : "------------"
+                              }}
+                              <template
+                                v-slot:input
+                              >
+                                <v-select :items="grades" v-model="props.item.grade" label="Grades"></v-select>
+                              </template>
+                            </v-edit-dialog>
+                          </td>
                           <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
+                          <td>{{ getPrerequisites(props.item) }}</td>
                           <td></td>
                           <td>
                             <removeButton
@@ -370,6 +531,19 @@ export default {
   },
   data() {
     return {
+      grades: [
+        "1.00",
+        "1.25",
+        "1.50",
+        "1.75",
+        "2.00",
+        "2.25",
+        "2.50",
+        "2.75",
+        "3.00",
+        "5.00"
+      ],
+      editDialog: false,
       program_id: "",
       programs: [],
       formHeaders: [
@@ -424,6 +598,16 @@ export default {
     };
   },
   methods: {
+    getPrerequisites(data) {
+      if (data.prerequisites) {
+        let prerequisites = data.prerequisites.map(data => {
+          return data.name;
+        });
+        return prerequisites.toString();
+      } else {
+        return "";
+      }
+    },
     getChecklistByYearSem(id) {
       if (id == "11") {
         return this.checklist.filter(data => {
@@ -469,6 +653,15 @@ export default {
     closeChecklistDialog() {
       // this.dialog = false;
       this.$emit("close");
+    },
+    changeEditDialog() {
+      this.editDialog = !this.editDialog;
+    },
+    saveEditGrade(data) {
+      console.log(data);
+    },
+    saveEditChecklist() {
+      this.$emit("saveChecklist");
     }
   }
 };

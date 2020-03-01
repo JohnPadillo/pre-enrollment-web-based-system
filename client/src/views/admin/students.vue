@@ -110,6 +110,7 @@
         <checklist
           ref="checklist"
           :dialog="checklistDialog"
+          @saveChecklist="saveEditChecklist"
           :action="action"
           :user="user"
           :checklist="checklist"
@@ -158,6 +159,8 @@
 import StudentService from "@/services/StudentService";
 import ProgramService from "@/services/ProgramService";
 import CurriculumService from "@/services/CurriculumService";
+import GradeService from "@/services/GradeService";
+import CourseService from "@/services/CourseService";
 import Checklist from "@/components/form/CurriculumForm";
 
 export default {
@@ -335,25 +338,48 @@ export default {
       let response = (await CurriculumService.getCurriculum(data.course.id))
         .data;
 
-      this.checklist = response.map(data => {
-        let id = data.subject.id;
-        let code = data.subject.code;
-        let name = data.subject.name;
-        let prerequisite = data.subject.prerequisite;
-        let year = data.subject.year;
-        let semester = data.subject.semester;
+      let grades = (await GradeService.getGrades(data.id)).data;
+      this.checklist = await Promise.all(
+        response.map(async data => {
+          let id = data.subject.id;
+          let code = data.subject.code;
+          let name = data.subject.name;
+          let prerequisites = data.subject.prerequisites;
+          let prerequisitesName = [];
+          if (prerequisites) {
+            let prerequisitesData = prerequisites.split(",");
+            for (let prerequisite of prerequisitesData) {
+              let data = (await CourseService.getCourse(prerequisite)).data;
+              prerequisitesName.push(data);
+            }
+          }
 
-        return {
-          id: id,
-          code: code,
-          name: name,
-          prerequisite: prerequisite,
-          year: year,
-          semester: semester
-        };
-      });
+          let grade = await grades
+            .filter(data => {
+              return data.subject.id == id;
+            })
+            .map(data => {
+              return data.grade;
+            });
+          let units = data.subject.units;
+          let year = data.subject.year;
+          let semester = data.subject.semester;
+
+          return {
+            id: id,
+            code: code,
+            name: name,
+            grade: grade[0] ? grade[0] : "-",
+            prerequisites: prerequisites ? prerequisitesName : "",
+            units: units,
+            year: year,
+            semester: semester
+          };
+        })
+      );
 
       this.user = {
+        id: data.id,
         name: data.name,
         email: data.email,
         course: {
@@ -369,6 +395,20 @@ export default {
 
     closeChecklistDialog() {
       this.checklistDialog = false;
+    },
+    async saveEditChecklist() {
+      let data = this.$refs.checklist.checklist.map(data => {
+        return {
+          studentId: this.$refs.checklist.user.id,
+          subjectId: data.id,
+          grade: data.grade
+        };
+      });
+
+      await GradeService.editGrade(data);
+      this.checklistDialog = false;
+      this.$refs.checklist.changeEditDialog();
+      this.getData();
     }
   }
 };
