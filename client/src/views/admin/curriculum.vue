@@ -116,7 +116,7 @@
                       <td>{{ props.item.name }}</td>
                       <td align="center">{{ props.item.units }}</td>
                       <td></td>
-                      <td></td>
+                      <td>{{ props.item.prerequisites }}</td>
                       <td></td>
                       <td></td>
                       <td>
@@ -153,7 +153,7 @@
                       <td>{{ props.item.name }}</td>
                       <td align="center">{{ props.item.units }}</td>
                       <td></td>
-                      <td></td>
+                      <td>{{ props.item.prerequisites }}</td>
                       <td></td>
                       <td></td>
                       <td>
@@ -189,7 +189,7 @@
                       <td>{{ props.item.name }}</td>
                       <td align="center">{{ props.item.units }}</td>
                       <td></td>
-                      <td></td>
+                      <td>{{ props.item.prerequisites }}</td>
                       <td></td>
                       <td></td>
                       <td>
@@ -226,7 +226,7 @@
                       <td>{{ props.item.name }}</td>
                       <td align="center">{{ props.item.units }}</td>
                       <td></td>
-                      <td></td>
+                      <td>{{ props.item.prerequisites }}</td>
                       <td></td>
                       <td></td>
                       <td>
@@ -262,7 +262,7 @@
                       <td>{{ props.item.name }}</td>
                       <td align="center">{{ props.item.units }}</td>
                       <td></td>
-                      <td></td>
+                      <td>{{ props.item.prerequisites }}</td>
                       <td></td>
                       <td></td>
                       <td>
@@ -299,7 +299,7 @@
                       <td>{{ props.item.name }}</td>
                       <td align="center">{{ props.item.units }}</td>
                       <td></td>
-                      <td></td>
+                      <td>{{ props.item.prerequisites }}</td>
                       <td></td>
                       <td></td>
                       <td>
@@ -336,7 +336,7 @@
                       <td>{{ props.item.name }}</td>
                       <td align="center">{{ props.item.units }}</td>
                       <td></td>
-                      <td></td>
+                      <td>{{ props.item.prerequisites }}</td>
                       <td></td>
                       <td></td>
                       <td>
@@ -741,7 +741,7 @@ export default {
             let prerequisitesData = prerequisites.split(",");
             for (let prerequisite of prerequisitesData) {
               let data = (await CourseService.getCourse(prerequisite)).data;
-              prerequisitesName.push(data.name);
+              prerequisitesName.push(data.code);
             }
           }
 
