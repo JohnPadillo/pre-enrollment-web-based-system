@@ -584,11 +584,6 @@ export default {
       this.$refs.scheduleForm.sectionId = "";
     },
     async saveSchedule() {
-      // let data = {
-      //   programId: this.$refs.scheduleForm.programId,
-      //   sectionId: this.$refs.scheduleForm.sectionId
-      // };
-
       let data = this.$refs.scheduleForm.schedules.map(data => {
         return {
           CourseId: this.$refs.scheduleForm.programId,

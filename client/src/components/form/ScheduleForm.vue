@@ -34,7 +34,7 @@
             </v-col>
           </v-row>
           <v-data-table
-            :headers="action != 'view' ? headers : headers2"
+            :headers="action == 'edit' ? headers : headers2"
             :items="schedules"
             disable-filtering
             disable-sort

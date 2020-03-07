@@ -81,6 +81,19 @@
               solo
               clearable
               :rules="[rules.required]"
+              @input="getSections()"
+            ></v-select>
+
+            <v-select
+              :items="sections"
+              v-model="selectedSection"
+              label="Section"
+              item-text="name"
+              item-value="id"
+              solo
+              clearable
+              :disabled="!courseSelected"
+              :rules="[rules.required]"
             ></v-select>
           </v-form>
         </addDialog>
@@ -161,6 +174,7 @@ import ProgramService from "@/services/ProgramService";
 import CurriculumService from "@/services/CurriculumService";
 import GradeService from "@/services/GradeService";
 import CourseService from "@/services/CourseService";
+import SectionService from "@/services/SectionService";
 import Checklist from "@/components/form/CurriculumForm";
 
 export default {
@@ -204,6 +218,8 @@ export default {
       students: [],
       defaultStudents: [],
       courses: [],
+      sections: [],
+      selectedSection: null,
       headers: [
         { text: "Student Name", value: "name" },
         { text: "Student Program", value: "course.code" },
@@ -212,9 +228,19 @@ export default {
     };
   },
   methods: {
+    async getSections() {
+      console.log("getSections");
+      let data = (await SectionService.getSections()).data;
+      this.sections = await Promise.all(
+        data.filter(data => {
+          return data.course.id == this.courseSelected;
+        })
+      );
+    },
     async getData() {
       this.studentLoading = true;
       this.students = (await StudentService.getStudents()).data;
+      console.log(this.students);
       this.defaultStudents = this.students;
       this.studentLoading = false;
     },
@@ -268,7 +294,8 @@ export default {
         contact_no: this.contact_no,
         course: this.courseSelected,
         name_of_guardian: this.name_of_guardian,
-        contact_no_of_guardian: this.contact_no_of_guardian
+        contact_no_of_guardian: this.contact_no_of_guardian,
+        section: this.selectedSection
       };
       await StudentService.addStudent(data);
       this.getData();
@@ -291,6 +318,9 @@ export default {
       this.name_of_guardian = data.name_of_guardian;
       this.contact_no_of_guardian = data.contact_no_of_guardian;
       this.courseSelected = data.course.id;
+      this.getSections();
+      this.selectedSection = data.section.id;
+      console.log(this.selectedSection);
     },
 
     async editStudent() {
@@ -305,7 +335,8 @@ export default {
         contact_no: this.contact_no,
         name_of_guardian: this.name_of_guardian,
         contact_no_of_guardian: this.contact_no_of_guardian,
-        course: this.courseSelected
+        course: this.courseSelected,
+        section: this.selectedSection
       };
 
       await StudentService.editStudent(data);
