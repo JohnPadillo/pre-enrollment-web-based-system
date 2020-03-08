@@ -214,8 +214,7 @@ export default {
       //     });
       //   })
       // );
-      console.log("classes", response);
-      console.log("checklist", this.studentChecklist);
+
       // this.items = classesTobeTaken;
 
       // filter classes by checklist
@@ -237,7 +236,28 @@ export default {
         })
       );
 
-      this.items = filterClassForm;
+      // filter classForm thru grades
+      let studentGrades = this.studentGrades;
+      console.log(filterClassForm);
+
+      let studentSubjectWithGrades = await Promise.all(
+        studentGrades.filter(data => {
+          return data.grade <= 3;
+        })
+      );
+
+      let classGrade = await Promise.all(
+        filterClassForm.filter(obj => {
+          return !studentSubjectWithGrades.some(obj2 => {
+            return obj.subject.code == obj2.subject.code;
+          });
+        })
+      );
+
+      console.log(studentSubjectWithGrades);
+      console.log(classGrade);
+
+      this.items = classGrade;
       // console.log(classesTobeTaken);
       // console.log("form items", this.formItems);
     },
