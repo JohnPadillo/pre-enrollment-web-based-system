@@ -53,9 +53,13 @@
 <script>
 import ClassService from "@/services/ClassService";
 import StudentScheduleService from "@/services/StudentScheduleService";
+import StudentChecklistService from "@/services/CurriculumService";
+import StudentGradeService from "@/services/GradeService";
 export default {
   mounted() {
+    this.getStudentGrades();
     this.getSchedules();
+    this.getStudentCurriculum();
   },
   data() {
     return {
@@ -95,20 +99,31 @@ export default {
       formItems: [],
       itemsToSave: [],
       saveConfirmDialog: false,
-      saveConfirmDialogTitle: "save"
+      saveConfirmDialogTitle: "save",
+      studentChecklist: [],
+      studentGrades: []
     };
   },
   methods: {
+    async getStudentCurriculum() {
+      this.studentChecklist = (
+        await StudentChecklistService.getCurriculum(
+          this.$store.state.user.course.id
+        )
+      ).data;
+    },
+    async getStudentGrades() {
+      this.studentGrades = (
+        await StudentGradeService.getGrades(this.$store.state.user.id)
+      ).data;
+    },
     async saveEditSchedule() {
-      console.log(this.itemsToSave);
       await StudentScheduleService.editSchedule(this.itemsToSave);
       this.getSchedules();
       this.closeSaveConfirmDialog();
       this.action = "";
     },
     async saveEdit() {
-      // console.log("save edit");
-      // console.log(this.$refs);
       let itemsToSave = [];
 
       for (let item of this.$refs.preForm.items) {
@@ -124,7 +139,6 @@ export default {
       this.saveConfirmDialog = true;
     },
     async getSchedules() {
-      console.log("called");
       let response = (
         await StudentScheduleService.getSchedule(this.$store.state.user.id)
       ).data;
@@ -138,9 +152,19 @@ export default {
       this.getClasses();
     },
     async addClass(data) {
-      const index = this.items.indexOf(data);
-      this.items.splice(index, 1);
+      // const index = this.items.indexOf(data);
+      // this.items.splice(index, 1);
+      // this.formItems.push(data);
       this.formItems.push(data);
+
+      let classToRemove = this.items.filter(item => {
+        return data.subject.code == item.subject.code;
+      });
+
+      for (let removeClass of classToRemove) {
+        let index = this.items.indexOf(removeClass);
+        this.items.splice(index, 1);
+      }
     },
     edit() {
       this.action = "edit";
@@ -152,30 +176,70 @@ export default {
     deleteItem(data) {
       const index = this.formItems.indexOf(data);
       this.formItems.splice(index, 1);
-      this.items.push(data);
+      // this.items.push(data);
+      this.getClasses();
     },
     async getClasses() {
       let response = (await ClassService.getClasses()).data;
 
-      let data = await Promise.all(
-        response.filter(data => {
-          return (
-            data.course.id == this.$store.state.user.course.id &&
-            data.section.id == this.$store.state.user.section.id
-          );
-        })
-      );
+      // let data = await Promise.all(
+      //   response.filter(data => {
+      //     return (
+      //       data.course.id == this.$store.state.user.course.id &&
+      //       data.section.id == this.$store.state.user.section.id
+      //     );
+      //   })
+      // );
 
-      let formItems = await this.formItems;
-      let items = await Promise.all(
-        data.filter(function(obj) {
-          return !formItems.some(function(obj2) {
-            return obj.class_no == obj2.class_no;
+      // let formItems = await this.formItems;
+      // let items = await Promise.all(
+      //   data.filter(function(obj) {
+      //     return !formItems.some(function(obj2) {
+      //       return obj.class_no == obj2.class_no;
+      //     });
+      //   })
+      // );
+
+      // this.items = await items;
+      // console.log("student grades", this.studentGrades);
+      // console.log(`Class: ${response.length}`, response);
+      // console.log("form items", this.formItems);
+
+      // filter grades from class
+      // let studentGrades = await this.studentGrades;
+      // let classesTobeTaken = await Promise.all(
+      //   response.filter(function(obj) {
+      //     return !studentGrades.some(function(obj2) {
+      //       return obj.subject.code == obj2.subject.code;
+      //     });
+      //   })
+      // );
+      console.log("classes", response);
+      console.log("checklist", this.studentChecklist);
+      // this.items = classesTobeTaken;
+
+      // filter classes by checklist
+      let classesTobeTaken = await Promise.all(
+        response.filter(data => {
+          return this.studentChecklist.some(checklist => {
+            return data.subject.code == checklist.subject.code;
           });
         })
       );
 
-      this.items = await items;
+      // filter classesTobeTaken from form items
+      let formItems = await this.formItems;
+      let filterClassForm = await Promise.all(
+        classesTobeTaken.filter(classes => {
+          return !formItems.some(formItem => {
+            return classes.subject.code == formItem.subject.code;
+          });
+        })
+      );
+
+      this.items = filterClassForm;
+      // console.log(classesTobeTaken);
+      // console.log("form items", this.formItems);
     },
 
     closeSaveConfirmDialog() {
