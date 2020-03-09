@@ -34,7 +34,7 @@
                   <td>{{ props.item.subject.units }}</td>
                   <td>{{ props.item.day }}</td>
                   <td>{{ props.item.time_start }} - {{ props.item.time_end }}</td>
-                  <td>{{ props.item.room.code }}</td>
+                  <td>{{ props.item.room.name }}</td>
                   <td v-if="action == 'edit'">
                     <removeButton @delete="deleteItem(props.item)" />
                   </td>
