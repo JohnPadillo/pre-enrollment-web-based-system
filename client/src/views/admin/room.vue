@@ -16,6 +16,15 @@
               label="Room Name"
               v-model="room_name"
               outlined
+              :rules="[rules.required]"
+            ></v-text-field>
+            <v-text-field
+              :readonly="action == 'view'"
+              label="Room Limit"
+              v-model="room_limit"
+              outlined
+              type="number"
+              :rules="[rules.required]"
             ></v-text-field>
           </v-form>
         </addDialog>
@@ -88,10 +97,14 @@ export default {
       ],
       addDialog: false,
       room_name: "",
+      room_limit: "",
       room_id: "",
       confirmationDialog: false,
       roomLoading: false,
-      confirmDialogTitle: "delete"
+      confirmDialogTitle: "delete",
+      rules: {
+        required: value => !!value || "Required."
+      }
     };
   },
   mounted() {
@@ -112,38 +125,46 @@ export default {
     },
     async addRoom() {
       let data = {
-        name: this.room_name
+        name: this.room_name,
+        limit: this.room_limit
       };
 
-      await RoomService.addRoom(data);
-      this.getRooms();
-      this.closeAddDialog();
-      this.resetRoomForm();
+      if (this.$refs.roomForm.validate()) {
+        await RoomService.addRoom(data);
+        this.getRooms();
+        this.closeAddDialog();
+        this.resetRoomForm();
+      }
     },
     getEditItem(data) {
       this.action = "edit";
       this.addDialog = true;
       this.room_id = data.id;
       this.room_name = data.name;
+      this.room_limit = data.limit;
     },
 
     viewRoom(data) {
       this.action = "view";
       this.room_id = data.id;
       this.room_name = data.name;
+      this.room_limit = data.limit;
       this.addDialog = true;
     },
 
     async editRoom() {
       let data = {
         id: this.room_id,
-        name: this.room_name
+        name: this.room_name,
+        limit: this.room_limit
       };
 
-      await RoomService.editRoom(data);
-      this.getRooms();
-      this.closeAddDialog();
-      this.resetRoomForm();
+      if (this.$refs.roomForm.validate()) {
+        await RoomService.editRoom(data);
+        this.getRooms();
+        this.closeAddDialog();
+        this.resetRoomForm();
+      }
     },
     getDeleteItem(id) {
       this.room_id = id;

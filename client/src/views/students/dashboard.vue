@@ -251,44 +251,15 @@ export default {
     async getClasses() {
       let response = (await ClassService.getClasses()).data;
 
-      // let data = await Promise.all(
-      //   response.filter(data => {
-      //     return (
-      //       data.course.id == this.$store.state.user.course.id &&
-      //       data.section.id == this.$store.state.user.section.id
-      //     );
-      //   })
-      // );
-
-      // let formItems = await this.formItems;
-      // let items = await Promise.all(
-      //   data.filter(function(obj) {
-      //     return !formItems.some(function(obj2) {
-      //       return obj.class_no == obj2.class_no;
-      //     });
-      //   })
-      // );
-
-      // this.items = await items;
-      // console.log("student grades", this.studentGrades);
-      // console.log(`Class: ${response.length}`, response);
-      // console.log("form items", this.formItems);
-
-      // filter grades from class
-      // let studentGrades = await this.studentGrades;
-      // let classesTobeTaken = await Promise.all(
-      //   response.filter(function(obj) {
-      //     return !studentGrades.some(function(obj2) {
-      //       return obj.subject.code == obj2.subject.code;
-      //     });
-      //   })
-      // );
-
-      // this.items = classesTobeTaken;
+      let filteredResponse = await Promise.all(
+        response.filter(data => {
+          return data.students.length < parseInt(data.room.limit);
+        })
+      );
 
       // filter classes by checklist
       let classesTobeTaken = await Promise.all(
-        response.filter(data => {
+        filteredResponse.filter(data => {
           return this.studentChecklist.some(checklist => {
             return data.subject.code == checklist.subject.code;
           });
@@ -307,7 +278,6 @@ export default {
 
       // filter classForm thru grades
       let studentGrades = this.studentGrades;
-      console.log(filterClassForm);
 
       let studentSubjectWithGrades = await Promise.all(
         studentGrades.filter(data => {
@@ -323,12 +293,8 @@ export default {
         })
       );
 
-      console.log(studentSubjectWithGrades);
-      console.log(classGrade);
-
       this.items = classGrade;
-      // console.log(classesTobeTaken);
-      // console.log("form items", this.formItems);
+      console.log(this.items);
     },
 
     closeSaveConfirmDialog() {
