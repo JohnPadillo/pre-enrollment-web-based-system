@@ -40,7 +40,7 @@
                   hide-details
                   clearable
                 ></v-text-field>
-                <addButton :title="title" @add="addSchedule" />
+                <addButton v-if="$store.state.user.status == 1" :title="title" @add="addSchedule" />
               </v-card-title>
               <scheduleForm
                 ref="scheduleForm"
@@ -75,8 +75,14 @@
                     <td>{{ props.item.code }}</td>
                     <td align="center">
                       <viewButton @view="viewSchedule(props.item)" />
-                      <editButton @edit="editSchedule(props.item)" />
-                      <deleteButton @delete="getDeleteSchedule(props.item)" />
+                      <editButton
+                        v-if="$store.state.user.status == 1"
+                        @edit="editSchedule(props.item)"
+                      />
+                      <deleteButton
+                        v-if="$store.state.user.status == 1"
+                        @delete="getDeleteSchedule(props.item)"
+                      />
                     </td>
                   </tr>
                 </template>
@@ -95,7 +101,7 @@
                   hide-details
                   clearable
                 ></v-text-field>
-                <addButton :title="title" @add="addClass" />
+                <addButton v-if="$store.state.user.status == 1" :title="title" @add="addClass" />
               </v-card-title>
               <confirmationDialog
                 :dialog="classConfirmationDialog"
@@ -114,8 +120,15 @@
                     <td>{{ props.item.time_start + " - " + props.item.time_end }}</td>
                     <td>{{ props.item.room.code }}</td>
                     <td>
-                      <editButton @edit="editClass(props.item)" />
-                      <deleteButton @delete="deleteItem(props.item.id)" />
+                      <viewButton @view="viewClass(props.item)" />
+                      <editButton
+                        v-if="$store.state.user.status == 1"
+                        @edit="editClass(props.item)"
+                      />
+                      <deleteButton
+                        v-if="$store.state.user.status == 1"
+                        @delete="deleteItem(props.item.id)"
+                      />
                     </td>
                   </tr>
                 </template>
@@ -138,6 +151,7 @@
                           <v-row>
                             <v-col cols="12" sm="6" md="4">
                               <v-select
+                                :readonly="action == 'view'"
                                 v-model="classProgramId"
                                 :rules="[classRules.required]"
                                 :items="classPrograms"
@@ -155,10 +169,12 @@
                                 v-model="classClassNo"
                                 type="number"
                                 :rules="[classRules.required]"
+                                :readonly="action == 'view'"
                               ></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6" md="4">
                               <v-select
+                                :readonly="action == 'view'"
                                 v-model="classSectionId"
                                 :rules="[classRules.required]"
                                 :items="classSections"
@@ -169,6 +185,7 @@
                             </v-col>
                             <v-col cols="12" sm="6" md="4">
                               <v-select
+                                :readonly="action == 'view'"
                                 v-model="classCourseId"
                                 :rules="[classRules.required]"
                                 :items="classCourses"
@@ -188,6 +205,7 @@
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
                               <v-select
+                                :readonly="action == 'view'"
                                 v-model="classRoomId"
                                 :rules="[classRules.required]"
                                 :items="classRooms"
@@ -198,6 +216,7 @@
                             </v-col>
                             <v-col cols="12" sm="6">
                               <v-autocomplete
+                                :readonly="action == 'view'"
                                 v-model="classDay"
                                 :rules="[classRules.required]"
                                 :items="days"
@@ -213,6 +232,7 @@
 
                             <v-col cols="12" sm="3">
                               <v-dialog
+                                :disabled="action == 'view'"
                                 ref="startTimedialog"
                                 v-model="classStartTimeDialog"
                                 :return-value.sync="classTimeStart"
@@ -263,6 +283,7 @@
 
                             <v-col cols="12" sm="3">
                               <v-dialog
+                                :disabled="action == 'view'"
                                 ref="endTimedialog"
                                 v-model="classEndTimeDialog"
                                 :return-value.sync="classTimeEnd"
@@ -271,7 +292,11 @@
                               >
                                 <template v-slot:activator="{ on }">
                                   <v-text-field
-                                    :disabled="classTimeStart ? false : true"
+                                    :disabled="
+                                      classTimeStart
+                                        ? false
+                                        : true || action == 'view'
+                                    "
                                     v-model="classTimeEnd"
                                     :rules="[classRules.required]"
                                     label="Time End"
@@ -281,6 +306,7 @@
                                   ></v-text-field>
                                 </template>
                                 <v-time-picker
+                                  :readonly="action == 'view'"
                                   v-if="classEndTimeDialog"
                                   @update:period="clickPeriod"
                                   @click:hour="changeHour"
@@ -319,6 +345,7 @@
                       <v-spacer></v-spacer>
                       <v-btn color="blue darken-1" text @click="closeClassDialog">Close</v-btn>
                       <v-btn
+                        v-if="action != 'view'"
                         color="blue darken-1"
                         text
                         @click="
@@ -743,8 +770,30 @@ export default {
     },
 
     async editClass(data) {
-      console.log(data);
       this.action = "edit";
+      this.getPrograms();
+      this.getSections();
+      this.getCourses();
+      this.getRooms();
+      this.class_id = data.id;
+      this.classProgramId = data.course.id;
+      this.classClassNo = data.class_no;
+      (this.classCourseId = data.subject.id),
+        (this.classSectionId = data.section.id),
+        (this.classRoomId = data.room.id);
+      this.classUnits = data.subject.units;
+
+      let classday = data.day.split("/");
+
+      this.classDay = classday;
+      this.classTimeStart = data.time_start;
+      this.classTimeEnd = data.time_end;
+
+      this.classDialog = true;
+    },
+
+    async viewClass(data) {
+      this.action = "view";
       this.getPrograms();
       this.getSections();
       this.getCourses();

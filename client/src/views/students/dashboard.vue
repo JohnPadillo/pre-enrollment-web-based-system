@@ -20,6 +20,12 @@
           @no="closeSaveConfirmDialog"
           @yes="saveEditSchedule"
         ></confirmationDialog>
+        <snackbar
+          ref="scheduleSnackbar"
+          :color="snackbarColor"
+          :text="snackbarText"
+          @close="closeSnackBar"
+        />
         <v-container>
           <v-layout>
             <v-flex>
@@ -101,7 +107,9 @@ export default {
       saveConfirmDialog: false,
       saveConfirmDialogTitle: "save",
       studentChecklist: [],
-      studentGrades: []
+      studentGrades: [],
+      snackbarColor: "",
+      snackbarText: ""
     };
   },
   methods: {
@@ -155,16 +163,77 @@ export default {
       // const index = this.items.indexOf(data);
       // this.items.splice(index, 1);
       // this.formItems.push(data);
-      this.formItems.push(data);
 
-      let classToRemove = this.items.filter(item => {
-        return data.subject.code == item.subject.code;
+      // check time if conflict
+      let conflicts = await this.formItems.filter(conflict => {
+        // data.time_start
+        let reqTimeStart = data.time_start.split(":");
+        reqTimeStart = reqTimeStart[0] + "" + reqTimeStart[1];
+        reqTimeStart = parseInt(reqTimeStart);
+
+        // data.time_end
+        let reqTimeEnd = data.time_end.split(":");
+        reqTimeEnd = reqTimeEnd[0] + "" + reqTimeEnd[1];
+        reqTimeEnd = parseInt(reqTimeEnd);
+
+        // formitems.time_start
+        let conflictTimeStart = conflict.time_start.split(":");
+        conflictTimeStart = conflictTimeStart[0] + "" + conflictTimeStart[1];
+        conflictTimeStart = parseInt(conflictTimeStart);
+
+        // formitems.time_end
+        let conflictTimeEnd = conflict.time_end.split(":");
+        conflictTimeEnd = conflictTimeEnd[0] + "" + conflictTimeEnd[1];
+        conflictTimeEnd = parseInt(conflictTimeEnd);
+
+        return (
+          (reqTimeStart >= conflictTimeStart &&
+            reqTimeStart < conflictTimeEnd) ||
+          (reqTimeEnd > conflictTimeStart && reqTimeEnd <= conflictTimeEnd) ||
+          (reqTimeStart < conflictTimeStart && reqTimeEnd > conflictTimeEnd)
+        );
       });
 
-      for (let removeClass of classToRemove) {
-        let index = this.items.indexOf(removeClass);
-        this.items.splice(index, 1);
+      if (conflicts.length > 0) {
+        let conflictClass = "";
+        for (let i = 0; i < conflicts.length; i++) {
+          conflictClass +=
+            "" + conflicts[i].class_no + (i < conflicts.length - 1 ? "," : "");
+        }
+
+        this.$refs.scheduleSnackbar.dialog = true;
+        this.snackbarColor = "error";
+        this.snackbarText = `Conflict to Class No: ${conflictClass}`;
+
+        // for (let conflict of conflicts) {
+        //   console.log(conflict);
+        //   conflictClass += "" + conflict.class_no +
+        // }
+        // console.log("conflict", conflict);
+      } else {
+        this.formItems.push(data);
+
+        let classToRemove = this.items.filter(item => {
+          return data.subject.code == item.subject.code;
+        });
+
+        for (let removeClass of classToRemove) {
+          let index = this.items.indexOf(removeClass);
+          this.items.splice(index, 1);
+        }
       }
+
+      // _____________________________________________________________________
+      // this.formItems.push(data);
+
+      // let classToRemove = this.items.filter(item => {
+      //   return data.subject.code == item.subject.code;
+      // });
+
+      // for (let removeClass of classToRemove) {
+      //   let index = this.items.indexOf(removeClass);
+      //   this.items.splice(index, 1);
+      // }
     },
     edit() {
       this.action = "edit";
@@ -264,6 +333,10 @@ export default {
 
     closeSaveConfirmDialog() {
       this.saveConfirmDialog = false;
+    },
+
+    closeSnackBar() {
+      this.$refs.snackbar.dialog = false;
     }
   }
 };

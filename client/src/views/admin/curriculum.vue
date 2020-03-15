@@ -5,6 +5,7 @@
         <addDialog
           :dialog="openAddDialog"
           :title="title"
+          :action="action"
           ref="addDialog"
           @close="closeAddDialog"
           @save="addCourse"
@@ -33,6 +34,7 @@
         ></confirmationDialog>
         <!-- form -->
         <formDialog
+          :action="action"
           :dialog="openDialog"
           :title="title"
           :maxWidth="1000"

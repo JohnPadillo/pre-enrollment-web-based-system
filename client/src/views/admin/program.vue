@@ -5,6 +5,7 @@
         <addDialog
           :dialog="openDialog"
           :title="title"
+          :action="action"
           ref="addDialog"
           @close="closeDialog"
           @save="action === 'add' ? addProgram() : editProgram()"
@@ -54,8 +55,9 @@
               <tr>
                 <td>{{ props.item.code }}</td>
                 <td>{{ props.item.name }}</td>
-                <td>{{ props.item.department }}</td>
+                <td>{{ props.item.department.name }}</td>
                 <td align="center">
+                  <viewButton @view="viewProgram(props.item.id)" />
                   <editButton @edit="edit(props.item.id)" />
                   <deleteButton @delete="remove(props.item.id)" />
                 </td>
@@ -125,6 +127,7 @@ export default {
       this.programLoading = true;
       this.programs = (await ProgramService.getPrograms()).data;
       this.programLoading = false;
+      console.log(this.programs);
     },
     async getDepartments() {
       this.departments = (await DepartmentService.getDepartments()).data;
@@ -187,6 +190,16 @@ export default {
     },
     async closeConfirmDialog() {
       this.confirmationDialog = !this.confirmationDialog;
+    },
+
+    async viewProgram(id) {
+      this.action = "view";
+      this.id = id;
+      let course = (await ProgramService.getProgram(id)).data;
+      this.program_name = course.name;
+      this.program_code = course.code;
+      this.program_department = course.department.id;
+      this.openDialog = true;
     }
   }
 };

@@ -14,7 +14,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" text @click="close">Close</v-btn>
-          <v-btn color="blue darken-1" text @click="save">Save</v-btn>
+          <v-btn v-if="action != 'view'" color="blue darken-1" text @click="save">Save</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -28,6 +28,7 @@ export default {
   props: {
     dialog: Boolean,
     title: String,
+    action: String,
     maxWidth: {
       type: Number,
       default: 600

@@ -5,6 +5,7 @@
         <addDialog
           :dialog="addDialog"
           :title="title"
+          :action="action"
           ref="addDialog"
           @close="closeAddDialog"
           @save="action == 'add' ? addSection() : editSection()"
@@ -72,6 +73,7 @@
                 <td align="center">{{ props.item.year }}</td>
                 <td align="center">{{ props.item.semester }}</td>
                 <td align="center">
+                  <viewButton @view="viewSection(props.item)" />
                   <editButton @edit="getEditItem(props.item)" />
                   <deleteButton @delete="getDeleteItem(props.item.id)" />
                 </td>
@@ -193,6 +195,17 @@ export default {
     getEditItem(data) {
       this.getPrograms();
       this.action = "edit";
+      this.section_id = data.id;
+      this.section_programId = data.course.id;
+      this.section_name = data.name;
+      this.section_year = data.year;
+      this.section_semester = data.semester;
+      this.addDialog = true;
+    },
+
+    viewSection(data) {
+      this.getPrograms();
+      this.action = "view";
       this.section_id = data.id;
       this.section_programId = data.course.id;
       this.section_name = data.name;

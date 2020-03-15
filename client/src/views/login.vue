@@ -3,13 +3,20 @@
     <v-layout>
       <v-flex>
         <registerForm :title="title" @register="login">
-          <v-text-field label="Email" v-model="email" outlined :rules="[rules.required]"></v-text-field>
+          <v-text-field
+            label="Email"
+            v-model="email"
+            outlined
+            :rules="[rules.required]"
+            v-on:keyup.enter="login()"
+          ></v-text-field>
           <v-text-field
             label="Password"
             v-model="password"
             outlined
             type="password"
             :rules="[rules.required]"
+            v-on:keyup.enter="login()"
           ></v-text-field>
         </registerForm>
       </v-flex>
@@ -37,7 +44,11 @@ export default {
   mounted() {
     this.$store.dispatch("unSetUser");
   },
+
   methods: {
+    hello() {
+      console.log("hello");
+    },
     async login() {
       let data = {
         email: this.email
@@ -51,10 +62,10 @@ export default {
         if (checkPassword(user.password)) {
           await this.$store.dispatch("setUser", user);
 
-          if (user.status === 1) {
-            this.$router.push({ path: "/admin" });
-          } else {
+          if (user.status === 0) {
             this.$router.push({ path: "/dashboard" });
+          } else {
+            this.$router.push({ path: "/admin" });
           }
         }
       }

@@ -5,27 +5,25 @@
         <addDialog
           :dialog="openAddDialog"
           :title="title"
+          :action="action"
           ref="addDialog"
           @save="action == 'add' ? addStudent() : editStudent()"
           @close="closeAddDialog"
         >
-          <!-- <v-text-field label="Stundent Name" v-model="student_name" outlined></v-text-field>
-          <v-select
-            v-model="student_course"
-            :items="courses"
-            label="Course"
-            item-text="code"
-            item-value="code"
-            outlined
-          ></v-select>-->
-
           <v-form ref="registerForm">
-            <v-text-field label="First Name" v-model="firstName" outlined :rules="[rules.required]"></v-text-field>
+            <v-text-field
+              label="First Name"
+              v-model="firstName"
+              outlined
+              :rules="[rules.required]"
+              :readonly="action == 'view'"
+            ></v-text-field>
             <v-text-field
               label="Middle Name"
               v-model="middleName"
               outlined
               :rules="[rules.required]"
+              :readonly="action == 'view'"
             ></v-text-field>
             <v-text-field label="Last Name" v-model="lastName" outlined :rules="[rules.required]"></v-text-field>
             <v-text-field
@@ -33,6 +31,7 @@
               v-model="permanentAddress"
               outlined
               :rules="[rules.required]"
+              :readonly="action == 'view'"
             ></v-text-field>
             <v-text-field
               label="Contact No."
@@ -42,12 +41,14 @@
               counter="11"
               maxlength="11"
               :rules="[rules.required, rules.number]"
+              :readonly="action == 'view'"
             ></v-text-field>
             <v-text-field
               label="Email"
               v-model="email"
               outlined
               :rules="[rules.required, rules.email]"
+              :readonly="action == 'view'"
             ></v-text-field>
             <v-text-field
               label="Password"
@@ -55,12 +56,14 @@
               outlined
               type="password"
               :rules="[rules.required]"
+              :readonly="action == 'view'"
             ></v-text-field>
             <v-text-field
               label="Name of Parents(s)/Guardian"
               v-model="name_of_guardian"
               outlined
               :rules="[rules.required]"
+              :readonly="action == 'view'"
             ></v-text-field>
             <v-text-field
               label="Contact No. of Parent(s)/Guardian"
@@ -70,6 +73,7 @@
               maxlength="11"
               type="number"
               :rules="[rules.required, rules.number]"
+              :readonly="action == 'view'"
             ></v-text-field>
 
             <v-select
@@ -79,9 +83,10 @@
               item-text="code"
               item-value="id"
               solo
-              clearable
+              :clearable="action != 'view'"
               :rules="[rules.required]"
               @input="getSections()"
+              :readonly="action == 'view'"
             ></v-select>
 
             <v-select
@@ -91,12 +96,20 @@
               item-text="name"
               item-value="id"
               solo
-              clearable
+              :clearable="action != 'view'"
               :disabled="!courseSelected"
+              :readonly="action == 'view'"
               :rules="[rules.required]"
             ></v-select>
           </v-form>
         </addDialog>
+
+        <snackbar
+          ref="studentSnackbar"
+          :color="snackbarColor"
+          :text="snackbarText"
+          @close="closeSnackBar()"
+        />
 
         <v-layout>
           <v-spacer></v-spacer>
@@ -140,7 +153,13 @@
               single-line
               hide-details
             ></v-text-field>
-            <addButton :title="title" @add="add" />
+            <addButton
+              v-if="
+                $store.state.user.status == 3 || $store.state.user.status == 1
+              "
+              :title="title"
+              @add="add"
+            />
           </v-card-title>
           <v-data-table
             :headers="headers"
@@ -155,9 +174,23 @@
                 <td>{{ props.item.name }}</td>
                 <td>{{ props.item.course.code }}</td>
                 <td align="center">
-                  <viewButton @view="viewChecklist(props.item)" />
-                  <editButton @edit="getEditItem(props.item.id)" />
-                  <deleteButton @delete="getDeleteItem(props.item.id)" />
+                  <viewChecklistButton @viewChecklist="viewChecklist(props.item)" />
+                  <viewButton @view="viewStudent(props.item.id)" />
+                  <editButton
+                    v-if="
+                      $store.state.user.status == 3 ||
+                        $store.state.user.status == 1 ||
+                        ($store.state.user.department.id ==
+                          props.item.department.id &&
+                          $store.state.user.status == 3) ||
+                        $store.state.user.status == 1
+                    "
+                    @edit="getEditItem(props.item.id)"
+                  />
+                  <deleteButton
+                    v-if="$store.state.user.status != 2"
+                    @delete="getDeleteItem(props.item.id)"
+                  />
                 </td>
               </tr>
             </template>
@@ -224,12 +257,13 @@ export default {
         { text: "Student Name", value: "name" },
         { text: "Student Program", value: "course.code" },
         { text: "Actions", align: "center" }
-      ]
+      ],
+      snackbarColor: "",
+      snackbarText: ""
     };
   },
   methods: {
     async getSections() {
-      console.log("getSections");
       let data = (await SectionService.getSections()).data;
       this.sections = await Promise.all(
         data.filter(data => {
@@ -239,10 +273,62 @@ export default {
     },
     async getData() {
       this.studentLoading = true;
-      this.students = (await StudentService.getStudents()).data;
-      console.log(this.students);
+
+      let programs = (await ProgramService.getPrograms()).data;
+      let response = (await StudentService.getStudents()).data;
+
+      let studentsArray = await Promise.all(
+        response.map(async data => {
+          let id = data.id;
+          let name = data.name;
+          let email = data.email;
+          let permanent_address = data.permanent_address;
+          let contact_no = data.contact_no;
+          let name_of_guardian = data.name_of_guardian;
+          let contact_no_of_guardian = data.contact_no_of_guardian;
+          let course = {
+            id: data.course.id,
+            name: data.course.name,
+            code: data.course.code
+          };
+
+          let department = await programs.filter(program => {
+            return program.id == data.course.id;
+          });
+
+          department = {
+            id: department[0].department.id,
+            name: department[0].department.name
+          };
+
+          let section = {
+            id: data.section.id,
+            name: data.section.name
+          };
+
+          let status = data.status;
+
+          return {
+            id: id,
+            name: name,
+            email: email,
+            permanent_address: permanent_address,
+            contact_no: contact_no,
+            name_of_guardian: name_of_guardian,
+            contact_no_of_guardian: contact_no_of_guardian,
+            course: course,
+            department: department,
+            section: section,
+            status: status
+          };
+        })
+      );
+
+      this.students = await studentsArray;
       this.defaultStudents = this.students;
       this.studentLoading = false;
+
+      console.log(this.students);
     },
     async getStudent(id) {
       return (await StudentService.getStudent(id)).data;
@@ -274,7 +360,7 @@ export default {
       this.students = data;
     },
     async resetSelectCourse() {
-      this.students = (await StudentService.getStudents()).data;
+      this.getData();
     },
 
     async addStudent() {
@@ -297,10 +383,21 @@ export default {
         contact_no_of_guardian: this.contact_no_of_guardian,
         section: this.selectedSection
       };
-      await StudentService.addStudent(data);
-      this.getData();
-      this.closeAddDialog();
-      this.reset();
+      let response = (await StudentService.getStudents()).data;
+      let error = response.filter(response => {
+        return response.email == data.email;
+      });
+
+      if (error.length > 0) {
+        this.$refs.studentSnackbar.dialog = true;
+        this.snackbarText = "Email already exist!";
+        this.snackbarColor = "error";
+      } else {
+        await StudentService.addStudent(data);
+        this.getData();
+        this.closeAddDialog();
+        this.reset();
+      }
     },
 
     async getEditItem(id) {
@@ -409,17 +506,7 @@ export default {
         })
       );
 
-      this.user = {
-        id: data.id,
-        name: data.name,
-        email: data.email,
-        course: {
-          id: data.course.id,
-          name: data.course.name,
-          code: data.course.code
-        },
-        contact_no: data.contact_no
-      };
+      this.user = data;
       this.action = "view";
       this.checklistDialog = true;
     },
@@ -440,6 +527,30 @@ export default {
       this.checklistDialog = false;
       this.$refs.checklist.changeEditDialog();
       this.getData();
+    },
+
+    closeSnackbar() {
+      this.$refs.studentSnackbar.dialog = false;
+    },
+
+    async viewStudent(id) {
+      this.action = "view";
+      this.id = id;
+      let data = await this.getStudent(id);
+      this.firstName = data.first_name;
+      this.middleName = data.middle_name;
+      this.lastName = data.last_name;
+      this.permanentAddress = data.permanent_address;
+      this.contact_no = data.contact_no;
+      this.email = data.email;
+      this.password = data.password;
+      this.name_of_guardian = data.name_of_guardian;
+      this.contact_no_of_guardian = data.contact_no_of_guardian;
+      this.courseSelected = data.course.id;
+      this.getSections();
+      this.selectedSection = data.section.id;
+
+      this.openAddDialog = true;
     }
   }
 };

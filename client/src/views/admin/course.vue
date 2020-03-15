@@ -46,19 +46,32 @@
         <addDialog
           :dialog="openAddDialog"
           :title="title"
+          :action="action"
           ref="addDialog"
           @close="closeAddDialog"
           @save="action === 'edit' ? saveEditCourse() : addCourse()"
         >
           <v-text-field
             label="Course Code"
-            :readonly="action === 'edit'"
+            :readonly="action == 'view'"
             v-model="course_code"
             outlined
           ></v-text-field>
-          <v-text-field label="Course Name" v-model="course_name" outlined></v-text-field>
-          <v-text-field label="Units" v-model="course_units" type="number" outlined></v-text-field>
+          <v-text-field
+            :readonly="action == 'view'"
+            label="Course Name"
+            v-model="course_name"
+            outlined
+          ></v-text-field>
+          <v-text-field
+            :readonly="action == 'view'"
+            label="Units"
+            v-model="course_units"
+            type="number"
+            outlined
+          ></v-text-field>
           <v-autocomplete
+            :readonly="action == 'view'"
             outlined
             v-model="course_prerequisites"
             :items="prerequisites"
@@ -89,7 +102,7 @@
               hide-details
               clearable
             ></v-text-field>
-            <addButton :title="title" @add="add" />
+            <addButton v-if="$store.state.user.status == 1" :title="title" @add="add" />
           </v-card-title>
           <v-data-table
             :headers="headers"
@@ -106,8 +119,15 @@
                 <td>{{ props.item.units }}</td>
                 <td>{{ props.item.prerequisites }}</td>
                 <td align="center">
-                  <editButton @edit="editCourse(props.item.id)" />
-                  <deleteButton @delete="remove(props.item.id)" />
+                  <viewButton @view="viewCourse(props.item.id)" />
+                  <editButton
+                    v-if="$store.state.user.status == 1"
+                    @edit="editCourse(props.item.id)"
+                  />
+                  <deleteButton
+                    v-if="$store.state.user.status == 1"
+                    @delete="remove(props.item.id)"
+                  />
                 </td>
               </tr>
             </template>
@@ -485,6 +505,31 @@ export default {
       });
 
       this.subjects = data;
+    },
+
+    async viewCourse(id) {
+      this.action = "view";
+      let subject = (await CourseService.getCourse(id)).data;
+      this.id = subject.id;
+      await this.getPrerequisites();
+      this.course_code = subject.code;
+      this.course_name = subject.name;
+      this.course_units = subject.units;
+      let prerequisiteArray = []; // we can pass object here
+
+      if (subject.prerequisites) {
+        let prerequisites = subject.prerequisites.split(","); // Convert string to array separating by comma
+
+        for (let prerequisite of prerequisites) {
+          let data = (await CourseService.getCourse(prerequisite)).data;
+          prerequisiteArray.push(data);
+        }
+      }
+
+      this.course_prerequisites = subject.prerequisites
+        ? prerequisiteArray
+        : "";
+      this.openAddDialog = true;
     }
   }
 };

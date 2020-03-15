@@ -33,6 +33,12 @@ export default {
     items() {
       if (this.$store.state.user.status == 1) {
         return this.items1;
+      }
+      if (this.$store.state.user.status == 2) {
+        return this.programHeadHeader;
+      }
+      if (this.$store.state.user.status == 3) {
+        return this.registrarHeader;
       } else {
         return this.items2;
       }
@@ -58,11 +64,42 @@ export default {
           title: "Schedules | Classes",
           icon: "mdi-calendar-clock",
           link: "/admin/schedule"
+        },
+
+        {
+          title: "Admins",
+          icon: " mdi-account-check",
+          link: "/admin/roles"
         }
       ],
       items2: [
         { title: "Dashboard", icon: "mdi-view-dashboard", link: "/dashboard" }
         // { title: "Profile", icon: "mdi-image", link: "" },
+      ],
+      programHeadHeader: [
+        { title: "Dashboard", icon: "mdi-view-dashboard", link: "/admin" },
+        { title: "Students", icon: "assignment_ind", link: "/admin/students" },
+        { title: "Courses", icon: "subject", link: "/admin/courses" },
+        {
+          title: "Schedules | Classes",
+          icon: "mdi-calendar-clock",
+          link: "/admin/schedule"
+        }
+      ],
+      registrarHeader: [
+        { title: "Dashboard", icon: "mdi-view-dashboard", link: "/admin" },
+
+        {
+          title: "Students Checklist",
+          icon: "assignment_ind",
+          link: "/admin/students"
+        },
+        {
+          title: "Schedules | Classes",
+          icon: "mdi-calendar-clock",
+          link: "/admin/schedule"
+        },
+        { title: "Rooms", icon: "room", link: "/admin/rooms" }
       ],
       right: null
     };

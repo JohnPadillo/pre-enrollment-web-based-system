@@ -5,9 +5,10 @@
         <addDialog
           :dialog="openDialog"
           :title="title"
+          :action="action"
           ref="addDialog"
           @close="closeDialog"
-          @save="action === 'edit' ? saveEditDepartment() : addDepartment()"
+          @save="action == 'edit' ? saveEditDepartment() : addDepartment()"
         >
           <v-text-field label="Department Name" v-model="department_name" outlined></v-text-field>
         </addDialog>
@@ -44,6 +45,7 @@
               <tr>
                 <td>{{ props.item.name }}</td>
                 <td align="center">
+                  <viewButton @view="viewDepartment(props.item.id)" />
                   <editButton @edit="getEditDepartment(props.item.id)" />
                   <deleteButton @delete="getDeleteDepartment(props.item.id)" />
                 </td>
@@ -155,6 +157,14 @@ export default {
       } catch (error) {
         console.log(error);
       }
+    },
+
+    async viewDepartment(id) {
+      this.action = "view";
+      this.openDialog = true;
+      let response = (await DepartmentService.getDepartment(id)).data;
+
+      this.department_name = response.name;
     }
   }
 };

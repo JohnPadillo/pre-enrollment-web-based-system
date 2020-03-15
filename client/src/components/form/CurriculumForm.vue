@@ -7,7 +7,14 @@
             <v-toolbar dark color="primary">
               <v-card-title>Checklist</v-card-title>
               <v-spacer></v-spacer>
-              <v-tooltip top>
+              <v-tooltip
+                v-if="
+                  $store.state.user.department.id == user.department.id ||
+                    $store.state.user.status == 1 ||
+                    $store.state.user.status == 3
+                "
+                top
+              >
                 <template v-slot:activator="{ on }">
                   <v-btn icon @click="changeEditDialog" v-on="on">
                     <v-icon dark>mdi-pencil</v-icon>

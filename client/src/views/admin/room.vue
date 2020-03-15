@@ -3,6 +3,7 @@
     <v-layout>
       <v-flex>
         <addDialog
+          :action="action"
           :dialog="addDialog"
           :title="title"
           ref="addDialog"
@@ -10,7 +11,12 @@
           @save="action == 'add' ? addRoom() : editRoom()"
         >
           <v-form ref="roomForm">
-            <v-text-field label="Room Name" v-model="room_name" outlined></v-text-field>
+            <v-text-field
+              :readonly="action == 'view'"
+              label="Room Name"
+              v-model="room_name"
+              outlined
+            ></v-text-field>
           </v-form>
         </addDialog>
         <confirmationDialog
@@ -31,7 +37,7 @@
               hide-details
               clearable
             ></v-text-field>
-            <addButton :title="title" @add="add" />
+            <addButton v-if="$store.state.user.status == 1" :title="title" @add="add" />
           </v-card-title>
           <v-data-table
             :headers="headers"
@@ -45,8 +51,12 @@
               <tr>
                 <td>{{ props.item.name }}</td>
                 <td align="center">
-                  <editButton @edit="getEditItem(props.item)" />
-                  <deleteButton @delete="getDeleteItem(props.item.id)" />
+                  <viewButton @view="viewRoom(props.item)" />
+                  <editButton v-if="$store.state.user.status == 1" @edit="getEditItem(props.item)" />
+                  <deleteButton
+                    v-if="$store.state.user.status == 1"
+                    @delete="getDeleteItem(props.item.id)"
+                  />
                 </td>
               </tr>
             </template>
@@ -115,6 +125,13 @@ export default {
       this.addDialog = true;
       this.room_id = data.id;
       this.room_name = data.name;
+    },
+
+    viewRoom(data) {
+      this.action = "view";
+      this.room_id = data.id;
+      this.room_name = data.name;
+      this.addDialog = true;
     },
 
     async editRoom() {
