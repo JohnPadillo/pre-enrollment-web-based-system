@@ -9,9 +9,11 @@
               <v-spacer></v-spacer>
               <v-tooltip
                 v-if="
-                  $store.state.user.department.id == user.department.id ||
-                    $store.state.user.status == 1 ||
-                    $store.state.user.status == 3
+                  $store.state.user.deparment
+                    ? $store.state.user.department.id == user.department.id ||
+                      $store.state.user.status == 1 ||
+                      $store.state.user.status == 3
+                    : ''
                 "
                 top
               >
@@ -54,7 +56,7 @@
                 {{ user.name == null ? "-" : user.name }}
                 <br />
                 <strong>Program:</strong>
-                {{ user.course.code == null ? "-" : user.course.code }}
+                {{ user.course.code ? user.course.code : "-" }}
               </v-list>
 
               <!-- 1st Year -->

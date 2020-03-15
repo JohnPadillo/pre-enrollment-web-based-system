@@ -276,7 +276,7 @@ export default {
 
       let programs = (await ProgramService.getPrograms()).data;
       let response = (await StudentService.getStudents()).data;
-
+      console.log(response);
       let studentsArray = await Promise.all(
         response.map(async data => {
           let id = data.id;
@@ -297,14 +297,18 @@ export default {
           });
 
           department = {
-            id: department[0].department.id,
+            id: department[0].department.id ? department[0].department.id : "",
             name: department[0].department.name
+              ? department[0].department.name
+              : ""
           };
 
-          let section = {
-            id: data.section.id,
-            name: data.section.name
-          };
+          let section = data.section
+            ? {
+                id: data.section.id,
+                name: data.section.name
+              }
+            : "-";
 
           let status = data.status;
 
@@ -317,7 +321,7 @@ export default {
             name_of_guardian: name_of_guardian,
             contact_no_of_guardian: contact_no_of_guardian,
             course: course,
-            department: department,
+            department: department ? department : "",
             section: section,
             status: status
           };
@@ -327,8 +331,6 @@ export default {
       this.students = await studentsArray;
       this.defaultStudents = this.students;
       this.studentLoading = false;
-
-      console.log(this.students);
     },
     async getStudent(id) {
       return (await StudentService.getStudent(id)).data;
@@ -505,8 +507,8 @@ export default {
           };
         })
       );
-
       this.user = data;
+      console.log(this.user);
       this.action = "view";
       this.checklistDialog = true;
     },
