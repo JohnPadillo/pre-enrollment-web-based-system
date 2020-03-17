@@ -536,6 +536,7 @@ export default {
     },
 
     async viewStudent(id) {
+      this.openAddDialog = true;
       this.action = "view";
       this.id = id;
       let data = await this.getStudent(id);
@@ -551,8 +552,6 @@ export default {
       this.courseSelected = data.course.id;
       this.getSections();
       this.selectedSection = data.section.id;
-
-      this.openAddDialog = true;
     }
   }
 };

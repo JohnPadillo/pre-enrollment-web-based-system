@@ -74,7 +74,7 @@
               item-value="id"
               outlined
               :rules="[rules.required]"
-              :disabled="action == 'view'"
+              :readonly="action == 'view'"
             ></v-select>
 
             <v-select
@@ -85,7 +85,7 @@
               item-value="id"
               outlined
               :rules="[rules.required]"
-              :disabled="action == 'view'"
+              :readonly="action == 'view'"
             ></v-select>
           </v-form>
         </addDialog>
@@ -252,6 +252,7 @@ export default {
       this.departments = (await DepartmentService.getDepartments()).data;
     },
     openAddDialog() {
+      this.action = "view";
       this.addDialog = true;
     },
     closeAddDialog() {
