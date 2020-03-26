@@ -98,8 +98,8 @@ export default {
           title: "Schedules | Classes",
           icon: "mdi-calendar-clock",
           link: "/admin/schedule"
-        },
-        { title: "Rooms", icon: "room", link: "/admin/rooms" }
+        }
+        // { title: "Rooms", icon: "room", link: "/admin/rooms" }
       ],
       right: null
     };
