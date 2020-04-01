@@ -1,26 +1,34 @@
 <template>
-  <v-container>
-    <v-layout>
-      <v-flex>
-        <registerForm :title="title" @register="login">
-          <v-text-field
-            label="Email"
-            v-model="email"
-            outlined
-            :rules="[rules.required]"
-            v-on:keyup.enter="login()"
-          ></v-text-field>
-          <v-text-field
-            label="Password"
-            v-model="password"
-            outlined
-            type="password"
-            :rules="[rules.required]"
-            v-on:keyup.enter="login()"
-          ></v-text-field>
-        </registerForm>
-      </v-flex>
-    </v-layout>
+  <v-container fluid>
+    <!-- <v-layout> -->
+    <div style="margin: auto; display: flex; align-items: center; height: 100%">
+      <v-row justify="center" align="center" class="pa-5">
+        <v-col cols="8">
+          <p style="font-size: 100px; text-align: center">Pre-enrollment Web-based System</p>
+        </v-col>
+        <v-col cols="4" align="center" style="margin-top: 80px">
+          <registerForm style="width: 80%" :title="title" @register="login">
+            <v-text-field
+              label="Email"
+              v-model="email"
+              outlined
+              :rules="[rules.required]"
+              v-on:keyup.enter="login()"
+              class="pt-8"
+            ></v-text-field>
+            <v-text-field
+              label="Password"
+              v-model="password"
+              outlined
+              type="password"
+              :rules="[rules.required]"
+              v-on:keyup.enter="login()"
+            ></v-text-field>
+          </registerForm>
+        </v-col>
+      </v-row>
+    </div>
+    <!-- </v-layout> -->
   </v-container>
 </template>
 

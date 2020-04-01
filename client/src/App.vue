@@ -14,9 +14,11 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn text v-if="isLoggedIn" color="light-blue darken-4"
-        >Hello {{ $store.state.user.first_name }}</v-btn
-      >
+      <v-btn
+        text
+        v-if="isLoggedIn"
+        color="light-blue darken-4"
+      >Hello {{ $store.state.user.first_name }}</v-btn>
 
       <!-- <v-btn href="https://github.com/vuetifyjs/vuetify/releases/latest" target="_blank" text>
         <span class="mr-2">Latest Release</span>
@@ -28,22 +30,21 @@
         :to="{ path: '/register' }"
         v-if="!isLoggedIn"
         >Register</v-btn
-      > -->
-      <v-btn
+      >-->
+      <!-- <v-btn
         color="light-blue darken-4"
         text
         :to="{ path: '/' }"
         v-if="!isLoggedIn"
         >Login</v-btn
-      >
+      >-->
       <v-btn
         color="light-blue darken-4"
         text
         :to="{ path: '/' }"
         v-if="isLoggedIn"
         @click="logout"
-        >Logout</v-btn
-      >
+      >Logout</v-btn>
     </v-app-bar>
     <navBar v-if="isLoggedIn" />
     <v-content>
