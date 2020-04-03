@@ -15,7 +15,9 @@
               <v-tooltip
                 v-if="
                   $store.state.user.status == 3 ||
-                    $store.state.user.department.id == user.department.id
+                  ($store.state.user.department && user.department)
+                    ? $store.state.user.department.id == user.department.id
+                    : ''
                 "
                 top
               >
@@ -68,12 +70,7 @@
                     <v-card-title>
                       1st Year 1st Term
                       <v-spacer></v-spacer>
-                      <addButton
-                        v-if="action != 'view'"
-                        id="11"
-                        ref="add11"
-                        @add="add11()"
-                      ></addButton>
+                      <addButton v-if="action != 'view'" id="11" ref="add11" @add="add11()"></addButton>
                     </v-card-title>
 
                     <v-data-table
@@ -91,9 +88,7 @@
                           <td>{{ props.item.code }}</td>
                           <td>{{ props.item.name }}</td>
                           <td>{{ props.item.units }}</td>
-                          <td v-if="editDialog == false" align="center">
-                            {{ props.item.grade }}
-                          </td>
+                          <td v-if="editDialog == false" align="center">{{ props.item.grade }}</td>
                           <td v-else>
                             <v-edit-dialog
                               :return-value.sync="props.item.grade"
@@ -101,16 +96,14 @@
                               large
                             >
                               {{
-                                props.item.grade
-                                  ? props.item.grade
-                                  : "------------"
+                              props.item.grade
+                              ? props.item.grade
+                              : "------------"
                               }}
-                              <template v-slot:input>
-                                <v-select
-                                  :items="grades"
-                                  v-model="props.item.grade"
-                                  label="Grades"
-                                ></v-select>
+                              <template
+                                v-slot:input
+                              >
+                                <v-select :items="grades" v-model="props.item.grade" label="Grades"></v-select>
                               </template>
                             </v-edit-dialog>
                           </td>
@@ -135,12 +128,7 @@
                     <v-card-title>
                       1st Year 2nd Term
                       <v-spacer></v-spacer>
-                      <addButton
-                        v-if="action != 'view'"
-                        id="12"
-                        ref="add12"
-                        @add="add12()"
-                      ></addButton>
+                      <addButton v-if="action != 'view'" id="12" ref="add12" @add="add12()"></addButton>
                     </v-card-title>
 
                     <v-data-table
@@ -158,9 +146,7 @@
                           <td>{{ props.item.code }}</td>
                           <td>{{ props.item.name }}</td>
                           <td>{{ props.item.units }}</td>
-                          <td v-if="editDialog == false" align="center">
-                            {{ props.item.grade }}
-                          </td>
+                          <td v-if="editDialog == false" align="center">{{ props.item.grade }}</td>
                           <td v-else>
                             <v-edit-dialog
                               :return-value.sync="props.item.grade"
@@ -168,16 +154,14 @@
                               large
                             >
                               {{
-                                props.item.grade
-                                  ? props.item.grade
-                                  : "------------"
+                              props.item.grade
+                              ? props.item.grade
+                              : "------------"
                               }}
-                              <template v-slot:input>
-                                <v-select
-                                  :items="grades"
-                                  v-model="props.item.grade"
-                                  label="Grades"
-                                ></v-select>
+                              <template
+                                v-slot:input
+                              >
+                                <v-select :items="grades" v-model="props.item.grade" label="Grades"></v-select>
                               </template>
                             </v-edit-dialog>
                           </td>
@@ -203,12 +187,7 @@
                     <v-card-title>
                       2nd Year 1st Term
                       <v-spacer></v-spacer>
-                      <addButton
-                        v-if="action != 'view'"
-                        id="21"
-                        ref="add21"
-                        @add="add21()"
-                      ></addButton>
+                      <addButton v-if="action != 'view'" id="21" ref="add21" @add="add21()"></addButton>
                     </v-card-title>
                     <v-data-table
                       disable-pagination
@@ -225,9 +204,7 @@
                           <td>{{ props.item.code }}</td>
                           <td>{{ props.item.name }}</td>
                           <td>{{ props.item.units }}</td>
-                          <td v-if="editDialog == false" align="center">
-                            {{ props.item.grade }}
-                          </td>
+                          <td v-if="editDialog == false" align="center">{{ props.item.grade }}</td>
                           <td v-else>
                             <v-edit-dialog
                               :return-value.sync="props.item.grade"
@@ -235,16 +212,14 @@
                               large
                             >
                               {{
-                                props.item.grade
-                                  ? props.item.grade
-                                  : "------------"
+                              props.item.grade
+                              ? props.item.grade
+                              : "------------"
                               }}
-                              <template v-slot:input>
-                                <v-select
-                                  :items="grades"
-                                  v-model="props.item.grade"
-                                  label="Grades"
-                                ></v-select>
+                              <template
+                                v-slot:input
+                              >
+                                <v-select :items="grades" v-model="props.item.grade" label="Grades"></v-select>
                               </template>
                             </v-edit-dialog>
                           </td>
@@ -269,12 +244,7 @@
                     <v-card-title>
                       2nd Year 2nd Term
                       <v-spacer></v-spacer>
-                      <addButton
-                        v-if="action != 'view'"
-                        id="22"
-                        ref="add22"
-                        @add="add22()"
-                      ></addButton>
+                      <addButton v-if="action != 'view'" id="22" ref="add22" @add="add22()"></addButton>
                     </v-card-title>
                     <v-data-table
                       disable-pagination
@@ -291,9 +261,7 @@
                           <td>{{ props.item.code }}</td>
                           <td>{{ props.item.name }}</td>
                           <td>{{ props.item.units }}</td>
-                          <td v-if="editDialog == false" align="center">
-                            {{ props.item.grade }}
-                          </td>
+                          <td v-if="editDialog == false" align="center">{{ props.item.grade }}</td>
                           <td v-else>
                             <v-edit-dialog
                               :return-value.sync="props.item.grade"
@@ -301,16 +269,14 @@
                               large
                             >
                               {{
-                                props.item.grade
-                                  ? props.item.grade
-                                  : "------------"
+                              props.item.grade
+                              ? props.item.grade
+                              : "------------"
                               }}
-                              <template v-slot:input>
-                                <v-select
-                                  :items="grades"
-                                  v-model="props.item.grade"
-                                  label="Grades"
-                                ></v-select>
+                              <template
+                                v-slot:input
+                              >
+                                <v-select :items="grades" v-model="props.item.grade" label="Grades"></v-select>
                               </template>
                             </v-edit-dialog>
                           </td>
@@ -336,12 +302,7 @@
                     <v-card-title>
                       3rd Year 1st Term
                       <v-spacer></v-spacer>
-                      <addButton
-                        v-if="action != 'view'"
-                        id="31"
-                        ref="add31"
-                        @add="add31()"
-                      ></addButton>
+                      <addButton v-if="action != 'view'" id="31" ref="add31" @add="add31()"></addButton>
                     </v-card-title>
                     <v-data-table
                       disable-pagination
@@ -358,9 +319,7 @@
                           <td>{{ props.item.code }}</td>
                           <td>{{ props.item.name }}</td>
                           <td>{{ props.item.units }}</td>
-                          <td v-if="editDialog == false" align="center">
-                            {{ props.item.grade }}
-                          </td>
+                          <td v-if="editDialog == false" align="center">{{ props.item.grade }}</td>
                           <td v-else>
                             <v-edit-dialog
                               :return-value.sync="props.item.grade"
@@ -368,16 +327,14 @@
                               large
                             >
                               {{
-                                props.item.grade
-                                  ? props.item.grade
-                                  : "------------"
+                              props.item.grade
+                              ? props.item.grade
+                              : "------------"
                               }}
-                              <template v-slot:input>
-                                <v-select
-                                  :items="grades"
-                                  v-model="props.item.grade"
-                                  label="Grades"
-                                ></v-select>
+                              <template
+                                v-slot:input
+                              >
+                                <v-select :items="grades" v-model="props.item.grade" label="Grades"></v-select>
                               </template>
                             </v-edit-dialog>
                           </td>
@@ -402,12 +359,7 @@
                     <v-card-title>
                       3rd Year 2nd Term
                       <v-spacer></v-spacer>
-                      <addButton
-                        v-if="action != 'view'"
-                        id="32"
-                        ref="add32"
-                        @add="add32()"
-                      ></addButton>
+                      <addButton v-if="action != 'view'" id="32" ref="add32" @add="add32()"></addButton>
                     </v-card-title>
                     <v-data-table
                       disable-pagination
@@ -424,9 +376,7 @@
                           <td>{{ props.item.code }}</td>
                           <td>{{ props.item.name }}</td>
                           <td>{{ props.item.units }}</td>
-                          <td v-if="editDialog == false" align="center">
-                            {{ props.item.grade }}
-                          </td>
+                          <td v-if="editDialog == false" align="center">{{ props.item.grade }}</td>
                           <td v-else>
                             <v-edit-dialog
                               :return-value.sync="props.item.grade"
@@ -434,16 +384,14 @@
                               large
                             >
                               {{
-                                props.item.grade
-                                  ? props.item.grade
-                                  : "------------"
+                              props.item.grade
+                              ? props.item.grade
+                              : "------------"
                               }}
-                              <template v-slot:input>
-                                <v-select
-                                  :items="grades"
-                                  v-model="props.item.grade"
-                                  label="Grades"
-                                ></v-select>
+                              <template
+                                v-slot:input
+                              >
+                                <v-select :items="grades" v-model="props.item.grade" label="Grades"></v-select>
                               </template>
                             </v-edit-dialog>
                           </td>
@@ -469,12 +417,7 @@
                     <v-card-title>
                       4th Year 1st Term
                       <v-spacer></v-spacer>
-                      <addButton
-                        v-if="action != 'view'"
-                        id="41"
-                        ref="add41"
-                        @add="add41()"
-                      ></addButton>
+                      <addButton v-if="action != 'view'" id="41" ref="add41" @add="add41()"></addButton>
                     </v-card-title>
                     <v-data-table
                       disable-pagination
@@ -491,9 +434,7 @@
                           <td>{{ props.item.code }}</td>
                           <td>{{ props.item.name }}</td>
                           <td>{{ props.item.units }}</td>
-                          <td v-if="editDialog == false" align="center">
-                            {{ props.item.grade }}
-                          </td>
+                          <td v-if="editDialog == false" align="center">{{ props.item.grade }}</td>
                           <td v-else>
                             <v-edit-dialog
                               :return-value.sync="props.item.grade"
@@ -501,16 +442,14 @@
                               large
                             >
                               {{
-                                props.item.grade
-                                  ? props.item.grade
-                                  : "------------"
+                              props.item.grade
+                              ? props.item.grade
+                              : "------------"
                               }}
-                              <template v-slot:input>
-                                <v-select
-                                  :items="grades"
-                                  v-model="props.item.grade"
-                                  label="Grades"
-                                ></v-select>
+                              <template
+                                v-slot:input
+                              >
+                                <v-select :items="grades" v-model="props.item.grade" label="Grades"></v-select>
                               </template>
                             </v-edit-dialog>
                           </td>
@@ -536,12 +475,7 @@
                       4th Year 2nd Term
                       <v-spacer></v-spacer>
 
-                      <addButton
-                        v-if="action != 'view'"
-                        id="42"
-                        ref="add42"
-                        @add="add42()"
-                      ></addButton>
+                      <addButton v-if="action != 'view'" id="42" ref="add42" @add="add42()"></addButton>
                     </v-card-title>
                     <v-data-table
                       disable-pagination
@@ -558,9 +492,7 @@
                           <td>{{ props.item.code }}</td>
                           <td>{{ props.item.name }}</td>
                           <td>{{ props.item.units }}</td>
-                          <td v-if="editDialog == false" align="center">
-                            {{ props.item.grade }}
-                          </td>
+                          <td v-if="editDialog == false" align="center">{{ props.item.grade }}</td>
                           <td v-else>
                             <v-edit-dialog
                               :return-value.sync="props.item.grade"
@@ -568,16 +500,14 @@
                               large
                             >
                               {{
-                                props.item.grade
-                                  ? props.item.grade
-                                  : "------------"
+                              props.item.grade
+                              ? props.item.grade
+                              : "------------"
                               }}
-                              <template v-slot:input>
-                                <v-select
-                                  :items="grades"
-                                  v-model="props.item.grade"
-                                  label="Grades"
-                                ></v-select>
+                              <template
+                                v-slot:input
+                              >
+                                <v-select :items="grades" v-model="props.item.grade" label="Grades"></v-select>
                               </template>
                             </v-edit-dialog>
                           </td>

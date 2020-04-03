@@ -62,10 +62,10 @@ import StudentScheduleService from "@/services/StudentScheduleService";
 import StudentChecklistService from "@/services/CurriculumService";
 import StudentGradeService from "@/services/GradeService";
 export default {
-  mounted() {
-    this.getStudentGrades();
-    this.getSchedules();
-    this.getStudentCurriculum();
+  async mounted() {
+    await this.getStudentGrades();
+    await this.getSchedules();
+    await this.getStudentCurriculum();
   },
   data() {
     return {

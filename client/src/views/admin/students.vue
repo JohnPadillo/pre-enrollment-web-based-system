@@ -179,11 +179,12 @@
                   <editButton
                     v-if="
                       $store.state.user.status == 3 ||
-                        $store.state.user.status == 1 ||
-                        ($store.state.user.department.id ==
-                          props.item.department.id &&
-                          $store.state.user.status == 3) ||
-                        $store.state.user.status == 1
+                      $store.state.user.status == 1 ||
+                      $$store.state.user.department
+                        ? $store.state.user.department.id ==
+                            props.item.department.id &&
+                          $store.state.user.status == 3
+                        : '' || $store.state.user.status == 1
                     "
                     @edit="getEditItem(props.item.id)"
                   />
