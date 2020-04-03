@@ -95,12 +95,14 @@
           <v-col class="d-flex" cols="12" sm="3">
             <v-select
               :items="roles"
+              v-model="roleId"
               label="Roles"
               item-text="name"
               item-value="id"
               outlined
               clearable
               @click:clear="resetRoleFilter"
+              @input="filterRole()"
             ></v-select>
           </v-col>
         </v-layout>
@@ -171,6 +173,8 @@ export default {
       id: null,
       action: null,
       title: "",
+      roleId: null,
+      defaultData: [],
       roles: [
         {
           name: "Program Head",
@@ -247,19 +251,22 @@ export default {
         .filter(data => {
           return data.status != 1;
         });
+      this.defaultData = this.admins;
     },
     async getDepartments() {
       this.departments = (await DepartmentService.getDepartments()).data;
     },
     openAddDialog() {
-      this.action = "view";
       this.addDialog = true;
     },
     closeAddDialog() {
       this.addDialog = false;
       this.$refs.registerForm.reset();
     },
-    async resetRoleFilter() {},
+
+    async resetRoleFilter() {
+      this.admins = await this.defaultData;
+    },
 
     addAdmin() {
       this.action = "add";
@@ -331,7 +338,7 @@ export default {
         (this.selected_department = data.department.id),
         (this.selected_role = data.status);
 
-      this.openAddDialog();
+      this.addDialog = true;
     },
 
     async saveEditAdmin() {
@@ -370,6 +377,12 @@ export default {
     },
     closeConfirmDialog() {
       this.confirmationDialog = false;
+    },
+
+    async filterRole() {
+      this.admins = this.defaultData.filter(admin => {
+        return admin.status === this.roleId;
+      });
     }
   }
 };
