@@ -72,7 +72,7 @@
                 <template v-slot:item="props">
                   <tr>
                     <td>{{ props.item.course.code }}</td>
-                    <td>{{ props.item.code }}</td>
+                    <td>{{ props.item.name }}</td>
                     <td align="center">
                       <viewButton @view="viewSchedule(props.item)" />
                       <editButton
@@ -114,7 +114,7 @@
                   <tr>
                     <td>{{ props.item.class_no }}</td>
                     <td>{{ props.item.subject.name }}</td>
-                    <td>{{ props.item.section.code }}</td>
+                    <td>{{ props.item.section.name }}</td>
                     <td>{{ props.item.subject.units }}</td>
                     <td>{{ props.item.day }}</td>
                     <td>{{ props.item.time_start + " - " + props.item.time_end }}</td>
@@ -179,7 +179,7 @@
                                 :rules="[classRules.required]"
                                 :items="classSections"
                                 label="Section"
-                                item-text="code"
+                                item-text="name"
                                 item-value="id"
                               ></v-select>
                             </v-col>
@@ -529,10 +529,8 @@ export default {
     async getSchedules() {
       this.scheduleLoading = true;
       let response = (await ScheduleService.getSchedules()).data;
-      console.log(response);
 
       let data = [...new Set(response.map(item => item.section.id))];
-      console.log(data);
 
       let scheduleArray = [];
 
@@ -631,7 +629,6 @@ export default {
         this.snackbarColor = "error";
         this.snackbarText = `Program and Section Schedule Already Exist!`;
       } else {
-        console.log(data);
         if (data.length > 0) {
           await ScheduleService.addSchedule(data);
 
@@ -742,7 +739,6 @@ export default {
           if (response.error) {
             let conflict = "";
             for (let i = 0; i < response.conflict.length; i++) {
-              console.log(response.conflict[i]);
               conflict +=
                 "" +
                 response.conflict[i].class_no +
@@ -918,7 +914,6 @@ export default {
       );
 
       this.$refs.scheduleForm.schedules = schedules;
-      console.log(schedules);
     },
 
     closeSnackBar() {

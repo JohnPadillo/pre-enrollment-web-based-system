@@ -65,7 +65,7 @@ export default {
   async mounted() {
     await this.getStudentGrades();
     await this.getSchedules();
-    await this.getStudentCurriculum();
+    // await this.getStudentCurriculum();
   },
   data() {
     return {
@@ -257,6 +257,8 @@ export default {
         })
       );
 
+      await this.getStudentCurriculum();
+
       // filter classes by checklist
       let classesTobeTaken = await Promise.all(
         filteredResponse.filter(data => {
@@ -294,7 +296,6 @@ export default {
       );
 
       this.items = classGrade;
-      console.log(this.items);
     },
 
     closeSaveConfirmDialog() {

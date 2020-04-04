@@ -25,7 +25,7 @@
                 v-model="sectionId"
                 :items="sections"
                 label="Section"
-                item-text="code"
+                item-text="name"
                 item-value="id"
                 :readonly="this.action == 'view'"
                 :disabled="!this.programId"
