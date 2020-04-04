@@ -12,6 +12,7 @@
           <div class="pl-4 pr-4 pb-4 pt-12">
             <v-btn block color="blue darken-4" dark height="50" @click="register">{{ title }}</v-btn>
           </div>
+          <v-btn text @click="gotoForgotPassword()">Forgot Password</v-btn>
         </div>
       </v-form>
     </v-flex>
@@ -26,6 +27,12 @@ export default {
       if (this.$refs.form.validate()) {
         this.$emit("register");
       }
+    },
+
+    gotoForgotPassword() {
+      this.$router.push({
+        path: "/forgot-password"
+      });
     }
   }
 };

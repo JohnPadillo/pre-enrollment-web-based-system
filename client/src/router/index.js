@@ -18,6 +18,9 @@ import AdminRole from "../views/admin/roles";
 import StudentRegister from "../views/students/register";
 import StudentDashboard from "../views/students/dashboard";
 import Login from "../views/login";
+
+// Forgot Password
+import ForgotPassword from "../views/forgotpassword";
 Vue.use(VueRouter);
 
 const routes = [
@@ -93,6 +96,13 @@ const routes = [
     path: "/register",
     name: "StudentRegister",
     component: StudentRegister
+  },
+
+  // Forgot Password
+  {
+    path: "/forgot-password",
+    name: "ForgotPassword",
+    component: ForgotPassword
   }
 ];
 
