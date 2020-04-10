@@ -173,21 +173,25 @@
               <tr>
                 <td>{{ props.item.name }}</td>
                 <td>{{ props.item.course.code }}</td>
-                <td align="center">
+                <td align="right">
                   <viewChecklistButton @viewChecklist="viewChecklist(props.item)" />
                   <viewButton @view="viewStudent(props.item.id)" />
-                  <editButton
+                  <!-- <editButton
                     v-if="
                       $store.state.user.status == 3 ||
                       $store.state.user.status == 1 ||
                       $store.state.user.department
                         ? $store.state.user.department.id ==
-                            props.item.department.id &&
+                            props.item.department.id ||
                           $store.state.user.status == 3
                         : '' || $store.state.user.status == 1
                     "
                     @edit="getEditItem(props.item.id)"
-                  />
+                  />-->
+                  <editButton
+                    v-if="$store.state.user.status == 1"
+                    @edit="getEditItem(props.item.id)"
+                  ></editButton>
                   <deleteButton
                     v-if="$store.state.user.status != 2"
                     @delete="getDeleteItem(props.item.id)"
@@ -218,6 +222,7 @@ export default {
   mounted() {
     this.getData();
     this.getCourses();
+    console.log(this.$store.state.user.department);
   },
 
   data() {

@@ -40,16 +40,30 @@
       >-->
       <v-btn
         color="light-blue darken-4"
+        v-show="isLoggedIn"
         text
         :to="{ path: '/' }"
-        v-if="isLoggedIn"
-        @click="logout"
+        @click="logout()"
       >Logout</v-btn>
     </v-app-bar>
     <navBar v-if="isLoggedIn" />
-    <v-content>
+    <v-content
+      id="main"
+      :style="[
+        isLoggedIn
+          ? {
+              background: `url('http://localhost:8081/${
+                this.$store.state.user.course
+                  ? this.$store.state.user.course.courseImage
+                  : ''
+              }') no-repeat`,
+              backgroundSize: 'cover'
+            }
+          : { background: 'none' }
+      ]"
+    >
       <div class="ma-5">
-        <router-view />
+        <router-view id="routerView" />
       </div>
     </v-content>
   </v-app>
@@ -66,6 +80,7 @@ export default {
     // HelloWorld
     NavBar
   },
+  mounted() {},
   computed: {
     isLoggedIn() {
       let user = this.$store.state.user;
@@ -84,3 +99,5 @@ export default {
   }
 };
 </script>
+
+<style scoped></style>

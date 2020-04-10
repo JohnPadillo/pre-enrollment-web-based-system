@@ -54,15 +54,12 @@ export default {
   },
 
   methods: {
-    hello() {
-      console.log("hello");
-    },
     async login() {
       let data = {
         email: this.email
       };
       let user = (await LoginService.login(data)).data;
-
+      console.log(user);
       let checkPassword = password => {
         return password === this.password;
       };
@@ -73,6 +70,7 @@ export default {
           if (user.status === 0) {
             this.$router.push({ path: "/dashboard" });
           } else {
+            console.log(user);
             this.$router.push({ path: "/admin" });
           }
         }

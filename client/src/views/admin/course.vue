@@ -11,6 +11,7 @@
               :items="programs"
               item-text="code"
               item-value="id"
+              solo
               clearable
               @click:clear="resetCourses"
               @input="filterCourseByProgramId"
@@ -24,6 +25,7 @@
               item-text="name"
               item-value="id"
               clearable
+              solo
               :disabled="!this.programId"
               @input="filterCourseByYear"
               @click:clear="resetCourses"
@@ -37,6 +39,7 @@
               item-text="name"
               item-value="id"
               clearable
+              solo
               :disabled="!this.yearId"
               @input="filterCourseBySemester"
               @click:clear="resetCourses"

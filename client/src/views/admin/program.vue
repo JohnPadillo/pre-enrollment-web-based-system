@@ -21,6 +21,13 @@
             item-value="id"
             outlined
           ></v-select>
+          <v-file-input
+            type="file"
+            accept="image/*"
+            label="Upload Image"
+            outlined
+            @change="onFileInput"
+          ></v-file-input>
         </addDialog>
         <confirmationDialog
           :dialog="confirmationDialog"
@@ -83,6 +90,7 @@ export default {
   data() {
     return {
       title: "Programs",
+      image: "",
       id: null,
       search: "",
       action: "",
@@ -127,7 +135,6 @@ export default {
       this.programLoading = true;
       this.programs = (await ProgramService.getPrograms()).data;
       this.programLoading = false;
-      console.log(this.programs);
     },
     async getDepartments() {
       this.departments = (await DepartmentService.getDepartments()).data;
@@ -149,7 +156,9 @@ export default {
       let data = {
         code: this.program_code,
         name: this.program_name,
-        department: this.program_department
+        department: this.program_department,
+        courseImagePath: this.image.path,
+        courseImage: this.image
       };
 
       let response = await ProgramService.addProgram(data);
@@ -165,6 +174,7 @@ export default {
       this.program_name = course.name;
       this.program_code = course.code;
       this.program_department = course.department.id;
+      this.courseImage = course.courseImage;
       this.openDialog = !this.openDialog;
     },
     async editProgram() {
@@ -172,7 +182,8 @@ export default {
         id: this.id,
         name: this.program_name,
         code: this.program_code,
-        department: this.program_department
+        department: this.program_department,
+        courseImage: this.image
       };
       await ProgramService.editProgram(data);
       this.openDialog = !this.openDialog;
@@ -200,6 +211,10 @@ export default {
       this.program_code = course.code;
       this.program_department = course.department.id;
       this.openDialog = true;
+    },
+
+    onFileInput(event) {
+      this.image = event;
     }
   }
 };

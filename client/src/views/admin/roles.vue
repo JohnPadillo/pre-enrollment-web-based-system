@@ -99,7 +99,7 @@
               label="Roles"
               item-text="name"
               item-value="id"
-              outlined
+              solo
               clearable
               @click:clear="resetRoleFilter"
               @input="filterRole()"

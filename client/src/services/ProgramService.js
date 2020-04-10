@@ -8,10 +8,26 @@ export default {
     return Api().post(`course/${id}`);
   },
   addProgram(params) {
-    return Api().post("add/course", params);
+    const formData = new FormData();
+    formData.append("name", `${params.name}`);
+    formData.append("code", `${params.code}`);
+    formData.append("department", `${params.department}`);
+    formData.append("courseImage", params.courseImage);
+
+    return Api().post("add/course", formData, {
+      headers: { "content-type": "multipart/form-data" }
+    });
   },
   editProgram(params) {
-    return Api().patch(`edit/course/${params.id}`, params);
+    const formData = new FormData();
+    formData.append("name", `${params.name}`);
+    formData.append("code", `${params.code}`);
+    formData.append("department", `${params.department}`);
+    formData.append("courseImage", params.courseImage);
+
+    return Api().patch(`edit/course/${params.id}`, formData, {
+      headers: { "content-type": "multipart/form-data" }
+    });
   },
   deleteProgram(id) {
     return Api().delete(`delete/course/${id}`);
