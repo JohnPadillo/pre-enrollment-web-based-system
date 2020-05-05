@@ -12,15 +12,10 @@
                       $store.state.user.status == 1 ||
                       $store.state.user.status == 3
               : ''-->
-              <v-tooltip
-                v-if="
-                  $store.state.user.status == 3 ||
-                  ($store.state.user.department && user.department)
+              <v-tooltip v-if="$store.state.user.status == 3" top>
+                <!-- ($store.state.user.department && user.department)
                     ? $store.state.user.department.id == user.department.id
-                    : ''
-                "
-                top
-              >
+                : ''-->
                 <template v-slot:activator="{ on }">
                   <v-btn icon @click="changeEditDialog" v-on="on">
                     <v-icon dark>mdi-pencil</v-icon>
@@ -665,6 +660,7 @@ export default {
     },
     closeChecklistDialog() {
       // this.dialog = false;
+      this.editDialog = false;
       this.$emit("close");
     },
     changeEditDialog() {

@@ -22,6 +22,7 @@
             outlined
           ></v-select>
           <v-file-input
+            v-if="action === 'edit'"
             type="file"
             accept="image/*"
             label="Upload Image"
