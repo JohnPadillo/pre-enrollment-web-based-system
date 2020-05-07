@@ -22,7 +22,7 @@
             outlined
           ></v-select>
           <v-file-input
-            v-if="action === 'edit'"
+            v-if="action === 'edit' || action === 'add'"
             type="file"
             accept="image/*"
             label="Upload Image"
@@ -141,6 +141,7 @@ export default {
       this.departments = (await DepartmentService.getDepartments()).data;
     },
     add() {
+      console.log("add");
       this.action = "add";
       this.openDialog = !this.openDialog;
     },
