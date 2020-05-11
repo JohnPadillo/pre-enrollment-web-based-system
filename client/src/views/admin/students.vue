@@ -153,13 +153,7 @@
               single-line
               hide-details
             ></v-text-field>
-            <addButton
-              v-if="
-                $store.state.user.status == 3 || $store.state.user.status == 1
-              "
-              :title="title"
-              @add="add"
-            />
+            <addButton v-if="$store.state.user.status == 3" :title="title" @add="add" />
           </v-card-title>
           <v-data-table
             :headers="headers"
