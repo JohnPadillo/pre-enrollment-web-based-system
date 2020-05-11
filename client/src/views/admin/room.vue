@@ -59,8 +59,9 @@
             <template v-slot:item="props">
               <tr>
                 <td>{{ props.item.name }}</td>
+                <td>{{ props.item.limit }}</td>
                 <td align="center">
-                  <viewButton @view="viewRoom(props.item)" />
+                  <!-- <viewButton @view="viewRoom(props.item)" /> -->
                   <editButton v-if="$store.state.user.status == 1" @edit="getEditItem(props.item)" />
                   <deleteButton
                     v-if="$store.state.user.status == 1"
@@ -91,6 +92,10 @@ export default {
           value: "name"
         },
         {
+          text: "Limit",
+          value: "limit"
+        },
+        {
           text: "Actions",
           align: "center"
         }
@@ -114,6 +119,7 @@ export default {
     async getRooms() {
       this.roomLoading = true;
       this.rooms = (await RoomService.getRooms()).data;
+      console.log(this.rooms);
       this.roomLoading = false;
     },
     closeAddDialog() {
