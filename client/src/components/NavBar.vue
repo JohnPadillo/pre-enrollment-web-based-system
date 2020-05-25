@@ -70,6 +70,11 @@ export default {
           title: "Admins",
           icon: " mdi-account-check",
           link: "/admin/roles"
+        },
+        {
+          title: "Student Pre Enrollment",
+          icon: " mdi-account-check",
+          link: "/admin/pre-enrollment"
         }
       ],
       items2: [
@@ -98,8 +103,13 @@ export default {
           title: "Schedules | Classes",
           icon: "mdi-calendar-clock",
           link: "/admin/schedule"
-        }
+        },
         // { title: "Rooms", icon: "room", link: "/admin/rooms" }
+        {
+          title: "Student Pre Enrollment",
+          icon: " mdi-account-check",
+          link: "/admin/pre-enrollment"
+        }
       ],
       right: null
     };

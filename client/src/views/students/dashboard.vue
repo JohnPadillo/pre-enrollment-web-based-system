@@ -126,6 +126,7 @@ export default {
       ).data;
     },
     async saveEditSchedule() {
+      console.log(this.itemsToSave);
       await StudentScheduleService.editSchedule(this.itemsToSave);
       this.getSchedules();
       this.closeSaveConfirmDialog();
@@ -137,12 +138,14 @@ export default {
       for (let item of this.$refs.preForm.items) {
         let data = {
           UserId: this.$store.state.user.id,
-          ClassId: item.id
+          ClassId: item.id,
+          status: "PENDING"
         };
         itemsToSave.push(data);
       }
 
-      this.itemsToSave = itemsToSave;
+      this.itemsToSave = await itemsToSave;
+      console.log(this.itemsToSave);
 
       this.saveConfirmDialog = true;
     },

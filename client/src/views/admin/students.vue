@@ -216,7 +216,6 @@ export default {
   mounted() {
     this.getData();
     this.getCourses();
-    console.log(this.$store.state.user.department);
   },
 
   data() {
@@ -276,7 +275,6 @@ export default {
 
       let programs = (await ProgramService.getPrograms()).data;
       let response = (await StudentService.getStudents()).data;
-      console.log(response);
       let studentsArray = await Promise.all(
         response.map(async data => {
           let id = data.id;

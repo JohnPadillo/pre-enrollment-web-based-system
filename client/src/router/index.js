@@ -13,6 +13,7 @@ import AdminSchedule from "../views/admin/schedule";
 import AdminSection from "../views/admin/section";
 import AdminRoom from "../views/admin/room";
 import AdminRole from "../views/admin/roles";
+import AdminPreEnrollment from "../views/admin/pre-enrollment";
 
 // Student
 import StudentRegister from "../views/students/register";
@@ -84,6 +85,11 @@ const routes = [
     path: "/admin/roles",
     name: "AdminRole",
     component: AdminRole
+  },
+  {
+    path: "/admin/pre-enrollment",
+    name: "AdminPreEnrollment",
+    component: AdminPreEnrollment
   },
 
   // Student router

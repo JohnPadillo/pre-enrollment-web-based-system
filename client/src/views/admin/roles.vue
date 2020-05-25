@@ -232,25 +232,24 @@ export default {
   methods: {
     async getAdmins() {
       let response = (await AdminService.getAdmins()).data;
-      this.admins = await response
-        .map(response => {
-          return {
-            id: response.id,
-            name: response.first_name + " " + response.last_name,
-            email: response.email,
-            password: response.password,
-            permanent_address: response.permanent_address,
-            contact_no: response.contact_no,
-            department: {
-              id: response.department.id,
-              name: response.department.name
-            },
-            status: response.status
-          };
-        })
-        .filter(data => {
-          return data.status != 1;
-        });
+      this.admins = await response.map(response => {
+        return {
+          id: response.id,
+          name: response.first_name + " " + response.last_name,
+          email: response.email,
+          password: response.password,
+          permanent_address: response.permanent_address,
+          contact_no: response.contact_no,
+          department: {
+            id: response.department.id,
+            name: response.department.name
+          },
+          status: response.status
+        };
+      });
+      // .filter(data => {
+      //   return data.status != 1;
+      // });
       this.defaultData = this.admins;
     },
     async getDepartments() {

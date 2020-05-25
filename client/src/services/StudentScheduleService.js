@@ -1,6 +1,10 @@
 import Api from "@/services/Api";
 
 export default {
+  getSchedules() {
+    return Api().get("student-schedules");
+  },
+
   getSchedule(id) {
     return Api().get(`student-schedule/${id}`);
   },
