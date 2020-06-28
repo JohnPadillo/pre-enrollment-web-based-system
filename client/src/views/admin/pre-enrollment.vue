@@ -64,7 +64,10 @@
               <v-spacer></v-spacer>
               <v-btn
                 color="success"
-                v-if="$store.state.user.status === 1"
+                v-if="
+                  $store.state.user.status === 1 ||
+                    $store.state.user.status === 2
+                "
                 dark
                 @click="approve()"
               >Approve</v-btn>
@@ -98,7 +101,10 @@
                 <td>{{ props.item.schedule[0].status }}</td>
                 <td align="center">
                   <editButton
-                    v-if="$store.state.user.status === 1"
+                    v-if="
+                      $store.state.user.status === 1 ||
+                        $store.state.user.status === 2
+                    "
                     @edit="openApproveDialog(props.item)"
                   ></editButton>
                   <viewButton
@@ -239,13 +245,12 @@ export default {
           };
         })
       );
-
-      console.log(this.courses);
     },
 
     openApproveDialog(item) {
       this.formDialog = true;
       this.items = item.schedule;
+      console.log(this.items);
     },
 
     approve() {

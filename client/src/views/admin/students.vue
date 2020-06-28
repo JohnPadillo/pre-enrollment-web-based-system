@@ -25,7 +25,12 @@
               :rules="[rules.required]"
               :readonly="action == 'view'"
             ></v-text-field>
-            <v-text-field label="Last Name" v-model="lastName" outlined :rules="[rules.required]"></v-text-field>
+            <v-text-field
+              label="Last Name"
+              v-model="lastName"
+              outlined
+              :rules="[rules.required]"
+            ></v-text-field>
             <v-text-field
               label="Permanent Address"
               v-model="permanentAddress"
@@ -101,6 +106,13 @@
               :readonly="action == 'view'"
               :rules="[rules.required]"
             ></v-select>
+
+            <v-select
+              solo
+              v-model="type"
+              :items="student_type"
+              label="Student Type"
+            ></v-select>
           </v-form>
         </addDialog>
 
@@ -153,7 +165,11 @@
               single-line
               hide-details
             ></v-text-field>
-            <addButton v-if="$store.state.user.status == 3" :title="title" @add="add" />
+            <addButton
+              v-if="$store.state.user.status == 3"
+              :title="title"
+              @add="add"
+            />
           </v-card-title>
           <v-data-table
             :headers="headers"
@@ -168,7 +184,9 @@
                 <td>{{ props.item.name }}</td>
                 <td>{{ props.item.course.code }}</td>
                 <td align="right">
-                  <viewChecklistButton @viewChecklist="viewChecklist(props.item)" />
+                  <viewChecklistButton
+                    @viewChecklist="viewChecklist(props.item)"
+                  />
                   <viewButton @view="viewStudent(props.item.id)" />
                   <!-- <editButton
                     v-if="
@@ -242,10 +260,11 @@ export default {
       contact_no: "",
       courseSelected: "",
       selected_course: "",
+      type: "",
       rules: {
         required: value => !!value || "Required.",
         email: v => /.+@.+\..+/.test(v) || "Email must be valid",
-        number: v => v.length <= 11 || "Maximum of 11 Digits"
+        number: v => (v || "").length <= 11 || "Maximum of 11 Digits"
       },
       students: [],
       defaultStudents: [],
@@ -258,7 +277,17 @@ export default {
         { text: "Actions", align: "center" }
       ],
       snackbarColor: "",
-      snackbarText: ""
+      snackbarText: "",
+      student_type: [
+        {
+          text: "Regular",
+          value: "regular"
+        },
+        {
+          text: "Irregular",
+          value: "irregular"
+        }
+      ]
     };
   },
   methods: {
@@ -381,7 +410,8 @@ export default {
         course: this.courseSelected,
         name_of_guardian: this.name_of_guardian,
         contact_no_of_guardian: this.contact_no_of_guardian,
-        section: this.selectedSection
+        section: this.selectedSection,
+        type: this.type
       };
       let response = (await StudentService.getStudents()).data;
       let error = response.filter(response => {
@@ -417,10 +447,11 @@ export default {
       this.courseSelected = data.course.id;
       this.getSections();
       this.selectedSection = data.section.id;
-      console.log(this.selectedSection);
+      this.type = data.type;
     },
 
     async editStudent() {
+      this.action = "edit";
       let data = {
         id: this.id,
         first_name: this.firstName,
@@ -433,7 +464,8 @@ export default {
         name_of_guardian: this.name_of_guardian,
         contact_no_of_guardian: this.contact_no_of_guardian,
         course: this.courseSelected,
-        section: this.selectedSection
+        section: this.selectedSection,
+        type: this.type
       };
 
       await StudentService.editStudent(data);
@@ -550,6 +582,7 @@ export default {
       this.courseSelected = data.course.id;
       this.getSections();
       this.selectedSection = data.section.id;
+      this.type = data.type;
     }
   }
 };

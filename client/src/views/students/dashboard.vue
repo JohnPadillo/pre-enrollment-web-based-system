@@ -39,7 +39,9 @@
                       <td>{{ props.item.section.name }}</td>
                       <td>{{ props.item.subject.units }}</td>
                       <td>{{ props.item.day }}</td>
-                      <td>{{ props.item.time_start + " " + props.item.time_end }}</td>
+                      <td>
+                        {{ props.item.time_start + " " + props.item.time_end }}
+                      </td>
                       <td>{{ props.item.room.name }}</td>
                       <td>
                         <addButton @add="addClass(props.item)" />
@@ -61,10 +63,14 @@ import ClassService from "@/services/ClassService";
 import StudentScheduleService from "@/services/StudentScheduleService";
 import StudentChecklistService from "@/services/CurriculumService";
 import StudentGradeService from "@/services/GradeService";
+import CourseSectionScheduleService from "@/services/ScheduleService";
+
 export default {
   async mounted() {
     await this.getStudentGrades();
-    await this.getSchedules();
+    await this.getStudentSchedule();
+
+    // await this.getCourseSectionSchedule();
     // await this.getStudentCurriculum();
   },
   data() {
@@ -107,6 +113,7 @@ export default {
       saveConfirmDialog: false,
       saveConfirmDialogTitle: "save",
       studentChecklist: [],
+      courseSectionSchedule: [],
       studentGrades: [],
       snackbarColor: "",
       snackbarText: ""
@@ -125,10 +132,17 @@ export default {
         await StudentGradeService.getGrades(this.$store.state.user.id)
       ).data;
     },
+
+    async getCourseSectionSchedule() {
+      this.courseSectionSchedule = (
+        await CourseSectionScheduleService.getSchedules()
+      ).data;
+    },
+
     async saveEditSchedule() {
       console.log(this.itemsToSave);
       await StudentScheduleService.editSchedule(this.itemsToSave);
-      this.getSchedules();
+      this.getStudentSchedule();
       this.closeSaveConfirmDialog();
       this.action = "";
     },
@@ -149,18 +163,32 @@ export default {
 
       this.saveConfirmDialog = true;
     },
-    async getSchedules() {
-      let response = (
-        await StudentScheduleService.getSchedule(this.$store.state.user.id)
-      ).data;
+    async getStudentSchedule() {
+      const studentType = this.$store.state.user.type;
+      if (studentType === "regular") {
+        await this.getCourseSectionSchedule();
+        let schedule = await Promise.all(
+          this.courseSectionSchedule.map(async item => {
+            return (await ClassService.getClass(item.class.id)).data;
+          })
+        );
 
-      let data = await Promise.all(
-        response.map(async item => {
-          return (await ClassService.getClass(item.class.id)).data;
-        })
-      );
-      this.formItems = data;
-      this.getClasses();
+        this.formItems = schedule;
+      } else {
+        let response = (
+          await StudentScheduleService.getSchedule(this.$store.state.user.id)
+        ).data;
+
+        if (response) {
+          let data = await Promise.all(
+            response.map(async item => {
+              return (await ClassService.getClass(item.class.id)).data;
+            })
+          );
+          this.formItems = data;
+        }
+        this.getClasses();
+      }
     },
     async addClass(data) {
       // const index = this.items.indexOf(data);
@@ -253,6 +281,7 @@ export default {
     },
     async getClasses() {
       let response = (await ClassService.getClasses()).data;
+      console.log(response);
 
       let filteredResponse = await Promise.all(
         response.filter(data => {
