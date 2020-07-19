@@ -153,7 +153,7 @@ export default {
         let data = {
           UserId: this.$store.state.user.id,
           ClassId: item.id,
-          status: "PENDING"
+          ph_status: "PENDING"
         };
         itemsToSave.push(data);
       }

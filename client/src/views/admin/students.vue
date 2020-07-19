@@ -378,7 +378,7 @@ export default {
       this.openAddDialog = true;
     },
     async closeAddDialog() {
-      this.reset();
+      await this.reset();
       this.openAddDialog = false;
     },
     selectCourse() {
@@ -485,13 +485,13 @@ export default {
       this.getData();
     },
 
-    closeConfirmDialog() {
-      this.reset();
+    async closeConfirmDialog() {
+      await this.reset();
       this.confirmationDialog = false;
     },
 
-    reset() {
-      this.$refs.registerForm.reset();
+    async reset() {
+      await this.$refs.registerForm.reset();
     },
 
     async viewChecklist(data) {

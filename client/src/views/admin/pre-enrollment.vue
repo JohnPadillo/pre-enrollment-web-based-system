@@ -70,8 +70,11 @@
                 "
                 dark
                 @click="approve()"
-              >Approve</v-btn>
-              <v-btn color="primary" dark @click="formDialog = false">Close</v-btn>
+                >Approve</v-btn
+              >
+              <v-btn color="primary" dark @click="formDialog = false"
+                >Close</v-btn
+              >
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -96,7 +99,9 @@
           >
             <template v-slot:item="props">
               <tr>
-                <td>{{ `${props.item.first_name} ${props.item.last_name}` }}</td>
+                <td>
+                  {{ `${props.item.first_name} ${props.item.last_name}` }}
+                </td>
                 <td>{{ props.item.course.code }}</td>
                 <td>{{ props.item.schedule[0].status }}</td>
                 <td align="center">
@@ -185,13 +190,17 @@ export default {
       this.loading = true;
       let response = (await StudentScheduleService.getSchedules()).data;
 
-      if (this.$store.state.user.status == 3) {
+      if (this.$store.state.user.status === 2) {
         response = response.filter(data => {
-          return data.status === "APPROVED";
+          return data.ph_status === "PENDING";
+        });
+      } else if (this.$store.state.user.status === 1) {
+        response = response.filter(data => {
+          return data.status === "PENDING";
         });
       } else {
         response = response.filter(data => {
-          return data.status === "PENDING";
+          return data.ph_status === "APPROVED" && data.status === "APPROVED";
         });
       }
 
@@ -260,11 +269,19 @@ export default {
     async approveSchedule() {
       let data = await Promise.all(
         this.items.map(data => {
-          return {
-            UserId: data.UserId,
-            ClassId: data.ClassId,
-            status: "APPROVED"
-          };
+          if (this.$store.state.user.status === 2) {
+            return {
+              UserId: data.UserId,
+              ClassId: data.ClassId,
+              ph_status: "APPROVED"
+            };
+          } else {
+            return {
+              UserId: data.UserId,
+              ClassId: data.ClassId,
+              status: "APPROVED"
+            };
+          }
         })
       );
 
