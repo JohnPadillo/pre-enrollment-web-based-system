@@ -166,6 +166,15 @@ export default {
         // });
 
         this.getAvailableClasses();
+      } else {
+        await this.getCourseSectionSchedule();
+        let schedule = await Promise.all(
+          this.courseSectionSchedule.map(async item => {
+            return (await ClassService.getClass(item.class.id)).data;
+          })
+        );
+
+        this.formItems = schedule;
       }
     },
 
@@ -325,9 +334,17 @@ export default {
     },
 
     async getCourseSectionSchedule() {
-      this.courseSectionSchedule = (
+      let courseSectionSchedule = (
         await CourseSectionScheduleService.getSchedules()
       ).data;
+
+      this.courseSectionSchedule = courseSectionSchedule.filter(
+        item =>
+          item.course.id === this.$store.state.user.course.id &&
+          item.section.id === this.$store.state.user.section.id
+      );
+
+      console.log(this.courseSectionSchedule);
     },
 
     async saveEditSchedule() {
