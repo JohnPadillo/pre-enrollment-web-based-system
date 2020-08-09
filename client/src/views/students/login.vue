@@ -10,11 +10,11 @@
       </v-flex>
     </v-layout>
   </v-container>
-</template>
+</template> 
 
 <script>
 import RegisterForm from "@/components/Form.vue";
-export default {
+export default { 
   components: {
     RegisterForm
   },

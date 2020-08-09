@@ -8,12 +8,14 @@
           </v-toolbar>
           <div class="pl-4 pr-4 pt-4">
             <slot></slot>
-          </div>
+          </div> 
           <div class="pl-4 pr-4 pb-4 pt-12">
             <v-btn block color="blue darken-4" dark height="50" @click="register">{{ title }}</v-btn>
           </div>
           <v-btn text @click="gotoForgotPassword()">Forgot Password</v-btn>
+          
         </div>
+          
       </v-form>
     </v-flex>
   </v-layout>
