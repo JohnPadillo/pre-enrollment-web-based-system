@@ -59,7 +59,9 @@ module.exports = {
               day: data.class.day,
               time_start: data.class.time_start,
               time_end: data.class.time_end
-            }
+            },
+            ph_status: data.ph_status,
+            status: data.status
           }
         })
       )

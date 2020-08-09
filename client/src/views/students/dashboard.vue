@@ -9,6 +9,7 @@
           :course="course"
           :headers="headers"
           :items="formItems"
+          :status="enrollmentStatus"
           @add="add"
           @edit="edit"
           @delete="deleteItem"
@@ -119,7 +120,8 @@ export default {
       studentGrades: [],
       snackbarColor: "",
       snackbarText: "",
-      subjectsToTake: []
+      subjectsToTake: [],
+      enrollmentStatus: ""
     };
   },
   methods: {
@@ -133,7 +135,24 @@ export default {
       ).data;
 
       // display current schedule
-      if (schedule) {
+      if (schedule.length) {
+        // set enrollment status
+        console.log(schedule);
+        if (
+          schedule[0].ph_status === "APPROVED" &&
+          schedule[0].status === "APPROVED"
+        ) {
+          this.enrollmentStatus = schedule[0].status;
+          console.log(this.enrollmentStatus);
+        } else if (
+          schedule[0].ph_status === "PENDING" ||
+          schedule[0].status === "PENDING"
+        ) {
+          this.enrollmentStatus = schedule[0].ph_status;
+        } else {
+          this.enrollmentStatus = null;
+        }
+
         let data = await Promise.all(
           schedule.map(async item => {
             return (await ClassService.getClass(item.class.id)).data;
@@ -343,8 +362,6 @@ export default {
           item.course.id === this.$store.state.user.course.id &&
           item.section.id === this.$store.state.user.section.id
       );
-
-      console.log(this.courseSectionSchedule);
     },
 
     async saveEditSchedule() {

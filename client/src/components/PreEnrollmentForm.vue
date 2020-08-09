@@ -11,7 +11,9 @@
               @add="add"
             ></addButton>
             <editButton
-              v-if="action != 'edit' && items.length > 0"
+              v-if="
+                action != 'edit' && items.length > 0 && status !== 'PENDING'
+              "
               @edit="edit"
             />
             <saveButton
@@ -26,6 +28,12 @@
               <br />
               <strong>Program:</strong>
               {{ course }}
+
+              <br />
+              <div v-if="status">
+                <strong>Status:</strong>
+                {{ status }}
+              </div>
             </v-list>
             <v-data-table
               :headers="
@@ -75,7 +83,8 @@ export default {
     name: String,
     course: String,
     headers: Array,
-    items: Array
+    items: Array,
+    status: String
   },
 
   data() {
@@ -104,6 +113,10 @@ export default {
         }
       ]
     };
+  },
+
+  mounted() {
+    console.log(this.$store.state.user);
   },
 
   methods: {

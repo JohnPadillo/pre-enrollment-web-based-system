@@ -103,7 +103,13 @@
                   {{ `${props.item.first_name} ${props.item.last_name}` }}
                 </td>
                 <td>{{ props.item.course.code }}</td>
-                <td>{{ props.item.schedule[0].status }}</td>
+                <td>
+                  {{
+                    $store.state.user.status === 2
+                      ? props.item.schedule[0].ph_status
+                      : props.item.schedule[0].status
+                  }}
+                </td>
                 <td align="center">
                   <editButton
                     v-if="
@@ -145,7 +151,7 @@ export default {
       headers: [
         { text: "Student Name", value: "name" },
         { text: "Student Program", value: "course.code" },
-        { text: "Status", value: "status" },
+        { text: "Status" },
         { text: "Actions", align: "center" }
       ],
       items: [],
@@ -275,7 +281,8 @@ export default {
             return {
               UserId: data.UserId,
               ClassId: data.ClassId,
-              ph_status: "APPROVED"
+              ph_status: "APPROVED",
+              status: "PENDING"
             };
           } else {
             return {
