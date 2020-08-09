@@ -26,7 +26,7 @@
           :text="snackbarText"
           @close="closeSnackBar"
         />
-        <v-container>
+        <v-container v-if="this.$store.state.user.type === 'irregular'">
           <v-layout>
             <v-flex>
               <v-card v-if="action == 'edit'">

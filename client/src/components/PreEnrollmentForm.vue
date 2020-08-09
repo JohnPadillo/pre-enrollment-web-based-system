@@ -6,9 +6,18 @@
           <v-card-title>
             PRE ENROLLMENT FORM
             <v-spacer></v-spacer>
-            <addButton v-if="items.length < 1 && action != 'edit'" @add="add"></addButton>
-            <editButton v-if="action != 'edit' && items.length > 0" @edit="edit" />
-            <saveButton v-if="action == 'edit' && items.length > 0" @save="saveEdit()" />
+            <addButton
+              v-if="items.length < 1 && action != 'edit'"
+              @add="add"
+            ></addButton>
+            <editButton
+              v-if="action != 'edit' && items.length > 0"
+              @edit="edit"
+            />
+            <saveButton
+              v-if="action == 'edit' && items.length > 0"
+              @save="saveEdit()"
+            />
           </v-card-title>
           <v-card-text>
             <v-list>
@@ -33,9 +42,16 @@
                   <td>{{ props.item.section.name }}</td>
                   <td>{{ props.item.subject.units }}</td>
                   <td>{{ props.item.day }}</td>
-                  <td>{{ props.item.time_start }} - {{ props.item.time_end }}</td>
+                  <td>
+                    {{ props.item.time_start }} - {{ props.item.time_end }}
+                  </td>
                   <td>{{ props.item.room.name }}</td>
-                  <td v-if="action == 'edit'">
+                  <td
+                    v-if="
+                      action == 'edit' && $store.state.user.type === 'irregular'
+                    "
+                    )
+                  >
                     <removeButton @delete="deleteItem(props.item)" />
                   </td>
                 </tr>
