@@ -67,11 +67,12 @@ import CourseSectionScheduleService from "@/services/ScheduleService";
 
 export default {
   async mounted() {
-    await this.getStudentGrades();
-    await this.getStudentSchedule();
-
+    // await this.getStudentGrades();
+    // await this.getStudentSchedule();
     // await this.getCourseSectionSchedule();
     // await this.getStudentCurriculum();
+    // await this.getStudentType();
+    await this.getPreEnrollmentData();
   },
   data() {
     return {
@@ -107,6 +108,7 @@ export default {
           text: "Action"
         }
       ],
+      availableClasses: [],
       items: [],
       formItems: [],
       itemsToSave: [],
@@ -116,10 +118,199 @@ export default {
       courseSectionSchedule: [],
       studentGrades: [],
       snackbarColor: "",
-      snackbarText: ""
+      snackbarText: "",
+      subjectsToTake: []
     };
   },
   methods: {
+    async getPreEnrollmentData() {
+      // get student type
+      const studentType = await this.getStudentType();
+
+      // get student current schedule
+      const schedule = (
+        await StudentScheduleService.getSchedule(this.$store.state.user.id)
+      ).data;
+
+      // display current schedule
+      if (schedule) {
+        let data = await Promise.all(
+          schedule.map(async item => {
+            return (await ClassService.getClass(item.class.id)).data;
+          })
+        );
+
+        this.formItems = data;
+      }
+
+      if (studentType === "irregular") {
+        // get student grades
+        const grades = (
+          await StudentGradeService.getGrades(this.$store.state.user.id)
+        ).data;
+
+        // filter subjects with grade of 5.00 or greater than 3 (it means failed)
+        const subjectsToTake = grades.filter(subject => {
+          return subject.grade === "-" || subject.grade > 3;
+        });
+
+        this.subjectsToTake = subjectsToTake.map(subject => subject.subject);
+
+        // // get all classes
+        // const classes = (await ClassService.getClasses()).data;
+
+        // this.availableClasses = classes.filter(studentClass => {
+        //   return subjectsToTake.some(classes => {
+        //     return classes.subject.name === studentClass.subject.name;
+        //   });
+        // });
+
+        this.getAvailableClasses();
+      }
+    },
+
+    // --------------------------------------------------------------------------------------
+
+    async getAvailableClasses() {
+      const classes = (await ClassService.getClasses()).data;
+
+      this.availableClasses = classes.filter(studentClass => {
+        return this.subjectsToTake.some(classes => {
+          return classes.name === studentClass.subject.name;
+        });
+      });
+
+      // filter classes already in schedule
+      const classesToShow = await this.availableClasses.filter(
+        classes =>
+          !this.formItems.some(
+            formItem => formItem.subject.name === classes.subject.name
+          )
+      );
+
+      // get classes with available slot
+      const hasSlot = await classesToShow.filter(
+        classItem => classItem.room.limit > classItem.students.length
+      );
+
+      // // filter available classes with no conflicts ( room , time , day )
+      // const conflict = await hasSlot.filter(item => {
+      //   const itemStartTime = parseInt(
+      //     item.time_start.split(":")[0] + "" + item.time_start.split(":")[1]
+      //   );
+
+      //   const itemEndTime = parseInt(
+      //     item.time_end.split(":")[0] + "" + item.time_end.split(":")[1]
+      //   );
+
+      //   const itemDay = item.day.split("/");
+
+      //   return this.formItems.some(formItem => {
+      //     const formDay = formItem.day.split("/");
+
+      //     const formStartTime = parseInt(
+      //       formItem.time_start.split(":")[0] +
+      //         "" +
+      //         formItem.time_start.split(":")[1]
+      //     );
+
+      //     const formEndTime = parseInt(
+      //       formItem.time_end.split(":")[0] +
+      //         "" +
+      //         formItem.time_end.split(":")[1]
+      //     );
+
+      //     // check day conflict
+      //     const dayConflict = itemDay.filter(day =>
+      //       formDay.some(formItemDay => formItemDay.includes(day))
+      //     );
+
+      //     // will return classes with conflicts
+      //     return (
+      //       ((itemStartTime >= formStartTime && itemEndTime <= formEndTime) ||
+      //         (itemStartTime <= formStartTime &&
+      //           itemEndTime > formStartTime &&
+      //           itemEndTime <= formEndTime) ||
+      //         (itemStartTime > formStartTime && itemStartTime < formEndTime) ||
+      //         (itemStartTime <= formStartTime && itemEndTime >= formEndTime)) &&
+      //       dayConflict.length
+      //     );
+      //   });
+      // });
+
+      const conflict = await this.getConflictClasses(hasSlot);
+
+      // filter available classes with no conflicts
+      if (conflict.length) {
+        this.items = hasSlot.filter(
+          item => !conflict.some(conflictItem => item.id === conflictItem.id)
+        );
+      } else {
+        this.items = hasSlot;
+      }
+    },
+
+    // --------------------------------------------------------------------------------------
+
+    async getConflictClasses(availableItem) {
+      const conflict = await availableItem.filter(item => {
+        const itemStartTime = parseInt(
+          item.time_start.split(":")[0] + "" + item.time_start.split(":")[1]
+        );
+
+        const itemEndTime = parseInt(
+          item.time_end.split(":")[0] + "" + item.time_end.split(":")[1]
+        );
+
+        const itemDay = item.day.split("/");
+
+        return this.formItems.some(formItem => {
+          const formDay = formItem.day.split("/");
+
+          const formStartTime = parseInt(
+            formItem.time_start.split(":")[0] +
+              "" +
+              formItem.time_start.split(":")[1]
+          );
+
+          const formEndTime = parseInt(
+            formItem.time_end.split(":")[0] +
+              "" +
+              formItem.time_end.split(":")[1]
+          );
+
+          // check day conflict
+          const dayConflict = itemDay.filter(day =>
+            formDay.some(formItemDay => formItemDay.includes(day))
+          );
+
+          // will return classes with conflicts
+          return (
+            ((itemStartTime >= formStartTime && itemEndTime <= formEndTime) ||
+              (itemStartTime <= formStartTime &&
+                itemEndTime > formStartTime &&
+                itemEndTime <= formEndTime) ||
+              (itemStartTime > formStartTime && itemStartTime < formEndTime) ||
+              (itemStartTime <= formStartTime && itemEndTime >= formEndTime)) &&
+            dayConflict.length
+          );
+        });
+      });
+
+      return conflict;
+    },
+
+    // --------------------------------------------------------------------------------------
+
+    async addClassToForm(item) {
+      // Check if there is no conflict to the Classes in the schedules
+      this.formItems.push(item);
+    },
+
+    async getStudentType() {
+      return this.$store.state.user.type;
+    },
+
     async getStudentCurriculum() {
       this.studentChecklist = (
         await StudentChecklistService.getCurriculum(
@@ -140,7 +331,6 @@ export default {
     },
 
     async saveEditSchedule() {
-      console.log(this.itemsToSave);
       await StudentScheduleService.editSchedule(this.itemsToSave);
       this.getStudentSchedule();
       this.closeSaveConfirmDialog();
@@ -159,7 +349,6 @@ export default {
       }
 
       this.itemsToSave = await itemsToSave;
-      console.log(this.itemsToSave);
 
       this.saveConfirmDialog = true;
     },
@@ -185,16 +374,16 @@ export default {
               return (await ClassService.getClass(item.class.id)).data;
             })
           );
+
+          console.log(data);
+
           this.formItems = data;
         }
+
         this.getClasses();
       }
     },
     async addClass(data) {
-      // const index = this.items.indexOf(data);
-      // this.items.splice(index, 1);
-      // this.formItems.push(data);
-
       // check time if conflict
       let conflicts = await this.formItems.filter(conflict => {
         // data.time_start
@@ -217,11 +406,20 @@ export default {
         conflictTimeEnd = conflictTimeEnd[0] + "" + conflictTimeEnd[1];
         conflictTimeEnd = parseInt(conflictTimeEnd);
 
+        const formItemDay = conflict.day.split("/");
+        const dataDay = data.day.split("/");
+
+        const dayConflict = formItemDay.some(formItem =>
+          formItem.includes(dataDay)
+        );
+
         return (
-          (reqTimeStart >= conflictTimeStart &&
+          ((reqTimeStart >= conflictTimeStart &&
             reqTimeStart < conflictTimeEnd) ||
-          (reqTimeEnd > conflictTimeStart && reqTimeEnd <= conflictTimeEnd) ||
-          (reqTimeStart < conflictTimeStart && reqTimeEnd > conflictTimeEnd)
+            (reqTimeEnd > conflictTimeStart && reqTimeEnd <= conflictTimeEnd) ||
+            (reqTimeStart < conflictTimeStart &&
+              reqTimeEnd > conflictTimeEnd)) &&
+          dayConflict
         );
       });
 
@@ -235,36 +433,13 @@ export default {
         this.$refs.scheduleSnackbar.dialog = true;
         this.snackbarColor = "error";
         this.snackbarText = `Conflict to Class No: ${conflictClass}`;
-
-        // for (let conflict of conflicts) {
-        //   console.log(conflict);
-        //   conflictClass += "" + conflict.class_no +
-        // }
-        // console.log("conflict", conflict);
       } else {
         this.formItems.push(data);
 
-        let classToRemove = this.items.filter(item => {
-          return data.subject.code == item.subject.code;
+        this.items = this.items.filter(item => {
+          return data.subject.name !== item.subject.name;
         });
-
-        for (let removeClass of classToRemove) {
-          let index = this.items.indexOf(removeClass);
-          this.items.splice(index, 1);
-        }
       }
-
-      // _____________________________________________________________________
-      // this.formItems.push(data);
-
-      // let classToRemove = this.items.filter(item => {
-      //   return data.subject.code == item.subject.code;
-      // });
-
-      // for (let removeClass of classToRemove) {
-      //   let index = this.items.indexOf(removeClass);
-      //   this.items.splice(index, 1);
-      // }
     },
     edit() {
       this.action = "edit";
@@ -276,8 +451,9 @@ export default {
     deleteItem(data) {
       const index = this.formItems.indexOf(data);
       this.formItems.splice(index, 1);
-      // this.items.push(data);
-      this.getClasses();
+      this.getAvailableClasses();
+      // // this.items.push(data);
+      // this.getClasses();
     },
     async getClasses() {
       let response = (await ClassService.getClasses()).data;
