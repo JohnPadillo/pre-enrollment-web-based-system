@@ -12,7 +12,10 @@
             ></addButton>
             <editButton
               v-if="
-                action != 'edit' && items.length > 0 && status !== 'PENDING'
+                action != 'edit' &&
+                  items.length > 0 &&
+                  status !== 'PENDING' &&
+                  status !== 'APPROVED'
               "
               @edit="edit"
             />
