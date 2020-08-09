@@ -24,6 +24,7 @@ module.exports = {
         let section = student.section ? { id: student.SectionId ? student.SectionId : "", name: student.section.name ? student.section.name : ""} : null
         let status = student.status
         let type = student.type
+        let departmentId = student.DepartmentId
 
         return {
           id: id,
@@ -36,7 +37,8 @@ module.exports = {
           course: course,
           section: section,
           status: status,
-          type: type
+          type: type,
+          departmentId
         }
       })
     
@@ -62,7 +64,8 @@ module.exports = {
           CourseId: req.body.course,
           SectionId: req.body.section,
           status: 0,
-          type: req.body.type
+          type: req.body.type,
+          DepartmentId: req.body.departmentId
         }
         
         let response = await User.create(data)
@@ -108,7 +111,8 @@ module.exports = {
             name: response.section.name
           } : null,
           status: response.status,
-          type: response.type
+          type: response.type,
+          departmentId: response.DepartmentId
       }
 
       res.status(200).send(data)
@@ -136,7 +140,8 @@ module.exports = {
           CourseId: req.body.course,
           SectionId: req.body.section,
           type: req.body.type,
-          status: req.body.status
+          status: req.body.status,
+          DepartmentId: req.body.departmentId
         },
         {
           where: {

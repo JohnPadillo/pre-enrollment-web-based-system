@@ -226,6 +226,7 @@ import GradeService from "@/services/GradeService";
 import CourseService from "@/services/CourseService";
 import SectionService from "@/services/SectionService";
 import Checklist from "@/components/form/CurriculumForm";
+// import DepartmentService from "@/services/DepartmentService";
 
 export default {
   components: {
@@ -369,9 +370,12 @@ export default {
         return {
           code: course.code,
           name: course.name,
-          id: course.id
+          id: course.id,
+          departmentId: course.department.id
         };
       });
+
+      console.log(this.courses);
     },
     add() {
       this.action = "add";
@@ -399,6 +403,10 @@ export default {
     },
 
     async saveStudent() {
+      let program = (await ProgramService.getProgram(this.courseSelected)).data;
+
+      let departmentId = program.department.id;
+
       let data = {
         first_name: this.firstName,
         middle_name: this.middleName,
@@ -411,8 +419,10 @@ export default {
         name_of_guardian: this.name_of_guardian,
         contact_no_of_guardian: this.contact_no_of_guardian,
         section: this.selectedSection,
-        type: this.type
+        type: this.type,
+        departmentId
       };
+
       let response = (await StudentService.getStudents()).data;
       let error = response.filter(response => {
         return response.email == data.email;
@@ -451,6 +461,9 @@ export default {
     },
 
     async editStudent() {
+      let program = (await ProgramService.getProgram(this.courseSelected)).data;
+
+      let departmentId = program.department.id;
       this.action = "edit";
       let data = {
         id: this.id,
@@ -465,7 +478,8 @@ export default {
         contact_no_of_guardian: this.contact_no_of_guardian,
         course: this.courseSelected,
         section: this.selectedSection,
-        type: this.type
+        type: this.type,
+        departmentId
       };
 
       await StudentService.editStudent(data);

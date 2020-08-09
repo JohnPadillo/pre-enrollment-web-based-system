@@ -192,7 +192,10 @@ export default {
 
       if (this.$store.state.user.status === 2) {
         response = response.filter(data => {
-          return data.ph_status === "PENDING";
+          return (
+            data.ph_status === "PENDING" &&
+            this.$store.state.user.department.id === data.student.DepartmentId
+          );
         });
       } else if (this.$store.state.user.status === 1) {
         response = response.filter(data => {
@@ -259,7 +262,6 @@ export default {
     openApproveDialog(item) {
       this.formDialog = true;
       this.items = item.schedule;
-      console.log(this.items);
     },
 
     approve() {
@@ -285,8 +287,7 @@ export default {
         })
       );
 
-      let response = (await StudentScheduleService.editSchedule(data)).data;
-      console.log(response);
+      (await StudentScheduleService.editSchedule(data)).data;
       await this.getStudentSchedule();
       this.confirmationDialog = false;
       this.formDialog = false;

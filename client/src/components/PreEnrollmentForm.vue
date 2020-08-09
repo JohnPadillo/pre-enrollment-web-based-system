@@ -28,7 +28,11 @@
               {{ course }}
             </v-list>
             <v-data-table
-              :headers="action == 'edit' ? headers : headers2"
+              :headers="
+                action == 'edit' && $store.state.user.type === 'irregular'
+                  ? headers
+                  : headers2
+              "
               :items="items"
               disable-pagination
               hide-default-footer
