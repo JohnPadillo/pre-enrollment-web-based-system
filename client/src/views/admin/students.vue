@@ -433,7 +433,20 @@ export default {
         this.snackbarText = "Email already exist!";
         this.snackbarColor = "error";
       } else {
-        await StudentService.addStudent(data);
+        let studentData = (await StudentService.addStudent(data)).data;
+        let checklist = (
+          await CurriculumService.getCurriculum(this.courseSelected)
+        ).data;
+
+        let checklistData = checklist.map(data => {
+          return {
+            studentId: studentData.id,
+            subjectId: data.subject.id,
+            grade: "-"
+          };
+        });
+
+        await GradeService.editGrade(checklistData);
         this.getData();
         this.closeAddDialog();
         this.reset();
@@ -494,13 +507,14 @@ export default {
     },
 
     async deleteStudent() {
+      console.log("delete");
       await StudentService.deleteStudent(this.id);
+      await this.getData();
       this.closeConfirmDialog();
-      this.getData();
     },
 
     async closeConfirmDialog() {
-      await this.reset();
+      // await this.reset();
       this.confirmationDialog = false;
     },
 

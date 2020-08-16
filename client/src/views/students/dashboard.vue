@@ -143,7 +143,6 @@ export default {
           schedule[0].status === "APPROVED"
         ) {
           this.enrollmentStatus = schedule[0].status;
-          console.log(this.enrollmentStatus);
         } else if (
           schedule[0].ph_status === "PENDING" ||
           schedule[0].status === "PENDING"
@@ -366,8 +365,8 @@ export default {
 
     async saveEditSchedule() {
       await StudentScheduleService.editSchedule(this.itemsToSave);
-      this.getStudentSchedule();
       this.closeSaveConfirmDialog();
+      this.getPreEnrollmentData();
       this.action = "";
     },
     async saveEdit() {

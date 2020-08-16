@@ -15,10 +15,21 @@
                 action != 'edit' &&
                   items.length > 0 &&
                   status !== 'PENDING' &&
-                  status !== 'APPROVED'
+                  status !== 'APPROVED' &&
+                  $store.state.user.type === 'irregular'
               "
               @edit="edit"
             />
+
+            <enrollButton
+              v-if="
+                $store.state.user.type === 'regular' &&
+                  status !== 'PENDING' &&
+                  status !== 'APPROVED'
+              "
+              @enroll="saveEdit()"
+            >
+            </enrollButton>
             <saveButton
               v-if="action == 'edit' && items.length > 0"
               @save="saveEdit()"
@@ -87,7 +98,8 @@ export default {
     course: String,
     headers: Array,
     items: Array,
-    status: String
+    status: String,
+    type: String
   },
 
   data() {
@@ -120,6 +132,7 @@ export default {
 
   mounted() {
     console.log(this.$store.state.user);
+    console.log(this.status);
   },
 
   methods: {

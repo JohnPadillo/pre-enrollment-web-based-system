@@ -26,18 +26,33 @@
         ></confirmationDialog>
         <v-dialog v-if="formDialog" v-model="formDialog" max-width="1000">
           <v-card>
-            <v-card-title>PRE ENROLLMENT FORM</v-card-title>
-
+            <v-card-title
+              >PRE ENROLLMENT FORM
+              <v-spacer></v-spacer>
+              <editButton
+                v-if="studentData.type === 'irregular'"
+                @edit="edit()"
+              />
+            </v-card-title>
             <v-card-text>
               <v-list>
                 <strong>Student Name:</strong>
-                <!-- {{ `${studentData.first_name} ${studentData.last_name}` }} -->
+                {{ `${studentData.first_name} ${studentData.last_name}` }}
                 <br />
                 <strong>Program:</strong>
-                <!-- {{ studentData.course.code }} -->
+                {{ studentData.course.code }}
+                <br />
+                <strong>Type:</strong>
+                {{
+                  studentData.type.charAt(0).toUpperCase() +
+                    studentData.type.substr(1)
+                }}
+                Student
               </v-list>
               <v-data-table
-                :headers="scheduleHeader"
+                :headers="
+                  action === 'edit' ? editScheduleHeader : scheduleHeader
+                "
                 :items="items"
                 disable-pagination
                 hide-default-footer
@@ -56,6 +71,10 @@
                       {{ props.item.class.time_end }}
                     </td>
                     <td>{{ props.item.class.room.name }}</td>
+                    <removeButton
+                      v-if="action === 'edit'"
+                      @delete="deleteItem(props.item)"
+                    />
                   </tr>
                 </template>
               </v-data-table>
@@ -72,11 +91,37 @@
                 @click="approve()"
                 >Approve</v-btn
               >
-              <v-btn color="primary" dark @click="formDialog = false"
+              <v-btn color="primary" dark @click="closeFormDialog()"
                 >Close</v-btn
               >
             </v-card-actions>
           </v-card>
+
+          <v-layout>
+            <v-flex>
+              <v-card class="available-card" v-if="action == 'edit'">
+                <v-card-title text-md-center>Available Classes</v-card-title>
+                <!-- <v-data-table :headers="headers" :items="items">
+                  <template v-slot:item="props">
+                    <tr>
+                      <td>{{ props.item.class_no }}</td>
+                      <td>{{ props.item.subject.name }}</td>
+                      <td>{{ props.item.section.name }}</td>
+                      <td>{{ props.item.subject.units }}</td>
+                      <td>{{ props.item.day }}</td>
+                      <td>
+                        {{ props.item.time_start + " " + props.item.time_end }}
+                      </td>
+                      <td>{{ props.item.room.name }}</td>
+                      <td>
+                        <addButton @add="addClass(props.item)" />
+                      </td>
+                    </tr>
+                  </template>
+                </v-data-table> -->
+              </v-card>
+            </v-flex>
+          </v-layout>
         </v-dialog>
         <v-card>
           <v-card-title>
@@ -146,6 +191,7 @@ export default {
 
   data() {
     return {
+      action: "",
       title: "Student Pre-enrollment",
       search: "",
       headers: [
@@ -187,11 +233,41 @@ export default {
         {
           text: "Room"
         }
+      ],
+      editScheduleHeader: [
+        {
+          text: "Class No."
+        },
+        {
+          text: "Course Description"
+        },
+        {
+          text: "Section"
+        },
+        {
+          text: "Units"
+        },
+        {
+          text: "Day"
+        },
+        {
+          text: "Time"
+        },
+        {
+          text: "Room"
+        },
+        {
+          text: "Action"
+        }
       ]
     };
   },
 
   methods: {
+    edit() {
+      this.action = "edit";
+    },
+
     async getStudentSchedule() {
       this.loading = true;
       let response = (await StudentScheduleService.getSchedules()).data;
@@ -267,7 +343,13 @@ export default {
 
     openApproveDialog(item) {
       this.formDialog = true;
+      this.studentData = item;
       this.items = item.schedule;
+    },
+
+    closeFormDialog() {
+      this.formDialog = false;
+      this.action = "";
     },
 
     approve() {
@@ -316,4 +398,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.available-card {
+  margin-top: 20px;
+}
+</style>
