@@ -211,51 +211,6 @@ export default {
         classItem => classItem.room.limit > classItem.students.length
       );
 
-      // // filter available classes with no conflicts ( room , time , day )
-      // const conflict = await hasSlot.filter(item => {
-      //   const itemStartTime = parseInt(
-      //     item.time_start.split(":")[0] + "" + item.time_start.split(":")[1]
-      //   );
-
-      //   const itemEndTime = parseInt(
-      //     item.time_end.split(":")[0] + "" + item.time_end.split(":")[1]
-      //   );
-
-      //   const itemDay = item.day.split("/");
-
-      //   return this.formItems.some(formItem => {
-      //     const formDay = formItem.day.split("/");
-
-      //     const formStartTime = parseInt(
-      //       formItem.time_start.split(":")[0] +
-      //         "" +
-      //         formItem.time_start.split(":")[1]
-      //     );
-
-      //     const formEndTime = parseInt(
-      //       formItem.time_end.split(":")[0] +
-      //         "" +
-      //         formItem.time_end.split(":")[1]
-      //     );
-
-      //     // check day conflict
-      //     const dayConflict = itemDay.filter(day =>
-      //       formDay.some(formItemDay => formItemDay.includes(day))
-      //     );
-
-      //     // will return classes with conflicts
-      //     return (
-      //       ((itemStartTime >= formStartTime && itemEndTime <= formEndTime) ||
-      //         (itemStartTime <= formStartTime &&
-      //           itemEndTime > formStartTime &&
-      //           itemEndTime <= formEndTime) ||
-      //         (itemStartTime > formStartTime && itemStartTime < formEndTime) ||
-      //         (itemStartTime <= formStartTime && itemEndTime >= formEndTime)) &&
-      //       dayConflict.length
-      //     );
-      //   });
-      // });
-
       const conflict = await this.getConflictClasses(hasSlot);
 
       // filter available classes with no conflicts

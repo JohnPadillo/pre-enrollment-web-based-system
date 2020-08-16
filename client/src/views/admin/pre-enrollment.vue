@@ -31,7 +31,7 @@
               <v-spacer></v-spacer>
               <editButton
                 v-if="studentData.type === 'irregular'"
-                @edit="edit()"
+                @edit="edit(studentData)"
               />
             </v-card-title>
             <v-card-text>
@@ -86,7 +86,7 @@
                   $store.state.user.status === 1 ||
                     $store.state.user.status === 2
                 "
-                dark
+                :disabled="!items.length"
                 @click="approve()"
                 >Approve</v-btn
               >
@@ -104,7 +104,7 @@
                   :headers="editScheduleHeader"
                   :items="availableClasses"
                 >
-                  <!-- <template v-slot:item="props">
+                  <template v-slot:item="props">
                     <tr>
                       <td>{{ props.item.class_no }}</td>
                       <td>{{ props.item.subject.name }}</td>
@@ -119,12 +119,18 @@
                         <addButton @add="addClass(props.item)" />
                       </td>
                     </tr>
-                  </template> -->
+                  </template>
                 </v-data-table>
               </v-card>
             </v-flex>
           </v-layout>
         </v-dialog>
+        <snackbar
+          ref="scheduleSnackbar"
+          :color="snackbarColor"
+          :text="snackbarText"
+          @close="closeSnackBar"
+        />
         <v-card>
           <v-card-title>
             Student Pre-enrollment
@@ -184,6 +190,7 @@ import StudentScheduleService from "@/services/StudentScheduleService";
 import StudentService from "@/services/StudentService";
 import ClassService from "@/services/ClassService";
 import ProgramService from "@/services/ProgramService";
+import StudentGradeService from "@/services/GradeService";
 
 export default {
   mounted() {
@@ -211,9 +218,12 @@ export default {
       formDialog: false,
       studentData: null,
       availableClasses: [],
+      defaultStudentSchedule: [],
       confirmationDialog: false,
       defaultStudents: [],
       confirmDialogTitle: "Approve",
+      snackbarColor: "",
+      snackbarText: "",
       scheduleHeader: [
         {
           text: "Class No."
@@ -267,8 +277,201 @@ export default {
   },
 
   methods: {
-    edit() {
+    async deleteItem(data) {
+      const index = this.items.indexOf(data);
+      this.items.splice(index, 1);
+      await this.getAvailableClasses(data.student);
+      console.log(data);
+    },
+    async edit(student) {
       this.action = "edit";
+      await this.getAvailableClasses(student);
+    },
+
+    async getAvailableClasses(student) {
+      // get student grades
+      const grades = (await StudentGradeService.getGrades(student.id)).data;
+
+      // filter subjects with grade of 5.00 or greater than 3 (it means failed)
+      const subjectsToTake = grades.filter(subject => {
+        return subject.grade === "-" || subject.grade > 3;
+      });
+
+      const classes = (await ClassService.getClasses()).data;
+
+      const unFilteredavailableClasses = classes.filter(studentClass => {
+        return subjectsToTake.some(classes => {
+          return classes.subject.name === studentClass.subject.name;
+        });
+      });
+
+      // filter unfilteredAvailable classes with items (Schedule)
+      const filteredAvailableClasses = unFilteredavailableClasses.filter(
+        classes => {
+          return !this.items.some(itemClass => {
+            return itemClass.class.subject.name === classes.subject.name;
+          });
+        }
+      );
+
+      const hasSlot = await filteredAvailableClasses.filter(
+        classItem => classItem.room.limit > classItem.students.length
+      );
+
+      const conflict = await this.getConflictClasses(hasSlot);
+      // filter available classes with no conflicts
+      if (conflict.length) {
+        this.availableClasses = hasSlot.filter(
+          item => !conflict.some(conflictItem => item.id === conflictItem.id)
+        );
+      } else {
+        this.availableClasses = hasSlot;
+      }
+    },
+
+    async addClass(classData) {
+      const conflict = await this.items.filter(item => {
+        // check if there is day conflict with items
+        const itemDay = item.class.day.split("/");
+        const classDataDay = classData.day.split("/");
+
+        const dayConflict = itemDay.filter(day => {
+          return classDataDay.some(classDay => classDay == day);
+        });
+
+        // has day conflict
+        if (dayConflict.length) {
+          // check time conflict
+          const itemStartTime = parseInt(
+            item.class.time_start.split(":")[0] +
+              "" +
+              item.class.time_start.split(":")[1]
+          );
+
+          const itemEndTime = parseInt(
+            item.class.time_end.split(":")[0] +
+              "" +
+              item.class.time_end.split(":")[1]
+          );
+
+          const dayConflictStartTime = parseInt(
+            classData.time_start.split(":")[0] +
+              "" +
+              classData.time_start.split(":")[1]
+          );
+
+          const dayConflictEndTime = parseInt(
+            classData.time_end.split(":")[0] +
+              "" +
+              classData.time_end.split(":")[1]
+          );
+
+          if (
+            (itemStartTime >= dayConflictStartTime &&
+              itemEndTime <= dayConflictEndTime) ||
+            (itemStartTime <= dayConflictStartTime &&
+              itemEndTime > dayConflictStartTime &&
+              itemEndTime <= dayConflictEndTime) ||
+            (itemStartTime > dayConflictStartTime &&
+              itemStartTime < dayConflictEndTime) ||
+            (itemStartTime <= dayConflictStartTime &&
+              itemEndTime >= dayConflictEndTime)
+          ) {
+            return item;
+          } else {
+            return;
+          }
+        }
+      });
+
+      if (conflict.length) {
+        let conflictClass = "";
+        for (let i = 0; i < conflict.length; i++) {
+          conflictClass +=
+            "" +
+            conflict[i].class.class_no +
+            (i < conflict.length - 1 ? "," : "");
+        }
+
+        this.$refs.scheduleSnackbar.dialog = true;
+        this.snackbarColor = "error";
+        this.snackbarText = `Conflict to Class No: ${conflictClass}`;
+      } else {
+        // no conflict on time and day
+        // check student room limit
+        if (classData.room.limit > classData.students.length) {
+          const newClass = {
+            ClassId: classData.id,
+            UserId: this.studentData.id,
+            class: classData,
+            ph_status: "PENDING",
+            status: null,
+            student: this.studentData,
+            newClass: true
+          };
+          this.items.push(newClass);
+          console.log(this.items);
+          console.log(newClass);
+
+          this.availableClasses = this.availableClasses.filter(
+            avail => avail.subject.name !== classData.subject.name
+          );
+        } else {
+          return;
+        }
+      }
+    },
+
+    async getConflictClasses(availableItem) {
+      const conflict = await availableItem.filter(item => {
+        const itemStartTime = parseInt(
+          item.time_start.split(":")[0] + "" + item.time_start.split(":")[1]
+        );
+
+        const itemEndTime = parseInt(
+          item.time_end.split(":")[0] + "" + item.time_end.split(":")[1]
+        );
+
+        const itemDay = item.day.split("/");
+
+        return this.items.some(formItem => {
+          const formDay = formItem.class.day.split("/");
+
+          const formStartTime = parseInt(
+            formItem.class.time_start.split(":")[0] +
+              "" +
+              formItem.class.time_start.split(":")[1]
+          );
+
+          const formEndTime = parseInt(
+            formItem.class.time_end.split(":")[0] +
+              "" +
+              formItem.class.time_end.split(":")[1]
+          );
+
+          // check day conflict
+          const dayConflict = itemDay.filter(day =>
+            formDay.some(formItemDay => formItemDay.includes(day))
+          );
+
+          // will return classes with conflicts
+          return (
+            ((itemStartTime >= formStartTime && itemEndTime <= formEndTime) ||
+              (itemStartTime <= formStartTime &&
+                itemEndTime > formStartTime &&
+                itemEndTime <= formEndTime) ||
+              (itemStartTime > formStartTime && itemStartTime < formEndTime) ||
+              (itemStartTime <= formStartTime && itemEndTime >= formEndTime)) &&
+            dayConflict.length
+          );
+        });
+      });
+
+      return conflict;
+    },
+
+    closeSnackBar() {
+      this.$refs.snackbar.dialog = false;
     },
 
     async getStudentSchedule() {
@@ -344,19 +547,25 @@ export default {
       );
     },
 
-    openApproveDialog(item) {
+    async openApproveDialog(item) {
       this.formDialog = true;
       this.studentData = item;
       this.items = item.schedule;
     },
 
     closeFormDialog() {
-      this.formDialog = false;
+      if (this.action === "edit") {
+        this.getStudentSchedule();
+        this.getCourses();
+      }
       this.action = "";
+      this.formDialog = false;
     },
 
-    approve() {
+    async approve() {
+      await StudentScheduleService.editSchedule(this.items);
       this.confirmationDialog = true;
+      this.action = "";
     },
 
     async approveSchedule() {
