@@ -137,7 +137,6 @@ export default {
       // display current schedule
       if (schedule.length) {
         // set enrollment status
-        console.log(schedule);
         if (
           schedule[0].ph_status === "APPROVED" &&
           schedule[0].status === "APPROVED"
@@ -222,7 +221,6 @@ export default {
         );
       } else {
         this.items = hasSlot;
-        console.log(this.items);
       }
     },
 
@@ -357,8 +355,6 @@ export default {
             })
           );
 
-          console.log(data);
-
           this.formItems = data;
         }
 
@@ -438,7 +434,6 @@ export default {
     },
     add() {
       this.action = "edit";
-      console.log(this.formItems);
     },
 
     deleteItem(data) {
@@ -450,7 +445,6 @@ export default {
     },
     async getClasses() {
       let response = (await ClassService.getClasses()).data;
-      console.log(response);
 
       let filteredResponse = await Promise.all(
         response.filter(data => {
