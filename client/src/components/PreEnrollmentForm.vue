@@ -76,7 +76,6 @@
                     v-if="
                       action == 'edit' && $store.state.user.type === 'irregular'
                     "
-                    )
                   >
                     <removeButton @delete="deleteItem(props.item)" />
                   </td>
@@ -131,8 +130,7 @@ export default {
   },
 
   mounted() {
-    console.log(this.$store.state.user);
-    console.log(this.status);
+    console.log(this.items);
   },
 
   methods: {

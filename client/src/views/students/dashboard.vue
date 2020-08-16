@@ -174,15 +174,6 @@ export default {
 
         this.subjectsToTake = subjectsToTake.map(subject => subject.subject);
 
-        // // get all classes
-        // const classes = (await ClassService.getClasses()).data;
-
-        // this.availableClasses = classes.filter(studentClass => {
-        //   return subjectsToTake.some(classes => {
-        //     return classes.subject.name === studentClass.subject.name;
-        //   });
-        // });
-
         this.getAvailableClasses();
       } else {
         await this.getCourseSectionSchedule();
@@ -417,58 +408,68 @@ export default {
       }
     },
     async addClass(data) {
-      // check time if conflict
-      let conflicts = await this.formItems.filter(conflict => {
-        // data.time_start
-        let reqTimeStart = data.time_start.split(":");
-        reqTimeStart = reqTimeStart[0] + "" + reqTimeStart[1];
-        reqTimeStart = parseInt(reqTimeStart);
+      if (this.formItems.length > 0) {
+        // check time if conflict
+        let conflicts = await this.formItems.filter(conflict => {
+          // data.time_start
+          let reqTimeStart = data.time_start.split(":");
+          reqTimeStart = reqTimeStart[0] + "" + reqTimeStart[1];
+          reqTimeStart = parseInt(reqTimeStart);
 
-        // data.time_end
-        let reqTimeEnd = data.time_end.split(":");
-        reqTimeEnd = reqTimeEnd[0] + "" + reqTimeEnd[1];
-        reqTimeEnd = parseInt(reqTimeEnd);
+          // data.time_end
+          let reqTimeEnd = data.time_end.split(":");
+          reqTimeEnd = reqTimeEnd[0] + "" + reqTimeEnd[1];
+          reqTimeEnd = parseInt(reqTimeEnd);
 
-        // formitems.time_start
-        let conflictTimeStart = conflict.time_start.split(":");
-        conflictTimeStart = conflictTimeStart[0] + "" + conflictTimeStart[1];
-        conflictTimeStart = parseInt(conflictTimeStart);
+          // formitems.time_start
+          let conflictTimeStart = conflict.time_start.split(":");
+          conflictTimeStart = conflictTimeStart[0] + "" + conflictTimeStart[1];
+          conflictTimeStart = parseInt(conflictTimeStart);
 
-        // formitems.time_end
-        let conflictTimeEnd = conflict.time_end.split(":");
-        conflictTimeEnd = conflictTimeEnd[0] + "" + conflictTimeEnd[1];
-        conflictTimeEnd = parseInt(conflictTimeEnd);
+          // formitems.time_end
+          let conflictTimeEnd = conflict.time_end.split(":");
+          conflictTimeEnd = conflictTimeEnd[0] + "" + conflictTimeEnd[1];
+          conflictTimeEnd = parseInt(conflictTimeEnd);
 
-        const formItemDay = conflict.day.split("/");
-        const dataDay = data.day.split("/");
+          const formItemDay = conflict.day.split("/");
+          const dataDay = data.day.split("/");
 
-        const dayConflict = formItemDay.some(formItem =>
-          formItem.includes(dataDay)
-        );
+          const dayConflict = formItemDay.some(formItem =>
+            formItem.includes(dataDay)
+          );
 
-        return (
-          ((reqTimeStart >= conflictTimeStart &&
-            reqTimeStart < conflictTimeEnd) ||
-            (reqTimeEnd > conflictTimeStart && reqTimeEnd <= conflictTimeEnd) ||
-            (reqTimeStart < conflictTimeStart &&
-              reqTimeEnd > conflictTimeEnd)) &&
-          dayConflict
-        );
-      });
+          return (
+            ((reqTimeStart >= conflictTimeStart &&
+              reqTimeStart < conflictTimeEnd) ||
+              (reqTimeEnd > conflictTimeStart &&
+                reqTimeEnd <= conflictTimeEnd) ||
+              (reqTimeStart < conflictTimeStart &&
+                reqTimeEnd > conflictTimeEnd)) &&
+            dayConflict
+          );
+        });
 
-      if (conflicts.length > 0) {
-        let conflictClass = "";
-        for (let i = 0; i < conflicts.length; i++) {
-          conflictClass +=
-            "" + conflicts[i].class_no + (i < conflicts.length - 1 ? "," : "");
+        if (conflicts.length > 0) {
+          let conflictClass = "";
+          for (let i = 0; i < conflicts.length; i++) {
+            conflictClass +=
+              "" +
+              conflicts[i].class_no +
+              (i < conflicts.length - 1 ? "," : "");
+          }
+
+          this.$refs.scheduleSnackbar.dialog = true;
+          this.snackbarColor = "error";
+          this.snackbarText = `Conflict to Class No: ${conflictClass}`;
+        } else {
+          this.formItems.push(data);
+
+          this.items = this.items.filter(item => {
+            return data.subject.name !== item.subject.name;
+          });
         }
-
-        this.$refs.scheduleSnackbar.dialog = true;
-        this.snackbarColor = "error";
-        this.snackbarText = `Conflict to Class No: ${conflictClass}`;
       } else {
         this.formItems.push(data);
-
         this.items = this.items.filter(item => {
           return data.subject.name !== item.subject.name;
         });
@@ -479,6 +480,7 @@ export default {
     },
     add() {
       this.action = "edit";
+      console.log(this.formItems);
     },
 
     deleteItem(data) {
