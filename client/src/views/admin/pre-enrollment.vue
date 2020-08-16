@@ -30,7 +30,10 @@
               >PRE ENROLLMENT FORM
               <v-spacer></v-spacer>
               <editButton
-                v-if="studentData.type === 'irregular'"
+                v-if="
+                  studentData.type === 'irregular' &&
+                    $store.state.user.status === 2
+                "
                 @edit="edit(studentData)"
               />
             </v-card-title>
