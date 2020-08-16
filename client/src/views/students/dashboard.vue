@@ -148,6 +148,8 @@ export default {
           schedule[0].status === "PENDING"
         ) {
           this.enrollmentStatus = schedule[0].ph_status;
+        } else if (schedule[0].status === "DISAPPROVED") {
+          this.enrollmentStatus = schedule[0].status;
         } else {
           this.enrollmentStatus = null;
         }
@@ -220,6 +222,7 @@ export default {
         );
       } else {
         this.items = hasSlot;
+        console.log(this.items);
       }
     },
 

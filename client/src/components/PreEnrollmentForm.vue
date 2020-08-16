@@ -16,6 +16,7 @@
                   items.length > 0 &&
                   status !== 'PENDING' &&
                   status !== 'APPROVED' &&
+                  status !== 'DISAPPROVED' &&
                   $store.state.user.type === 'irregular'
               "
               @edit="edit"

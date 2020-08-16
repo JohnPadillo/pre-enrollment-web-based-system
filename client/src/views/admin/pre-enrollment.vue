@@ -21,8 +21,12 @@
         <confirmationDialog
           :dialog="confirmationDialog"
           :title="confirmDialogTitle"
-          @no="confirmationDialog = false"
-          @yes="approveSchedule()"
+          @no="closeConfirmationDialog()"
+          @yes="
+            confirmDialogTitle === 'Disapprove'
+              ? disapproveSchedule()
+              : approveSchedule()
+          "
         ></confirmationDialog>
         <v-dialog v-if="formDialog" v-model="formDialog" max-width="1000">
           <v-card>
@@ -83,6 +87,13 @@
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
+              <v-btn
+                v-if="$store.state.user.status === 1"
+                color="error"
+                @click="openDisapproveDialog()"
+              >
+                Disapprove
+              </v-btn>
               <v-btn
                 color="success"
                 v-if="
@@ -224,7 +235,7 @@ export default {
       defaultStudentSchedule: [],
       confirmationDialog: false,
       defaultStudents: [],
-      confirmDialogTitle: "Approve",
+      confirmDialogTitle: "",
       snackbarColor: "",
       snackbarText: "",
       scheduleHeader: [
@@ -280,6 +291,43 @@ export default {
   },
 
   methods: {
+    async disapproveSchedule() {
+      let data = await Promise.all(
+        this.items.map(data => {
+          if (this.$store.state.user.status === 2) {
+            return {
+              UserId: data.UserId,
+              ClassId: data.ClassId,
+              ph_status: "APPROVED",
+              status: "PENDING"
+            };
+          } else {
+            return {
+              UserId: data.UserId,
+              ClassId: data.ClassId,
+              status: "DISAPPROVED"
+            };
+          }
+        })
+      );
+
+      (await StudentScheduleService.editSchedule(data)).data;
+      await this.getStudentSchedule();
+      this.closeConfirmationDialog();
+      this.formDialog = false;
+      this.items = [];
+    },
+
+    closeConfirmationDialog() {
+      this.confirmDialogTitle = "";
+      this.confirmationDialog = false;
+    },
+
+    openDisapproveDialog() {
+      this.confirmDialogTitle = "Disapprove";
+      this.confirmationDialog = true;
+    },
+
     async deleteItem(data) {
       const index = this.items.indexOf(data);
       this.items.splice(index, 1);
@@ -494,7 +542,7 @@ export default {
         });
       } else {
         response = response.filter(data => {
-          return data.ph_status === "APPROVED" && data.status === "APPROVED";
+          return data.ph_status && data.status;
         });
       }
 
@@ -568,6 +616,7 @@ export default {
     async approve() {
       await StudentScheduleService.editSchedule(this.items);
       this.confirmationDialog = true;
+      this.confirmDialogTitle = "Approve";
       this.action = "";
     },
 
@@ -593,7 +642,7 @@ export default {
 
       (await StudentScheduleService.editSchedule(data)).data;
       await this.getStudentSchedule();
-      this.confirmationDialog = false;
+      this.closeConfirmationDialog();
       this.formDialog = false;
       this.items = [];
     },
