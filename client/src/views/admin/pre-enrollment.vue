@@ -71,10 +71,9 @@
                       {{ props.item.class.time_end }}
                     </td>
                     <td>{{ props.item.class.room.name }}</td>
-                    <removeButton
-                      v-if="action === 'edit'"
-                      @delete="deleteItem(props.item)"
-                    />
+                    <td v-if="action === 'edit'">
+                      <removeButton @delete="deleteItem(props.item)" />
+                    </td>
                   </tr>
                 </template>
               </v-data-table>
@@ -101,8 +100,11 @@
             <v-flex>
               <v-card class="available-card" v-if="action == 'edit'">
                 <v-card-title text-md-center>Available Classes</v-card-title>
-                <!-- <v-data-table :headers="headers" :items="items">
-                  <template v-slot:item="props">
+                <v-data-table
+                  :headers="editScheduleHeader"
+                  :items="availableClasses"
+                >
+                  <!-- <template v-slot:item="props">
                     <tr>
                       <td>{{ props.item.class_no }}</td>
                       <td>{{ props.item.subject.name }}</td>
@@ -117,8 +119,8 @@
                         <addButton @add="addClass(props.item)" />
                       </td>
                     </tr>
-                  </template>
-                </v-data-table> -->
+                  </template> -->
+                </v-data-table>
               </v-card>
             </v-flex>
           </v-layout>
@@ -208,6 +210,7 @@ export default {
       loading: false,
       formDialog: false,
       studentData: null,
+      availableClasses: [],
       confirmationDialog: false,
       defaultStudents: [],
       confirmDialogTitle: "Approve",

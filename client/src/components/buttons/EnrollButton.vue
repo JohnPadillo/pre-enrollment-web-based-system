@@ -1,5 +1,5 @@
-<template v-slot:activator="{ on }">
-  <v-btn small class="mx-2" dark color="green" @click="enroll" v-on="on">
+<template>
+  <v-btn small class="mx-2" dark color="green" @click="enroll">
     <!-- <v-icon dark>mdi-content-save</v-icon> -->
     Enroll
   </v-btn>
