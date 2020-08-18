@@ -51,14 +51,15 @@
                 label="New Password"
                 v-model="new_password"
                 outlined
+                type="password"
                 :rules="[rules.required]"
                 class="pt-8"
               ></v-text-field>
               <v-text-field
+                type="password"
                 label="Confirm Password"
                 v-model="confirm_password"
                 outlined
-                type="number"
                 :rules="[rules.required, rules.number]"
               ></v-text-field>
             </div>
