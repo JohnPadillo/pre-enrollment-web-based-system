@@ -11,6 +11,7 @@ const ScheduleController = require('../controllers/ScheduleController')
 const GradeController = require('../controllers/GradeController')
 const StudentScheduleController = require('../controllers/StudentScheduleController.js')
 const AdminController = require('../controllers/AdminController')
+const FeeController = require('../controllers/FeeController')
 
 const multer = require('multer');
 const storage = multer.diskStorage({
@@ -116,4 +117,11 @@ module.exports = app => {
   app.post('/admin/:id', AdminController.getAdmin)
   app.patch('/edit/admin/:id', AdminController.editAdmin)
   app.delete('/delete/admin/:id', AdminController.deleteAdmin)
+
+  // Fee
+  app.post('/add/fee', FeeController.addFee)
+  app.get('/fees', FeeController.getAllFee)
+  app.post('/fee/:id', FeeController.getFee)
+  app.patch('/edit/fee/:id', FeeController.editFee)
+  app.delete('/delete/fee/:id', FeeController.deleteFee)
 }
