@@ -85,6 +85,13 @@
             label="Prerequisites"
             multiple
           ></v-autocomplete>
+          <v-text-field
+            :readonly="action == 'view'"
+            label="Fee"
+            v-model="course_fee"
+            type="number"
+            outlined
+          ></v-text-field>
         </addDialog>
         <confirmationDialog
           :dialog="confirmationDialog"
@@ -105,7 +112,11 @@
               hide-details
               clearable
             ></v-text-field>
-            <addButton v-if="$store.state.user.status == 1" :title="title" @add="add" />
+            <addButton
+              v-if="$store.state.user.status == 1"
+              :title="title"
+              @add="add"
+            />
           </v-card-title>
           <v-data-table
             :headers="headers"
@@ -160,6 +171,7 @@ export default {
       course_code: "",
       course_units: "",
       course_prerequisites: [],
+      course_fee: 0,
       subjects: [],
       programId: null,
       programs: [],
@@ -416,13 +428,16 @@ export default {
         name: this.course_name,
         code: this.course_code,
         units: this.course_units,
-        prerequisites: await prerequisites
+        prerequisites: await prerequisites,
+        fee: this.course_fee
       };
 
-      await CourseService.addCourse(data);
-      this.getCourses();
-      this.openAddDialog = false;
-      this.reset();
+      console.log(data);
+
+      // await CourseService.addCourse(data);
+      // this.getCourses();
+      // this.openAddDialog = false;
+      // this.reset();
     },
     async editCourse(id) {
       this.action = "edit";
@@ -432,6 +447,7 @@ export default {
       this.course_code = subject.code;
       this.course_name = subject.name;
       this.course_units = subject.units;
+      this.course_fee = subject.fee;
       let prerequisiteArray = []; // we can pass object here
 
       if (subject.prerequisites) {
@@ -470,7 +486,8 @@ export default {
         name: this.course_name,
         code: this.course_code,
         units: this.course_units,
-        prerequisites: prerequisites
+        prerequisites: prerequisites,
+        fee: this.course_fee
       };
 
       await CourseService.editCourse(data);

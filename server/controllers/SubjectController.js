@@ -36,7 +36,8 @@ module.exports = {
                 code: req.body.code,
                 name: req.body.name,
                 units: req.body.units,
-                prerequisites: req.body.prerequisites
+                prerequisites: req.body.prerequisites,
+                fee: req.body.fee
             }
 
             let response = await Subject.create(data)
@@ -56,7 +57,8 @@ module.exports = {
                     name: req.body.name,
                     code: req.body.code,
                     units: req.body.units,
-                    prerequisites: req.body.prerequisites
+                    prerequisites: req.body.prerequisites,
+                    fee: req.body.fee
                 },
                 {
                     where: {
