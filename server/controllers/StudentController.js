@@ -21,11 +21,11 @@ module.exports = {
         let name_of_guardian = student.name_of_guardian
         let contact_no_of_guardian = student.contact_no_of_guardian
         let course = { id: student.CourseId, name: student.course.name, code: student.course.code }
-        let section = student.section ? { id: student.SectionId ? student.SectionId : "", name: student.section.name ? student.section.name : ""} : null
+        let section = student.section
         let status = student.status
         let type = student.type
         let departmentId = student.DepartmentId
-
+        // student.section ? { id: student.SectionId ? student.SectionId : "", name: student.section.name ? student.section.name : ""} : null
         return {
           id: id,
           name: name,

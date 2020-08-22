@@ -107,7 +107,8 @@ module.exports = app => {
   app.get('/student-schedules', StudentScheduleController.getSchedules)
   app.post('/add/student-schedule', StudentScheduleController.addSchedule)
   app.get('/student-schedule/:studentId', StudentScheduleController.getSchedule)
-  app.patch('/edit/student-schedule/:studentId', StudentScheduleController.editSchedule)
+  app.patch('/edit/student-schedule/:studentId', StudentScheduleController.editSchedule),
+  app.delete('/delete/student-schedule/:studentId', StudentScheduleController.deleteSchedule)
 
   // Admins 
   app.post('/add/admin', AdminController.addAdmin)

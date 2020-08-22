@@ -1,4 +1,6 @@
 const StudentSchedule = require('../models').StudentSchedule
+const Subject = require('../models').Subject
+
 
 module.exports = {
   async getSchedules(req, res){
@@ -40,8 +42,16 @@ module.exports = {
         }
       )
 
+      
+
       response = await Promise.all(
-        response.map(data => {
+        response.map(async data => {
+          const subject = await Subject.findOne({
+            where: {
+              id: data.class.SubjectId
+            }
+          })
+
           return {
             id: data.id,
             student: {
@@ -61,7 +71,8 @@ module.exports = {
               time_end: data.class.time_end
             },
             ph_status: data.ph_status,
-            status: data.status
+            status: data.status,
+            subject: subject
           }
         })
       )
@@ -146,4 +157,21 @@ module.exports = {
       )
     }
   },
+
+  async deleteSchedule(req, res) {
+    try {
+      let response = StudentSchedule.destroy({
+        where: {
+          UserId: req.params.studentId
+        }
+      })
+
+      res.status(200).send(response)
+    } catch (error) {
+      res.status(400).send({
+        Error: 'Unable to delete schedule.'
+      })
+    }
+  }
+
 }

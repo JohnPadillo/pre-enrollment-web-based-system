@@ -334,7 +334,9 @@ export default {
           let section = data.section
             ? {
                 id: data.section.id,
-                name: data.section.name
+                name: data.section.name,
+                year: data.section.year,
+                semester: data.section.semester
               }
             : "-";
 
@@ -374,8 +376,6 @@ export default {
           departmentId: course.department.id
         };
       });
-
-      console.log(this.courses);
     },
     add() {
       this.action = "add";
@@ -507,7 +507,6 @@ export default {
     },
 
     async deleteStudent() {
-      console.log("delete");
       await StudentService.deleteStudent(this.id);
       await this.getData();
       this.closeConfirmDialog();
@@ -566,7 +565,6 @@ export default {
         })
       );
       this.user = data;
-      console.log(this.user);
       this.action = "view";
       this.checklistDialog = true;
     },

@@ -7,7 +7,11 @@
             PRE ENROLLMENT FORM
             <v-spacer></v-spacer>
             <addButton
-              v-if="items.length < 1 && action != 'edit'"
+              v-if="
+                items.length < 1 &&
+                  action != 'edit' &&
+                  $store.state.user.type === 'irregular'
+              "
               @add="add"
             ></addButton>
             <editButton
@@ -26,7 +30,8 @@
               v-if="
                 $store.state.user.type === 'regular' &&
                   status !== 'PENDING' &&
-                  status !== 'APPROVED'
+                  status !== 'APPROVED' &&
+                  items.length
               "
               @enroll="saveEdit()"
             >
@@ -43,6 +48,30 @@
               <br />
               <strong>Program:</strong>
               {{ course }}
+              <br />
+              <div v-if="user">
+                <strong>Year:</strong>
+                {{
+                  user.section.year == 1
+                    ? "1st "
+                    : user.section.year == 2
+                    ? "2nd "
+                    : user.section.year == 3
+                    ? "3rd "
+                    : user.section.year == 4
+                    ? "4th "
+                    : "-"
+                }}
+                <br />
+                <strong>Semester:</strong>
+                {{
+                  user.section.semester == 1
+                    ? "1st"
+                    : user.section.semester == 2
+                    ? "2nd"
+                    : "3rd"
+                }}
+              </div>
 
               <br />
               <div v-if="status">
@@ -96,6 +125,7 @@ export default {
     action: String,
     name: String,
     course: String,
+    user: Object,
     headers: Array,
     items: Array,
     status: String,

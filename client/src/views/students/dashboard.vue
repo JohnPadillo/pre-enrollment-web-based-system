@@ -10,6 +10,7 @@
           :headers="headers"
           :items="formItems"
           :status="enrollmentStatus"
+          :user="user"
           @add="add"
           @edit="edit"
           @delete="deleteItem"
@@ -82,6 +83,7 @@ export default {
         " " +
         this.$store.state.user.last_name,
       course: this.$store.state.user.course.code,
+      user: this.$store.state.user,
       action: "",
       headers: [
         {
@@ -130,24 +132,73 @@ export default {
       const studentType = await this.getStudentType();
 
       // get student current schedule
-      const schedule = (
+      let schedule = (
         await StudentScheduleService.getSchedule(this.$store.state.user.id)
       ).data;
 
+      const grades = (
+        await StudentGradeService.getGrades(this.$store.state.user.id)
+      ).data;
+
+      // ----------------------------------------------------------------------
+
       // display current schedule
       if (schedule.length) {
+        const subjectsToTake = schedule.filter(schedule => {
+          return grades.some(grade => {
+            return (
+              grade.subject.name == schedule.subject.name &&
+              (grade.grade === "-" || grade.grade > 3)
+            );
+          });
+        });
+
+        if (subjectsToTake.length) {
+          // filter subjects in form with grade and save schedule
+          let itemsToSave = [];
+
+          subjectsToTake.forEach(item => {
+            let data = {
+              UserId: this.$store.state.user.id,
+              ClassId: item.class.id,
+              ph_status: item.ph_status,
+              status: item.status
+            };
+
+            itemsToSave.push(data);
+          });
+
+          await StudentScheduleService.editSchedule(itemsToSave);
+
+          schedule = (
+            await StudentScheduleService.getSchedule(this.$store.state.user.id)
+          ).data;
+
+          // new schedule
+          schedule = (
+            await StudentScheduleService.getSchedule(this.$store.state.user.id)
+          ).data;
+        } else {
+          await StudentScheduleService.deleteSchedule(
+            this.$store.state.user.id
+          );
+          await this.getPreEnrollmentData();
+        }
+
         // set enrollment status
         if (
+          schedule.length &&
           schedule[0].ph_status === "APPROVED" &&
           schedule[0].status === "APPROVED"
         ) {
           this.enrollmentStatus = schedule[0].status;
         } else if (
-          schedule[0].ph_status === "PENDING" ||
-          schedule[0].status === "PENDING"
+          schedule.length &&
+          (schedule[0].ph_status === "PENDING" ||
+            schedule[0].status === "PENDING")
         ) {
           this.enrollmentStatus = schedule[0].ph_status;
-        } else if (schedule[0].status === "DISAPPROVED") {
+        } else if (schedule.length && schedule[0].status === "DISAPPROVED") {
           this.enrollmentStatus = schedule[0].status;
         } else {
           this.enrollmentStatus = null;
@@ -177,14 +228,27 @@ export default {
 
         this.getAvailableClasses();
       } else {
-        await this.getCourseSectionSchedule();
-        let schedule = await Promise.all(
-          this.courseSectionSchedule.map(async item => {
-            return (await ClassService.getClass(item.class.id)).data;
-          })
-        );
+        if (schedule.length) {
+          return;
+        } else {
+          await this.getCourseSectionSchedule();
+          let schedule = await Promise.all(
+            this.courseSectionSchedule.map(async item => {
+              return (await ClassService.getClass(item.class.id)).data;
+            })
+          );
 
-        this.formItems = schedule;
+          const subjectsToTake = schedule.filter(schedule => {
+            return grades.some(grade => {
+              return (
+                grade.subject.name == schedule.subject.name &&
+                (grade.grade === "-" || grade.grade > 3)
+              );
+            });
+          });
+
+          this.formItems = subjectsToTake;
+        }
       }
     },
 

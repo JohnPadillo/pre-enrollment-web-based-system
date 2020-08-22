@@ -13,5 +13,8 @@ export default {
   },
   editSchedule(params) {
     return Api().patch(`edit/student-schedule/${params[0].UserId}`, params);
+  },
+  deleteSchedule(id) {
+    return Api().delete(`delete/student-schedule/${id}`);
   }
 };
