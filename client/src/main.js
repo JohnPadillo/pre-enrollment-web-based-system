@@ -29,6 +29,9 @@ import PreEnrollmentForm from "@/components/PreEnrollmentForm";
 // Snackbar
 import Snackbar from "@/components/Snackbar";
 
+// Tuition fee
+import TuitionFee from "@/components/TuitionFee";
+
 Vue.config.productionTip = false;
 
 // Button
@@ -56,6 +59,9 @@ Vue.component("PreEnrollmentForm", PreEnrollmentForm);
 
 // Snackbar
 Vue.component("Snackbar", Snackbar);
+
+// Tuition fee
+Vue.component("TuitionFee", TuitionFee);
 
 new Vue({
   router,

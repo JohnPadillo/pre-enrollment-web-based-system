@@ -119,6 +119,11 @@ export default {
           title: "Student Pre Enrollment",
           icon: " mdi-account-check",
           link: "/admin/pre-enrollment"
+        },
+        {
+          title: "Fees",
+          icon: "mdi-cash",
+          link: "/admin/fees"
         }
       ],
       right: null

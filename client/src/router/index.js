@@ -14,6 +14,7 @@ import AdminSection from "../views/admin/section";
 import AdminRoom from "../views/admin/room";
 import AdminRole from "../views/admin/roles";
 import AdminPreEnrollment from "../views/admin/pre-enrollment";
+import AdminFees from "../views/admin/fees";
 
 // Student
 import StudentRegister from "../views/students/register";
@@ -91,7 +92,11 @@ const routes = [
     name: "AdminPreEnrollment",
     component: AdminPreEnrollment
   },
-
+  {
+    path: "/admin/fees",
+    name: "AdminFees",
+    component: AdminFees
+  },
   // Student router
   {
     path: "/dashboard",

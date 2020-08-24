@@ -16,6 +16,7 @@
           @delete="deleteItem"
           @saveEdit="saveEdit"
         ></preEnrollmentForm>
+        <tuitionFee :items="fees" />
         <confirmationDialog
           :dialog="saveConfirmDialog"
           :title="saveConfirmDialogTitle"
@@ -66,6 +67,7 @@ import StudentScheduleService from "@/services/StudentScheduleService";
 import StudentChecklistService from "@/services/CurriculumService";
 import StudentGradeService from "@/services/GradeService";
 import CourseSectionScheduleService from "@/services/ScheduleService";
+import FeeService from "@/services/FeeService";
 
 export default {
   async mounted() {
@@ -75,6 +77,7 @@ export default {
     // await this.getStudentCurriculum();
     // await this.getStudentType();
     await this.getPreEnrollmentData();
+    // this.getFees();
   },
   data() {
     return {
@@ -113,6 +116,7 @@ export default {
       ],
       availableClasses: [],
       items: [],
+      fees: [],
       formItems: [],
       itemsToSave: [],
       saveConfirmDialog: false,
@@ -127,6 +131,26 @@ export default {
     };
   },
   methods: {
+    async getFees() {
+      const tuitionfee = this.formItems.reduce((total, fee) => {
+        return (total += Number(fee.subject.fee));
+      }, 0);
+      this.fees.push({
+        name: "Tuition Fee",
+        amount: tuitionfee
+      });
+
+      const otherfees = (await FeeService.getAllFees()).data;
+      if (!otherfees.length) {
+        return;
+      }
+
+      otherfees.forEach(async item => {
+        await this.fees.push(item);
+      });
+
+      console.log(this.fees);
+    },
     async getPreEnrollmentData() {
       // get student type
       const studentType = await this.getStudentType();
@@ -229,7 +253,8 @@ export default {
         this.getAvailableClasses();
       } else {
         if (schedule.length) {
-          return;
+          // console.log("sched", schedule);
+          // return;
         } else {
           await this.getCourseSectionSchedule();
           let schedule = await Promise.all(
@@ -249,6 +274,11 @@ export default {
 
           this.formItems = subjectsToTake;
         }
+      }
+      // list breakdown
+
+      if (this.enrollmentStatus) {
+        this.getFees();
       }
     },
 
