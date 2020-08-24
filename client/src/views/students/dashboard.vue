@@ -16,7 +16,7 @@
           @delete="deleteItem"
           @saveEdit="saveEdit"
         ></preEnrollmentForm>
-        <tuitionFee :items="fees" />
+        <tuitionFee v-if="enrollmentStatus" :items="fees" />
         <confirmationDialog
           :dialog="saveConfirmDialog"
           :title="saveConfirmDialogTitle"
