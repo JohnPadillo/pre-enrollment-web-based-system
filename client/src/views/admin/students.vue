@@ -226,6 +226,7 @@ import GradeService from "@/services/GradeService";
 import CourseService from "@/services/CourseService";
 import SectionService from "@/services/SectionService";
 import Checklist from "@/components/form/CurriculumForm";
+import StudentScheduleService from "@/services/StudentScheduleService";
 // import DepartmentService from "@/services/DepartmentService";
 
 export default {
@@ -288,7 +289,8 @@ export default {
           text: "Irregular",
           value: "irregular"
         }
-      ]
+      ],
+      student: null
     };
   },
   methods: {
@@ -471,6 +473,8 @@ export default {
       this.getSections();
       this.selectedSection = data.section.id;
       this.type = data.type;
+
+      this.student = data;
     },
 
     async editStudent() {
@@ -495,9 +499,17 @@ export default {
         departmentId
       };
 
+      if (
+        this.student.section.id !== data.section ||
+        this.student.course.id !== data.course ||
+        this.student.type != data.type
+      ) {
+        await StudentScheduleService.deleteSchedule(this.student.id);
+      }
       await StudentService.editStudent(data);
       this.reset();
       this.getData();
+      this.student = null;
       this.closeAddDialog();
     },
 

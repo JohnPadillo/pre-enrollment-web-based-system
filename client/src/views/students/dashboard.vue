@@ -148,8 +148,6 @@ export default {
       otherfees.forEach(async item => {
         await this.fees.push(item);
       });
-
-      console.log(this.fees);
     },
     async getPreEnrollmentData() {
       // get student type
@@ -255,6 +253,23 @@ export default {
         if (schedule.length) {
           // console.log("sched", schedule);
           // return;
+          await this.getCourseSectionSchedule();
+          let courseSchedule = await Promise.all(
+            this.courseSectionSchedule.map(async item => {
+              return (await ClassService.getClass(item.class.id)).data;
+            })
+          );
+
+          const subjectsToTake = courseSchedule.filter(schedule => {
+            return grades.some(grade => {
+              return (
+                grade.subject.name == schedule.subject.name &&
+                (grade.grade === "-" || grade.grade > 3)
+              );
+            });
+          });
+
+          console.log(subjectsToTake);
         } else {
           await this.getCourseSectionSchedule();
           let schedule = await Promise.all(
