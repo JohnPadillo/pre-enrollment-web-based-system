@@ -110,6 +110,16 @@
             </v-card-actions>
           </v-card>
 
+          <tuitionFee
+            class="tuitionFee"
+            v-if="
+              enrollmentStatus &&
+                $store.state.user.status === 3 &&
+                this.enrollmentStatus != 'DISAPPROVED'
+            "
+            :items="fees"
+          />
+
           <v-layout>
             <v-flex>
               <v-card class="available-card" v-if="action == 'edit'">
@@ -138,6 +148,11 @@
               </v-card>
             </v-flex>
           </v-layout>
+
+          <!-- <v-layout>
+            <v-flex> -->
+          <!-- </v-flex>
+          </v-layout> -->
         </v-dialog>
         <snackbar
           ref="scheduleSnackbar"
@@ -205,6 +220,7 @@ import StudentService from "@/services/StudentService";
 import ClassService from "@/services/ClassService";
 import ProgramService from "@/services/ProgramService";
 import StudentGradeService from "@/services/GradeService";
+import FeeService from "@/services/FeeService";
 
 export default {
   mounted() {
@@ -235,7 +251,9 @@ export default {
       defaultStudentSchedule: [],
       confirmationDialog: false,
       defaultStudents: [],
+      fees: [],
       confirmDialogTitle: "",
+      enrollmentStatus: null,
       snackbarColor: "",
       snackbarText: "",
       scheduleHeader: [
@@ -332,7 +350,6 @@ export default {
       const index = this.items.indexOf(data);
       this.items.splice(index, 1);
       await this.getAvailableClasses(data.student);
-      console.log(data);
     },
     async edit(student) {
       this.action = "edit";
@@ -461,8 +478,6 @@ export default {
             newClass: true
           };
           this.items.push(newClass);
-          console.log(this.items);
-          console.log(newClass);
 
           this.availableClasses = this.availableClasses.filter(
             avail => avail.subject.name !== classData.subject.name
@@ -599,9 +614,30 @@ export default {
     },
 
     async openApproveDialog(item) {
-      this.formDialog = true;
-      this.studentData = item;
       this.items = item.schedule;
+      this.getFees();
+      this.studentData = item;
+      this.enrollmentStatus = item.schedule[0].status;
+      this.formDialog = true;
+    },
+
+    async getFees() {
+      const tuitionfee = this.items.reduce((total, fee) => {
+        return (total += Number(fee.class.subject.fee));
+      }, 0);
+      this.fees.push({
+        name: "Tuition Fee",
+        amount: tuitionfee
+      });
+
+      const otherfees = (await FeeService.getAllFees()).data;
+      if (!otherfees.length) {
+        return;
+      }
+
+      otherfees.forEach(async item => {
+        await this.fees.push(item);
+      });
     },
 
     closeFormDialog() {
@@ -610,6 +646,8 @@ export default {
         this.getCourses();
       }
       this.action = "";
+      this.fees = [];
+      this.enrollmentStatus = null;
       this.formDialog = false;
     },
 
@@ -665,5 +703,11 @@ export default {
 <style>
 .available-card {
   margin-top: 20px;
+}
+
+.tuitionFee {
+  width: 100%;
+  margin-top: 10px;
+  padding: 0;
 }
 </style>
