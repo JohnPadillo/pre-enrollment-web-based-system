@@ -11,7 +11,11 @@
               item-text="text"
               item-value="code"
             ></v-select>-->
-            <v-btn-toggle color="blue darken-4" v-model="toggle_exclusive" mandatory>
+            <v-btn-toggle
+              color="blue darken-4"
+              v-model="toggle_exclusive"
+              mandatory
+            >
               <v-btn @click="selectedCategory = 1">
                 <v-icon>mdi-calendar-blank</v-icon>Schedule
               </v-btn>
@@ -40,7 +44,11 @@
                   hide-details
                   clearable
                 ></v-text-field>
-                <addButton v-if="$store.state.user.status == 1" :title="title" @add="addSchedule" />
+                <addButton
+                  v-if="$store.state.user.status == 1"
+                  :title="title"
+                  @add="addSchedule"
+                />
               </v-card-title>
               <scheduleForm
                 ref="scheduleForm"
@@ -101,7 +109,11 @@
                   hide-details
                   clearable
                 ></v-text-field>
-                <addButton v-if="$store.state.user.status == 1" :title="title" @add="addClass" />
+                <addButton
+                  v-if="$store.state.user.status == 1"
+                  :title="title"
+                  @add="addClass()"
+                />
               </v-card-title>
               <confirmationDialog
                 :dialog="classConfirmationDialog"
@@ -109,7 +121,11 @@
                 @no="closeClassConfirmDialog"
                 @yes="deleteClass"
               ></confirmationDialog>
-              <v-data-table :headers="classHeaders" :items="classes" :search="searchClass">
+              <v-data-table
+                :headers="classHeaders"
+                :items="classes"
+                :search="searchClass"
+              >
                 <template v-slot:item="props">
                   <tr>
                     <td>{{ props.item.class_no }}</td>
@@ -117,7 +133,9 @@
                     <td>{{ props.item.section.name }}</td>
                     <td>{{ props.item.subject.units }}</td>
                     <td>{{ props.item.day }}</td>
-                    <td>{{ props.item.time_start + " - " + props.item.time_end }}</td>
+                    <td>
+                      {{ props.item.time_start + " - " + props.item.time_end }}
+                    </td>
                     <td>{{ props.item.room.code }}</td>
                     <td>
                       <viewButton @view="viewClass(props.item)" />
@@ -169,7 +187,8 @@
                                 v-model="classClassNo"
                                 type="number"
                                 :rules="[classRules.required]"
-                                :readonly="action == 'view'"
+                                readonly
+                                disable
                               ></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6" md="4">
@@ -201,7 +220,11 @@
                               </v-select>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
-                              <v-text-field label="Units" readonly v-model="classUnits"></v-text-field>
+                              <v-text-field
+                                label="Units"
+                                readonly
+                                v-model="classUnits"
+                              ></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
                               <v-select
@@ -269,14 +292,16 @@
                                     text
                                     color="primary"
                                     @click="classStartTimeDialog = false"
-                                  >Cancel</v-btn>
+                                    >Cancel</v-btn
+                                  >
                                   <v-btn
                                     text
                                     color="primary"
                                     @click="
                                       $refs.startTimedialog.save(classTimeStart)
                                     "
-                                  >OK</v-btn>
+                                    >OK</v-btn
+                                  >
                                 </v-time-picker>
                               </v-dialog>
                             </v-col>
@@ -326,14 +351,16 @@
                                     text
                                     color="primary"
                                     @click="classEndTimeDialog = false"
-                                  >Cancel</v-btn>
+                                    >Cancel</v-btn
+                                  >
                                   <v-btn
                                     text
                                     color="primary"
                                     @click="
                                       $refs.endTimedialog.save(classTimeEnd)
                                     "
-                                  >OK</v-btn>
+                                    >OK</v-btn
+                                  >
                                 </v-time-picker>
                               </v-dialog>
                             </v-col>
@@ -343,7 +370,12 @@
                     </v-card-text>
                     <v-card-actions>
                       <v-spacer></v-spacer>
-                      <v-btn color="blue darken-1" text @click="closeClassDialog">Close</v-btn>
+                      <v-btn
+                        color="blue darken-1"
+                        text
+                        @click="closeClassDialog"
+                        >Close</v-btn
+                      >
                       <v-btn
                         v-if="action != 'view'"
                         color="blue darken-1"
@@ -351,7 +383,8 @@
                         @click="
                           action == 'add' ? saveAddClass() : saveEditClass()
                         "
-                      >Save</v-btn>
+                        >Save</v-btn
+                      >
                     </v-card-actions>
                   </v-card>
                 </v-dialog>
@@ -589,7 +622,26 @@ export default {
       this.action = "add";
       this.openScheduleDialog = true;
     },
-    addClass() {
+
+    async addClass() {
+      const classes = (await ClassService.getClasses()).data;
+
+      const sorted = await classes.sort((a, b) => {
+        return a.class_no - b.class_no;
+      });
+
+      if (classes.length && sorted.length) {
+        let classNo = parseInt(sorted[sorted.length - 1].class_no);
+
+        do {
+          classNo++;
+        } while (classes.filter(item => item.class_no == classNo).length > 0);
+
+        this.classClassNo = classNo;
+      } else {
+        this.classClassNo = 1;
+      }
+
       this.action = "add";
       this.classDialog = true;
       this.getPrograms();
